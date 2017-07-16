@@ -1,0 +1,11 @@
+spring:
+    application:
+        name: Tarlac Virtual Tour
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+server:
+    port: 9000
+logging:
+    level:
+        org.springframework.security: TRACE
