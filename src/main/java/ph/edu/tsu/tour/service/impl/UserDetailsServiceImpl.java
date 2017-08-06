@@ -1,4 +1,4 @@
-package ph.edu.tsu.tour.spring.security;
+package ph.edu.tsu.tour.service.impl;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

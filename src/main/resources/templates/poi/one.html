@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+    <title th:text="#{poi.add}">Add a New Point of Interest</title>
+    <style>
+        .form-group.poi-image > .thumbnail {
+            margin-bottom: 0;
+        }
+        .form-group.poi-image > .thumbnail > img {
+            object-fit: cover;
+            height: 250px;
+        }
+        .form-group.poi-image > input[type=file] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="/" th:href="@{/}" th:text="#{home}">Home</a></li>
+        <li><a href="/poi" th:href="@{/poi}" th:text="#{poi}">Point of Interest</a></li>
+        <th:block th:with="text=#{new}">
+            <li class="active" th:text="${poi.id != null ? poi.id : text}">#</li>
+        </th:block>
+    </ol>
+</div>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-xs-12 col-md-8 col-md-offset-2">
+            <th:block th:with="text=#{error.message}" th:if="${errors}">
+                <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
+            </th:block>
+            <h1 class="text-center" th:text="#{poi}">Point of Interest</h1>
+            <div class="alert alert-danger text-center" role="alert" th:if="${poi == null}" th:text="#{poi.empty.message}">Point of interest not bound to form.</div>
+            <form action="/poi/save" th:if="${poi}" th:action="@{/poi/save}" th:object="${poi}" method="post" enctype="multipart/form-data">
+                <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('id')} ? has-error : ''">
+                    <label for="id" th:text="#{id}">Identifier</label>
+                    <input type="text" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#"/>
+                </div>
+                <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('name')} ? has-error : ''">
+                    <label for="name" th:text="#{name}">Name</label>
+                    <input type="text" th:field="*{name}" class="form-control" id="name" th:placeholder="#{poi.name.placeholder}" placeholder="Tarlac State University"/>
+                    <p class="help-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('website')} ? has-error : ''">
+                    <label for="website" th:text="#{website}">Website</label>
+                    <input type="url" th:field="*{website}" class="form-control" id="website" th:placeholder="#{poi.website.placeholder}" placeholder="http://www.tsu.edu.ph"/>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('contactNumber')} ? has-error : ''">
+                    <label for="contact" th:text="#{contact-information}">Contact Information</label>
+                    <input type="text" th:field="*{contactNumber}" class="form-control" id="contact" th:placeholder="#{poi.contact.placeholder}" placeholder="(045) 982 0110"/>
+                </div>
+                <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('addressLine1')} ? has-error : ''">
+                    <label for="address-line-one" th:text="#{address-line(1)}">Address Line 1</label>
+                    <input type="text" th:field="*{addressLine1}" class="form-control" id="address-line-one" th:placeholder="#{poi.address-line-one.placeholder}" placeholder="Romulo Blvd., San Vicente"/>
+                </div>
+                <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('addressLine2')} ? has-error : ''">
+                    <label for="address-line-two" th:text="#{address-line(2)}">Address Line 2</label>
+                    <input type="text" th:field="*{addressLine2}" class="form-control" id="address-line-two" th:placeholder="#{poi.address-line-two.placeholder}" placeholder=""/>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('city')} ? has-error : ''">
+                    <label for="city" th:text="#{city}">City</label>
+                    <input type="text" th:field="*{city}" class="form-control" id="city" th:placeholder="#{poi.city.placeholder}" placeholder="Tarlac City"/>
+                    <p class="help-block" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></p>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('zipCode')} ? has-error : ''">
+                    <label for="zip" th:text="#{zip-code}">Zip Code</label>
+                    <input type="text" th:field="*{zipCode}" class="form-control" id="zip" th:placeholder="#{poi.zip-code.placeholder}" placeholder="2003" />
+                    <p class="help-block" th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}"></p>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('latitude')} ? has-error : ''">
+                    <label for="latitude" th:text="#{latitude}">Latitude</label>
+                    <input type="number" th:field="*{latitude}" class="form-control" id="latitude" th:placeholder="#{poi.geometry.point.latitude.placeholder}" placeholder="120.58683700000006" />
+                    <p class="help-block" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></p>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('longitude')} ? has-error : ''">
+                    <label for="longitude" th:text="#{longitude}">Longitude</label>
+                    <input type="number" th:field="*{longitude}" class="form-control" id="longitude" th:placeholder="#{poi.geometry.point.longitude.placeholder}" placeholder="120.58683700000006" />
+                    <p class="help-block" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></p>
+                </div>
+                <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('previewImage1')} ? has-error : ''">
+                    <label for="primary-image-one" th:text="#{poi.image.primary(1)}">Primary Image 1</label>
+                    <div class="thumbnail">
+                        <img id="primary-image-one-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${poi?.previewImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                    </div>
+                    <input type="file" th:field="*{previewImage1.file}" id="primary-image-one" accept="image/*" />
+                    <input type="hidden" th:field="*{previewImage1.id}" />
+                </div>
+                <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('previewImage2')} ? has-error : ''">
+                    <label for="primary-image-two" th:text="#{poi.image.primary(2)}">Primary Image 2</label>
+                    <div class="thumbnail">
+                        <img id="primary-image-two-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${poi?.previewImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                    </div>
+                    <input type="file" th:field="*{previewImage2.file}" id="primary-image-two" accept="image/*" />
+                    <input type="hidden" th:field="*{previewImage2.id}" />
+                </div>
+                <div class="btn-group btn-group-vertical col-xs-6" role="group" aria-label="...">
+                    <div class="btn-group" role="group" th:if="${poi.id}">
+                        <a class="btn btn-default" th:href="@{/poi/} + ${poi.id} + @{/image/new}" th:value="#{image.add}">Add New Image</a>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-default" th:classappend="${images} ? '' : disabled" th:href="@{/poi/} + ${poi.id} + @{/image/}" th:value="#{images.view}">View Images</a>
+                    </div>
+                </div>
+                <div class="btn-group btn-group-vertical col-xs-6" role="group" aria-label="...">
+                    <div class="btn-group" role="group">
+                        <button id="reset" type="reset" class="btn btn-default" th:value="#{reset}">Reset</button>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="submit" class="btn btn-default" th:value="#{submit}">Submit</button>
+                    </div>
+                </div>
+            </form>
+            <form action="/poi/delete" th:action="@{/poi/delete}" method="post" th:if="${poi?.id}">
+                <div class="form-group col-xs-12">
+                    <input name="id" type="hidden" th:value="${poi.id}"/>
+                </div>
+                <div class="form-group col-xs-12">
+                    <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="scripts">
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        $('document').ready(function() {
+            $('.form-group.poi-image > .thumbnail').click(function(e) {
+                $(this).siblings('input[type=file]').click();
+            });
+            $('.form-group.poi-image > input[type=file]').change(function() {
+                var url = window.URL.createObjectURL($(this)[0].files[0]);
+                $(this).siblings('.thumbnail').children('img:first').attr('src', url);
+            });
+            $('#reset').click(function(e) {
+                $('#primary-image-one-preview').attr('src', /*[[${poi?.previewImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+                $('#primary-image-two-preview').attr('src', /*[[${poi?.previewImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+            });
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>

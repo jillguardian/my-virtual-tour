@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"/>
+</head>
+<body>
+<div th:fragment="alert (type, message, items, classes)"
+     th:assert="${!#strings.isEmpty(type) and !#strings.isEmpty(message)}"
+     th:classappend="'alert-' + ${type} + ' ' + ${classes}"
+     class="alert alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <p th:text="${message}">Message</p>
+    <ul class="list-group" th:if="${items}">
+        <li class="list-group-item" th:each="item : ${items}" th:text="${item}">Item</li>
+    </ul>
+</div>
+<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}">
+</script>
+</body>
+</html>

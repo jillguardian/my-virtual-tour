@@ -4,8 +4,27 @@ spring:
     jpa:
         hibernate:
             ddl-auto: create-drop
+    http:
+        multipart:
+            max-file-size: 50MB
+            max-request-size: 1000MB
 server:
     port: 9000
 logging:
     level:
-        org.springframework.security: TRACE
+        org.springframework.security: INFO
+storage:
+    base-uri: dropbox:///
+    dropbox:
+        access-token: E95Ro-m6k8AAAAAAAAAADZRS4lBiZeXN6q5BGBsF6KyayvKhhJIc5uNATEUkAT3-
+poi:
+    image:
+        resize: false
+        max-width:
+        max-height:
+        quality:
+        preview:
+            resize: true
+            max-width: 350
+            max-height: 250
+            quality:

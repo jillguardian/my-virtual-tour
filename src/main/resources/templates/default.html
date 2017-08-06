@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title th:text="#{application.name}">Tarlac Virtual Tour</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css"
+          th:href="@{/webjars/bootstrap-select/1.12.2/css/bootstrap-select.min.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.css"
+          th:href="@{/webjars/dropzone/4.3.0/min/dropzone.min.css}"/>
+    <link rel="stylesheet" href=""
+          th:href="@{/webjars/dropzone/4.3.0/min/basic.min.css}"/>
+    <link rel="stylesheet" href="/css/style.css"
+          th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#my-navbar-collapse" aria-expanded="false">
+                <span class="sr-only">Toggle Navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" th:href="@{/}">My Virtual Tour</a>
+        </div>
+        <div class="collapse navbar-collapse" id="my-navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li sec:authorize="isAnonymous() or (not hasAuthority(T(ph.edu.tsu.tour.configuration.Privileges.PointOfInterest).WRITE))">
+                    <a href="/poi" th:href="@{/poi}" th:value="#{pois}">Points of Interest</a>
+                </li>
+                <li class="dropdown" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.configuration.Privileges.PointOfInterest).WRITE)">
+                    <a href="#"
+                       class="dropdown-toggle"
+                       data-toggle="dropdown"
+                       role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false" th:value="#{pois}">Points of Interest <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a th:href="@{/poi/new}" th:value="#{add-new}">Add New</a></li>
+                        <li><a th:href="@{/poi/}" th:value="#{view-all}">View All</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.configuration.Privileges.Access).READ, T(ph.edu.tsu.tour.configuration.Privileges.Access).WRITE)">
+                    <a href="#"
+                       class="dropdown-toggle"
+                       data-toggle="dropdown"
+                       role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false" th:value="#{access-management}">Access Management <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header" th:value="#{user}">User</li>
+                        <li><a th:href="@{/access-management/user/new}" th:value="#{add-new}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.configuration.Privileges.Access).WRITE)">Add New</a></li>
+                        <li><a th:href="@{/access-management/user}" th:value="#{view-all}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.configuration.Privileges.Access).READ)">View All</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}">Log in</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a id="logout-link" th:href="@{/logout}">Log out</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container" style="margin-bottom: 40px;">
+    <div class="row">
+        <div layout:fragment="breadcrumbs"></div>
+    </div>
+    <div layout:fragment="content"></div>
+    <div class="row" sec:authorize="isAuthenticated()">
+        <form class="navbar-form navbar-right" th:action="@{/logout}" method="post" th:hidden="true">
+            <button id="logout-button" type="submit" class="btn btn-link" th:text="#{logout}">Logout</button>
+        </form>
+    </div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"
+        th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
+<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"
+        th:src="@{/webjars/bootstrap-select/1.12.2/js/bootstrap-select.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/min/dropzone.min.js"
+        th:src="@{/webjars/dropzone/4.3.0/min/dropzone.min.js}"></script>
+<script type="text/javascript" sec:authorize="isAuthenticated()">
+    $('document').ready(function() {
+        $('#logout-link').click(function() {
+            $('#logout-button').click();
+            return false;
+        });
+    });
+</script>
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

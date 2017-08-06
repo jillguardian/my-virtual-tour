@@ -1,6 +1,6 @@
 package ph.edu.tsu.tour.service;
 
-public interface Service<T> {
+public interface CrudService<T> {
 
     T findById(long id);
 

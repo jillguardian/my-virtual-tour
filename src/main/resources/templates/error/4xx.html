@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <div class="page-header text-center">
+                <h1 style="font-size: 72px;" th:text="${status}">4XX</h1>
+                <p class="lead" th:text="#{4xx.message}" style="margin-bottom: 0;">Uh-oh.</p>
+                <p th:text="${error}">Error</p>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body text-center">
+                    <div class="alert alert-danger" role="alert">
+                        <p th:text="${message}">Message</p>
+                    </div>
+                    <p th:text="${timestamp}">Timestamp</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

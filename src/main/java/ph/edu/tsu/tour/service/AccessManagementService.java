@@ -36,4 +36,6 @@ public interface AccessManagementService {
 
     User findUserById(long id);
 
+    Role findRoleByName(String name);
+
 }

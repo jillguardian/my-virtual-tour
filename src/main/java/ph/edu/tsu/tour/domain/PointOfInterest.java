@@ -1,19 +1,40 @@
 package ph.edu.tsu.tour.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Tolerate;
 import org.geojson.GeoJsonObject;
 import ph.edu.tsu.tour.common.converter.GeoJsonObjectConverter;
 import ph.edu.tsu.tour.common.converter.UriPersistenceConverter;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.ALWAYS)
 @Entity
 @Table(name = PointOfInterest.TABLE_NAME)
 @Data
@@ -40,11 +61,24 @@ public class PointOfInterest implements Serializable {
     @JsonProperty("TEL")
     private String contactNumber;
 
-    @ElementCollection
-    @CollectionTable(name = "points_of_interest_gallery", joinColumns = @JoinColumn(name = "id"))
-    @Convert(converter = UriPersistenceConverter.class)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="preview_image_one_id", referencedColumnName = "id")
+    @JsonProperty("IMAGE")
+    private Image previewImage1;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="preview_image_two_id", referencedColumnName = "id")
+    @JsonProperty("IMAGEBACK")
+    private Image previewImage2;
+
+    @Setter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "points_of_interest_images",
+            joinColumns = @JoinColumn(name = "point_of_interest_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id"))
     @JsonProperty("IMAGES")
-    private Set<URI> images;
+    private Set<Image> images = new HashSet<>();
 
     @Column(name = "address_line_1")
     @JsonProperty("ADDRESS1")
@@ -70,6 +104,25 @@ public class PointOfInterest implements Serializable {
     @Tolerate
     protected PointOfInterest() {
         // A default constructor to make JPA happy.
+    }
+
+    public Set<Image> getImages() {
+        return new HashSet<>(images);
+    }
+
+    public void addImage(Image image) {
+        if (images.contains(image)) {
+            return;
+        }
+        images.add(image);
+    }
+
+    public void removeImage(Image image) {
+        images.remove(image);
+    }
+
+    public static class Builder {
+        private Set<Image> images = new HashSet<>();
     }
 
     public static Builder builder() {

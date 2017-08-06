@@ -1,4 +1,4 @@
-package ph.edu.tsu.tour.configuration.security;
+package ph.edu.tsu.tour.configuration;
 
 public interface Privileges {
 

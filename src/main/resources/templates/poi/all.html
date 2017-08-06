@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+    <title th:text="#{pois}">Points of Interest</title>
+    <style>
+        .thumbnail.poi-thumbnail h2 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .thumbnail.poi-thumbnail > img {
+            width: 300px;
+            height: 250px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="/" th:href="@{/}" th:text="#{home}">Home</a></li>
+        <li class="active" th:text="#{poi}">Point of Interest</li>
+    </ol>
+</div>
+<div layout:fragment="content">
+    <div class="row">
+        <h1 class="text-center" th:text="#{pois}">Points of Interest</h1>
+        <div class="alert alert-danger text-center" role="alert" th:if="${pois.empty}" th:text="#{pois.empty.message}">Found no points of interest.</div>
+        <div class="row" th:if="${pois}">
+            <div th:each="group : ${T(com.google.common.collect.Lists).partition(pois, 4)}" class="row">
+                <div th:each="poi : ${group}" th:object="${poi}" class="col-md-3 col-sm-6">
+                    <div class="poi-thumbnail thumbnail">
+                        <img src="http://via.placeholder.com/350x250?text=X"
+                             alt="Preview."
+                             class="img-rounded"
+                             th:src="${poi?.previewImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}"
+                             th:alt="#{poi.image.primary.description}" />
+                        <div class="caption">
+                            <h2 class="text-center" th:text="${poi.name}">Point of Interest</h2>
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <a th:href="@{/poi/} + ${poi.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
+                                <a target="_blank" th:href="${poi.website}" th:text="#{website}" th:if="${not #strings.isEmpty(poi.website)}" class="btn btn-info">Website</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

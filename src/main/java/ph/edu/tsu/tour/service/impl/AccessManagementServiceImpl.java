@@ -6,10 +6,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ph.edu.tsu.tour.domain.Privilege;
 import ph.edu.tsu.tour.domain.Role;
 import ph.edu.tsu.tour.domain.User;
-import ph.edu.tsu.tour.service.AccessManagementService;
 import ph.edu.tsu.tour.repository.PrivilegeRepository;
 import ph.edu.tsu.tour.repository.RoleRepository;
 import ph.edu.tsu.tour.repository.UserRepository;
+import ph.edu.tsu.tour.service.AccessManagementService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class AccessManagementServiceImpl implements AccessManagementService {
 
     @Override
     public User saveUser(User user) {
-        if (userRepository.findUserByUsername(user.getUsername()) != null) {
+        if (user.getId() == null && userRepository.findUserByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("User [" + user.getUsername() + "] already exists");
         }
         for (Role role : user.getRoles()) {
@@ -156,6 +156,11 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     @Override
     public User findUserById(long id) {
         return userRepository.findOne(id);
+    }
+
+    @Override
+    public Role findRoleByName(String name) {
+        return roleRepository.findRoleByName(name);
     }
 
 }
