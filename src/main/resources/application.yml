@@ -12,20 +12,37 @@ server:
     port: 9000
 logging:
     level:
-        org.springframework.security: INFO
+        ph.edu.tsu.tour: TRACE
+# Properties related to disk storage.
 storage:
-    # The base directory where files are going to get saved.
+    # The default base directory where files are to be saved at.
     base-uri: dropbox:///
+    # Dropbox storage configuration.
     dropbox:
         access-token: E95Ro-m6k8AAAAAAAAAADZRS4lBiZeXN6q5BGBsF6KyayvKhhJIc5uNATEUkAT3-
+# Configuration properties for points of interest.
 poi:
+    # Configuration for point of interest images.
     image:
+        # Indicates if image should be resized. Possible values: "true" and "false".
         resize: false
+        # The max width of an image in pixels. If resize is set to true, then this field should be specified.
+        # Otherwise, it's optional.
         max-width:
+        # The max height of an image in pixels. If resize is set to true, then this field should be specified.
+        # Otherwise, it's optional.
         max-height:
+        # The quality of the image. Input should range from 0 to 1, with 1 having the most optimal quality.
         quality:
+        # Configuration for preview image.
         preview:
+            # Indicates if preview image should be resized. Possible values: "true" and "false".
             resize: true
+            # The max width of a preview image in pixels. If resize is set to true, then this field should be specified.
+            # Otherwise, it's optional.
             max-width: 350
+            # The max height of a preview image in pixels. If resize is set to true, then this field should be
+            # specified. Otherwise, it's optional.
             max-height: 250
+            # The quality of the preview image. Input should range from 0 to 1, with 1 having the most optimal quality.
             quality:
