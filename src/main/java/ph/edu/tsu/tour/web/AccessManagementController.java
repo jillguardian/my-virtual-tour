@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import ph.edu.tsu.tour.domain.Role;
-import ph.edu.tsu.tour.domain.User;
+import ph.edu.tsu.tour.core.access.Role;
+import ph.edu.tsu.tour.core.access.User;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
-import ph.edu.tsu.tour.service.AccessManagementService;
+import ph.edu.tsu.tour.core.access.AccessManagementService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

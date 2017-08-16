@@ -14,6 +14,7 @@ logging:
     level:
         org.springframework.security: INFO
 storage:
+    # The base directory where files are going to get saved.
     base-uri: dropbox:///
     dropbox:
         access-token: E95Ro-m6k8AAAAAAAAAADZRS4lBiZeXN6q5BGBsF6KyayvKhhJIc5uNATEUkAT3-

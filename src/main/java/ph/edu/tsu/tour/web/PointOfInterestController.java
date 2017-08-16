@@ -18,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import ph.edu.tsu.tour.domain.Image;
-import ph.edu.tsu.tour.domain.PointOfInterest;
+import ph.edu.tsu.tour.core.image.Image;
+import ph.edu.tsu.tour.core.poi.PointOfInterest;
+import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
+import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.exception.FunctionalityNotImplementedException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
-import ph.edu.tsu.tour.service.ImageTransformingService;
-import ph.edu.tsu.tour.service.PointOfInterestService;
-import ph.edu.tsu.tour.service.DiskStorageCapableImageService;
-import ph.edu.tsu.tour.service.impl.ToPublicImageUriService;
+import ph.edu.tsu.tour.core.poi.PointOfInterestService;
+import ph.edu.tsu.tour.core.image.DiskStorageCapableImageService;
+import ph.edu.tsu.tour.core.image.ToPublicImageService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -33,13 +34,12 @@ import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 // TODO: Show error messages in view
 @Controller
@@ -50,15 +50,18 @@ public class PointOfInterestController {
 
     private PointOfInterestService pointOfInterestService;
     private DiskStorageCapableImageService imageService;
-    private ImageTransformingService imageTransformingService;
+    private ToPublicPointOfInterestService toPublicPointOfInterestService;
+    private ToPublicImageService toPublicImageService;
 
     @Autowired
-    public PointOfInterestController(PointOfInterestService pointOfInterestService,
+    public PointOfInterestController(PublishingPointOfInterestService pointOfInterestService,
                                      DiskStorageCapableImageService diskStorageCapableImageService,
-                                     ToPublicImageUriService toPublicImageUriService) throws IOException {
+                                     ToPublicPointOfInterestService toPublicPointOfInterestService,
+                                     ToPublicImageService toPublicImageService) throws IOException {
         this.pointOfInterestService = pointOfInterestService;
         this.imageService = diskStorageCapableImageService;
-        this.imageTransformingService = toPublicImageUriService;
+        this.toPublicPointOfInterestService = toPublicPointOfInterestService;
+        this.toPublicImageService = toPublicImageService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -66,23 +69,18 @@ public class PointOfInterestController {
         Iterable<PointOfInterest> pois = pointOfInterestService.findAll();
         Collection<PointOfInterestDto> dtos = new HashSet<>();
         for (PointOfInterest poi : pois) {
+            PointOfInterest publicPoi = toPublicPointOfInterestService.apply(poi);
             PointOfInterestDto dto = PointOfInterestDto.builder()
-                    .id(poi.getId())
-                    .name(poi.getName())
-                    .website(poi.getWebsite())
-                    .contactNumber(poi.getContactNumber())
-                    .addressLine1(poi.getAddressLine1())
-                    .addressLine2(poi.getAddressLine2())
-                    .city(poi.getCity())
-                    .zipCode(poi.getZipCode())
+                    .id(publicPoi.getId())
+                    .name(publicPoi.getName())
+                    .website(publicPoi.getWebsite())
+                    .contactNumber(publicPoi.getContactNumber())
+                    .addressLine1(publicPoi.getAddressLine1())
+                    .addressLine2(publicPoi.getAddressLine2())
+                    .city(publicPoi.getCity())
+                    .zipCode(publicPoi.getZipCode())
+                    .previewImage1(toDto(publicPoi, publicPoi.getPreviewImage1())) // Only image displayed in view.
                     .build();
-            // We'll only bother with cover images since that's the only type of image we'll be displaying.
-            if (poi.getPreviewImage1() != null) {
-                Image image = imageService.findById(poi.getPreviewImage1().getId());
-                image = imageTransformingService.apply(Image.builder(image).build());
-                ImageDto previewImage1 = PointOfInterestController.toDto(poi, image);
-                dto.setPreviewImage1(previewImage1);
-            }
             dtos.add(dto);
         }
 
@@ -103,31 +101,22 @@ public class PointOfInterestController {
                     "Point of interest with ID [" + id + "] has geometry of type [" + type + "]");
         }
 
+        PointOfInterest publicPoi = toPublicPointOfInterestService.apply(poi);
         PointOfInterestDto dto = PointOfInterestDto.builder()
-                .id(poi.getId())
-                .name(poi.getName())
-                .website(poi.getWebsite())
-                .contactNumber(poi.getContactNumber())
-                .addressLine1(poi.getAddressLine1())
-                .addressLine2(poi.getAddressLine2())
-                .city(poi.getCity())
-                .zipCode(poi.getZipCode())
+                .id(publicPoi.getId())
+                .name(publicPoi.getName())
+                .website(publicPoi.getWebsite())
+                .contactNumber(publicPoi.getContactNumber())
+                .addressLine1(publicPoi.getAddressLine1())
+                .addressLine2(publicPoi.getAddressLine2())
+                .city(publicPoi.getCity())
+                .latitude(((Point) publicPoi.getGeometry()).getCoordinates().getLatitude())
+                .longitude(((Point) publicPoi.getGeometry()).getCoordinates().getLongitude())
+                .zipCode(publicPoi.getZipCode())
+                .previewImage1(toDto(publicPoi, publicPoi.getPreviewImage1()))
+                .previewImage2(toDto(publicPoi, publicPoi.getPreviewImage2()))
+                .images(publicPoi.getImages().stream().map(raw -> toDto(publicPoi, raw)).collect(Collectors.toSet()))
                 .build();
-        dto.setLatitude(((Point) poi.getGeometry()).getCoordinates().getLatitude());
-        dto.setLongitude(((Point) poi.getGeometry()).getCoordinates().getLongitude());
-
-        if (poi.getPreviewImage1() != null) {
-            Image image = imageService.findById(poi.getPreviewImage1().getId());
-            image = imageTransformingService.apply(Image.builder(image).build());
-            ImageDto previewImage1 = PointOfInterestController.toDto(poi, image);
-            dto.setPreviewImage1(previewImage1);
-        }
-        if (poi.getPreviewImage2() != null) {
-            Image image = imageService.findById(poi.getPreviewImage2().getId());
-            image = imageTransformingService.apply(Image.builder(image).build());
-            ImageDto previewImage2 = PointOfInterestController.toDto(poi, image);
-            dto.setPreviewImage2(previewImage2);
-        }
 
         model.addAttribute("poi", dto);
         model.addAttribute("images", !poi.getImages().isEmpty());
@@ -240,7 +229,7 @@ public class PointOfInterestController {
         }
 
         Image image = imageService.findById(imageId);
-        image = imageTransformingService.apply(Image.builder(image).build());
+        image = toPublicImageService.apply(image);
         if (image == null) {
             throw new ResourceNotFoundException("Image with ID [" + imageId + "] does not exist");
         }
@@ -325,10 +314,11 @@ public class PointOfInterestController {
             throw new ResourceNotFoundException("Point of interest with ID [" + id + "] does not exist");
         }
 
+        poi = toPublicPointOfInterestService.apply(poi);
+
         Collection<Image> images = poi.getImages();
         Collection<ImageDto> dtos = new HashSet<>();
         for (Image image : images) {
-            image = imageTransformingService.apply(Image.builder(image).build());
             ImageDto dto = toDto(poi, image);
             dtos.add(dto);
         }
@@ -377,7 +367,7 @@ public class PointOfInterestController {
         private Double longitude;
         private ImageDto previewImage1;
         private ImageDto previewImage2;
-        private Collection<ImageDto> images;
+        private Set<ImageDto> images;
 
     }
 
