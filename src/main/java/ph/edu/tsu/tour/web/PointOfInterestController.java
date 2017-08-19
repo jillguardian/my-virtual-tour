@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ph.edu.tsu.tour.core.image.Image;
+import ph.edu.tsu.tour.core.image.RawImage;
 import ph.edu.tsu.tour.core.poi.PointOfInterest;
 import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
@@ -36,9 +38,16 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 // TODO: Show error messages in view
@@ -132,11 +141,13 @@ public class PointOfInterestController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(Model model,
                        @Valid @ModelAttribute("poi") PointOfInterestDto dto,
-                       BindingResult bindingResult) throws IOException {
+                       BindingResult bindingResult,
+                       RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "poi/one";
         }
 
+        Collection<Exception> errors = new LinkedList<>();
         PointOfInterest poi = PointOfInterest.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -157,35 +168,58 @@ public class PointOfInterestController {
         poi = pointOfInterestService.save(poi);
         dto.setId(poi.getId());
 
+        CompletableFuture<Image> previewImage1 = null;
+        CompletableFuture<Image> previewImage2 = null;
         if (!dto.getPreviewImage1().getFile().isEmpty()) {
-            Image previewImage1 = imageService.save(
-                    Image.builder()
-                            .id(dto.getPreviewImage1().getId())
-                            .title(dto.getPreviewImage1().getTitle())
-                            .description(dto.getPreviewImage1().getDescription())
-                            .build(),
-                    dto.getPreviewImage1().getFile().getInputStream());
-            if (previewImage1 == null) {
-                throw new IllegalStateException("Unable to save preview image one");
-            }
-            poi.setPreviewImage1(previewImage1);
+            previewImage1 = imageService.saveAsync(RawImage.builder()
+                    .id(dto.getPreviewImage1().getId())
+                    .title(dto.getPreviewImage1().getTitle())
+                    .description(dto.getPreviewImage1().getDescription())
+                    .inputStream(dto.getPreviewImage1().getFile().getInputStream())
+                    .build());
         }
         if (!dto.getPreviewImage2().getFile().isEmpty()) {
-            Image previewImage2 = imageService.save(
-                    Image.builder()
-                            .id(dto.getPreviewImage2().getId())
-                            .title(dto.getPreviewImage2().getTitle())
-                            .description(dto.getPreviewImage2().getDescription())
-                            .build(),
-                    dto.getPreviewImage2().getFile().getInputStream());
-            if (previewImage2 == null) {
-                throw new IllegalStateException("Unable to save preview image one");
+            previewImage2 = imageService.saveAsync(RawImage.builder()
+                    .id(dto.getPreviewImage2().getId())
+                    .title(dto.getPreviewImage2().getTitle())
+                    .description(dto.getPreviewImage2().getDescription())
+                    .inputStream(dto.getPreviewImage2().getFile().getInputStream())
+                    .build());
+        }
+
+        if (previewImage1 != null) {
+            try {
+                poi.setPreviewImage1(previewImage1.get());
+            } catch (Exception e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("Couldn't save preview image one", e);
+                }
+                if (e instanceof ExecutionException) {
+                    e = (Exception) e.getCause();
+                }
+                errors.add(e);
             }
-            poi.setPreviewImage2(previewImage2);
+        }
+        if (previewImage2 != null) {
+            try {
+                poi.setPreviewImage2(previewImage2.get());
+            } catch (Exception e) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("Couldn't save preview image two", e);
+                }
+                if (e instanceof ExecutionException) {
+                    e = (Exception) e.getCause();
+                }
+                errors.add(e);
+            }
         }
 
         poi = pointOfInterestService.save(poi);
 
+        if (!errors.isEmpty()) {
+            redirectAttributes.addFlashAttribute(
+                    "errors", errors.stream().map(Exception::getMessage).collect(Collectors.toList()));
+        }
         return "redirect:" + Urls.POI + "/" + poi.getId();
     }
 
@@ -260,24 +294,23 @@ public class PointOfInterestController {
         Image image;
 
         if (!dto.getFile().isEmpty()) {
-            image = imageService.save(
-                    Image.builder()
-                            .id(dto.getId())
-                            .title(dto.getTitle())
-                            .description(dto.getDescription())
-                            .build(),
-                    dto.getFile().getInputStream());
-            if (image == null) {
-                throw new IllegalStateException("Unable to save image");
-            }
+            image = imageService.save(RawImage.builder()
+                    .id(dto.getId())
+                    .title(dto.getTitle())
+                    .description(dto.getDescription())
+                    .inputStream(dto.getFile().getInputStream())
+                    .build());
         } else {
             image = imageService.findById(dto.getId());
             image.setTitle(dto.getTitle());
             image.setDescription(dto.getDescription());
+            image = imageService.save(image);
         }
 
+        Image temp = image; // Because Java wants an effectively final variable.
+
         Set<Image> images = poi.getImages();
-        Optional<Image> existing = images.stream().filter(x -> x.getId().equals(image.getId())).findFirst();
+        Optional<Image> existing = images.stream().filter(x -> x.getId().equals(temp.getId())).findFirst();
         existing.ifPresent(poi::removeImage);
 
         poi.addImage(image);

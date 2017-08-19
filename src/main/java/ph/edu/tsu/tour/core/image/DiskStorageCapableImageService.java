@@ -1,17 +1,16 @@
 package ph.edu.tsu.tour.core.image;
 
-import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 public interface DiskStorageCapableImageService extends ImageService {
 
     /**
-     * Save the file to disk, and sets the given {@code image}'s {@link Image#location location} to the location
-     * of the file.
-     *
      * @param image the image to write
-     * @param inputStream holds the actual image file to write to disk
      * @return saved image
      */
-    Image save(Image image, InputStream inputStream);
+    Image save(RawImage image);
+
+    CompletableFuture<Image> saveAsync(RawImage image);
 
 }

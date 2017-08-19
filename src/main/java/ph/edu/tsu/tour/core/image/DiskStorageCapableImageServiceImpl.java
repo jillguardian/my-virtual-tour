@@ -26,6 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableImageService {
@@ -42,17 +46,23 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
             URI.create("http://via.placeholder.com/350x250?text=" + LocalDateTime.now());
     private Supplier<URI> destinationUri;
 
+    private Executor executor;
     private ImageService imageService;
 
     public DiskStorageCapableImageServiceImpl(ImageService imageService,
                                               StorageService<URI> storageService,
                                               ImageSettings mainSettings,
                                               ImageSettings previewSettings) {
+        this.executor = Executors.newCachedThreadPool();
         this.imageService = Objects.requireNonNull(imageService, "[imageService] must be set");
         this.storageService = Objects.requireNonNull(storageService, "[storageService] must be set");
         this.mainSettings = Objects.requireNonNull(mainSettings, "[mainSettings] must be set");
         this.previewSettings = Objects.requireNonNull(previewSettings, "[previewSettings] must be set");
         this.destinationUri = () -> URI.create("/" + DEFAULT_IMAGE_DIRECTORY + "/");
+    }
+
+    public Executor getExecutor() {
+        return executor;
     }
 
     @Override
@@ -96,7 +106,8 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
     }
 
     @Override
-    public Image save(Image image, InputStream inputStream) { // TODO: Throw exceptions if image fails to save
+    public Image save(RawImage rawImage) {
+        InputStream inputStream = rawImage.getInputStream();
         Path path;
         try {
             path = Files.createTempFile("IMG_", null);
@@ -149,13 +160,21 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
             }
         }
 
-        boolean exists = image.getId() != null;
-        if (!exists) {
+        Image image = Image.builder()
+                .id(rawImage.getId())
+                .title(rawImage.getTitle())
+                .description(rawImage.getDescription())
+                .build();
+        if (rawImage.getId() != null && exists(rawImage.getId())) {
+            Image found = findById(rawImage.getId());
+            image.setLocation(found.getLocation());
+            image.setPreview(found.getPreview());
+        } else {
             URI placeholder = placeholderUri.get();
             image.setLocation(placeholder);
             image.setPreview(placeholder);
-            imageService.save(image);
         }
+        imageService.save(image);
 
         // And then generate the final URI.
         URI destination;
@@ -212,6 +231,11 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
             logger.debug("Unable to delete [" + path + "]");
         }
         return imageService.save(image);
+    }
+
+    @Override
+    public CompletableFuture<Image> saveAsync(RawImage image) {
+        return CompletableFuture.supplyAsync( () -> save(image), executor );
     }
 
     private static File configure(File original, ImageSettings imageSettings) {
