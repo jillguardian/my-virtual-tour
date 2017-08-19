@@ -13,7 +13,7 @@
         <span aria-hidden="true">&times;</span>
     </button>
     <p th:text="${message}">Message</p>
-    <ul class="list-group" th:if="${items}">
+    <ul class="list-group" th:if="${items}" style="margin-top: 10px;">
         <li class="list-group-item" th:each="item : ${items}" th:text="${item}">Item</li>
     </ul>
 </div>

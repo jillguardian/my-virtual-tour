@@ -74,12 +74,12 @@
                 </div>
                 <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('latitude')} ? has-error : ''">
                     <label for="latitude" th:text="#{latitude}">Latitude</label>
-                    <input type="number" th:field="*{latitude}" class="form-control" id="latitude" th:placeholder="#{poi.geometry.point.latitude.placeholder}" placeholder="120.58683700000006" />
+                    <input type="number" step="any" th:field="*{latitude}" class="form-control" id="latitude" th:placeholder="#{poi.geometry.point.latitude.placeholder}" placeholder="120.58683700000006" />
                     <p class="help-block" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></p>
                 </div>
                 <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('longitude')} ? has-error : ''">
                     <label for="longitude" th:text="#{longitude}">Longitude</label>
-                    <input type="number" th:field="*{longitude}" class="form-control" id="longitude" th:placeholder="#{poi.geometry.point.longitude.placeholder}" placeholder="120.58683700000006" />
+                    <input type="number" step="any" th:field="*{longitude}" class="form-control" id="longitude" th:placeholder="#{poi.geometry.point.longitude.placeholder}" placeholder="120.58683700000006" />
                     <p class="help-block" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></p>
                 </div>
                 <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('previewImage1')} ? has-error : ''">
