@@ -42,7 +42,7 @@ public class Image implements Serializable {
     @JsonProperty("DESC")
     private String description;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = false)
     @Convert(converter = UriPersistenceConverter.class)
     @JsonProperty("IMAGE")
     private URI location;
