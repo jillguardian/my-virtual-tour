@@ -191,10 +191,29 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
         Path temporary = DiskStorageCapableImageServiceImpl.configure(path.toFile(), mainSettings).toPath();
 
         try {
+            Image old = rawImage.getId() != null && exists(rawImage.getId()) ? findById(rawImage.getId()) : null;
+
             storageService.write(destination, Files.readAllBytes(temporary));
             image.setLocation(destination);
             image.setPreview(destination);
             logger.trace("Successfully wrote image to [" + destination + "]");
+
+            if (old != null) {
+                CompletableFuture.runAsync(() -> {
+                    try {
+                        if (!old.getLocation().equals(destination)) {
+                            storageService.delete(old.getLocation());
+                            logger.trace("Successfully deleted [" + old.getLocation() + "]");
+                        }
+                        if (!old.getLocation().equals(old.getPreview()) && !old.getPreview().equals(destination)) {
+                            storageService.delete(old.getPreview());
+                            logger.trace("Successfully deleted [" + old.getPreview() + "]");
+                        }
+                    } catch (Exception e) {
+                        logger.error("Failed to delete old image file(s)", e);
+                    }
+                }, executor);
+            }
             if (!temporary.equals(path)) {
                 boolean deleted = temporary.toFile().delete();
                 if (!deleted) {
