@@ -24,7 +24,9 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
     @Override
     public PointOfInterest findById(long id) {
         PointOfInterest found = poiRepository.findOne(id);
-        entityManager.detach(found);
+        if (found != null) {
+            entityManager.detach(found);
+        }
         return found;
     }
 

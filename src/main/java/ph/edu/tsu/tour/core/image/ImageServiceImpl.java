@@ -24,17 +24,19 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public Image findById(long id) {
         Image found = imageRepository.findOne(id);
-        entityManager.detach(found);
+        if (found != null) {
+            entityManager.detach(found);
+        }
         return found;
     }
 
     @Override
     public Iterable<Image> findAll() {
-        Iterable<Image> all = imageRepository.findAll();
-        for (Image image : all) {
+        Iterable<Image> found = imageRepository.findAll();
+        for (Image image : found) {
             entityManager.detach(image);
         }
-        return all;
+        return found;
     }
 
     @Override
