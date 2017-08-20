@@ -11,8 +11,8 @@ import org.apache.commons.vfs2.provider.dropbox.DropboxFileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ph.edu.tsu.tour.Project;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
@@ -25,19 +25,22 @@ import ph.edu.tsu.tour.core.image.DiskStorageCapableImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ImageRepository;
 import ph.edu.tsu.tour.core.image.ImageService;
 import ph.edu.tsu.tour.core.image.ImageServiceImpl;
-import ph.edu.tsu.tour.core.image.ToPublicImageService;
+import ph.edu.tsu.tour.core.image.ToPublicImageServiceImpl;
 import ph.edu.tsu.tour.core.poi.PointOfInterestRepository;
 import ph.edu.tsu.tour.core.poi.PointOfInterestService;
 import ph.edu.tsu.tour.core.poi.PointOfInterestServiceImpl;
 import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
+import ph.edu.tsu.tour.core.storage.DelegatingStreamingStorageService;
+import ph.edu.tsu.tour.core.storage.DropboxStorageService;
 import ph.edu.tsu.tour.core.storage.StorageService;
+import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Observer;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 public class Main {
@@ -70,37 +73,14 @@ public class Main {
     }
 
     @Bean
-    public FileSystemManager fileSystemManager(VfsProperties vfsProperties,
-                                               FileSystemOptions fileSystemOptions) throws FileSystemException {
-        StandardFileSystemManager fileSystemManager = new StandardFileSystemManager();
-        fileSystemManager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
-        fileSystemManager.setFilesCache(new WeakRefFilesCache());
+    public DelegatingStreamingStorageService delegatingStreamingStorageService(StorageProperties storageProperties) {
+        DropboxStorageService dropboxStorageService = new DropboxStorageService(
+                storageProperties.getDropboxStorageProperties().getAccessToken(),
+                Project.getName() + "/" + Project.getVersion());
+        Map<String, StreamingStorageService<URI, URI>> schemeToStreamingStorageService = new HashMap<>();
+        schemeToStreamingStorageService.put("dropbox", dropboxStorageService);
 
-        fileSystemManager.addProvider("dropbox", new DropboxFileProvider());
-        fileSystemManager.init();
-
-        if (vfsProperties.getBaseUri() != null) {
-            fileSystemManager.setBaseFile(fileSystemManager.resolveFile(
-                    vfsProperties.getBaseUri().toASCIIString(), fileSystemOptions));
-        }
-        return fileSystemManager;
-    }
-
-    @Bean
-    public FileSystemOptions fileSystemOptions(VfsProperties vfsProperties) {
-        FileSystemOptions fileSystemOptions = new FileSystemOptions();
-
-        DropboxFileSystemConfigBuilder builder = DropboxFileSystemConfigBuilder.getInstance();
-        builder.setClientIdentifier(fileSystemOptions, Project.getName() + "/" + Project.getVersion());
-        builder.setAccessToken(fileSystemOptions, vfsProperties.getDropboxVfsProperties().getAccessToken());
-
-        return fileSystemOptions;
-    }
-
-    @Bean
-    public VfsStorageService vfsStorageService(FileSystemManager fileSystemManager,
-                                               FileSystemOptions fileSystemOptions) {
-        return new VfsStorageService(fileSystemManager, fileSystemOptions);
+        return new DelegatingStreamingStorageService(schemeToStreamingStorageService, storageProperties.getBaseUri());
     }
 
     @Bean
@@ -125,13 +105,12 @@ public class Main {
     }
 
     @Bean
-    public ToPublicImageService toPublicImageUriService(FileSystemManager fileSystemManager,
-                                                        FileSystemOptions fileSystemOptions) {
-        return new ToPublicImageService(fileSystemManager, fileSystemOptions);
+    public ToPublicImageServiceImpl toPublicImageUriService(StreamingStorageService<URI, URI> streamingStorageService) {
+        return new ToPublicImageServiceImpl(streamingStorageService);
     }
 
     @Bean
-    public ToPublicPointOfInterestService toPublicPointOfInterestService(ToPublicImageService toPublicImageService) {
+    public ToPublicPointOfInterestService toPublicPointOfInterestService(ToPublicImageServiceImpl toPublicImageService) {
         return new ToPublicPointOfInterestService(toPublicImageService);
     }
 

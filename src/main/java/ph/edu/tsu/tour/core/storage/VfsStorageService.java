@@ -3,6 +3,7 @@ package ph.edu.tsu.tour.core.storage;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.provider.PubliclyAccessibleFileObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
-public class VfsStorageService implements StorageService<URI> {
+public class VfsStorageService implements StreamingStorageService<URI, URI> {
 
     private static final Logger logger = LoggerFactory.getLogger(VfsStorageService.class);
 
@@ -36,4 +37,12 @@ public class VfsStorageService implements StorageService<URI> {
         source.delete();
     }
 
+    @Override
+    public URI getStream(URI uri) throws IOException {
+        FileObject fileObject = fileSystemManager.resolveFile(uri.toASCIIString(), fileSystemOptions);
+        if (fileObject instanceof PubliclyAccessibleFileObject) {
+            return PubliclyAccessibleFileObject.class.cast(fileObject).getPubliclyAccessibleUri();
+        }
+        return null;
+    }
 }

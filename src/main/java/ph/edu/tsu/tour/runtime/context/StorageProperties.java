@@ -11,21 +11,21 @@ import java.net.URI;
 @Service
 @Getter
 @EqualsAndHashCode
-final class VfsProperties {
+final class StorageProperties {
 
     @Value("${storage.base-uri}")
     private URI baseUri;
-    private DropboxVfsProperties dropboxVfsProperties;
+    private DropboxStorageProperties dropboxStorageProperties;
 
     @Autowired
-    public VfsProperties(DropboxVfsProperties dropboxVfsProperties) {
-        this.dropboxVfsProperties = dropboxVfsProperties;
+    public StorageProperties(DropboxStorageProperties dropboxStorageProperties) {
+        this.dropboxStorageProperties = dropboxStorageProperties;
     }
 
     @Service
     @Getter
     @EqualsAndHashCode
-    static final class DropboxVfsProperties {
+    static final class DropboxStorageProperties {
 
         @Value("${storage.dropbox.access-token}")
         private String accessToken;
