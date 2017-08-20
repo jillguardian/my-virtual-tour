@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ph.edu.tsu.tour.core.image.DiskStorageCapableImageService;
 import ph.edu.tsu.tour.core.image.Image;
 import ph.edu.tsu.tour.core.image.RawImage;
+import ph.edu.tsu.tour.core.image.ToPublicImageService;
 import ph.edu.tsu.tour.core.poi.PointOfInterest;
+import ph.edu.tsu.tour.core.poi.PointOfInterestService;
 import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.exception.FunctionalityNotImplementedException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
-import ph.edu.tsu.tour.core.poi.PointOfInterestService;
-import ph.edu.tsu.tour.core.image.DiskStorageCapableImageService;
-import ph.edu.tsu.tour.core.image.ToPublicImageService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -38,16 +38,11 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 // TODO: Show error messages in view
@@ -73,6 +68,19 @@ public class PointOfInterestController {
         this.toPublicImageService = toPublicImageService;
     }
 
+    private static ImageDto toDto(PointOfInterest poi, Image image) {
+        if (image == null || poi == null) {
+            return null;
+        }
+        return ImageDto.builder()
+                .poiId(poi.getId())
+                .id(image.getId())
+                .title(image.getTitle())
+                .description(image.getDescription())
+                .uri(image.getPreview())
+                .build();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public String findAll(Model model) {
         Iterable<PointOfInterest> pois = pointOfInterestService.findAll();
@@ -88,7 +96,7 @@ public class PointOfInterestController {
                     .addressLine2(publicPoi.getAddressLine2())
                     .city(publicPoi.getCity())
                     .zipCode(publicPoi.getZipCode())
-                    .previewImage1(toDto(publicPoi, publicPoi.getPreviewImage1())) // Only image displayed in view.
+                    .coverImage1(toDto(publicPoi, publicPoi.getCoverImage1())) // Only image displayed in view.
                     .build();
             dtos.add(dto);
         }
@@ -122,8 +130,8 @@ public class PointOfInterestController {
                 .latitude(((Point) publicPoi.getGeometry()).getCoordinates().getLatitude())
                 .longitude(((Point) publicPoi.getGeometry()).getCoordinates().getLongitude())
                 .zipCode(publicPoi.getZipCode())
-                .previewImage1(toDto(publicPoi, publicPoi.getPreviewImage1()))
-                .previewImage2(toDto(publicPoi, publicPoi.getPreviewImage2()))
+                .coverImage1(toDto(publicPoi, publicPoi.getCoverImage1()))
+                .coverImage2(toDto(publicPoi, publicPoi.getCoverImage2()))
                 .images(publicPoi.getImages().stream().map(raw -> toDto(publicPoi, raw)).collect(Collectors.toSet()))
                 .build();
 
@@ -147,7 +155,7 @@ public class PointOfInterestController {
             return "poi/one";
         }
 
-        Collection<Exception> errors = new LinkedList<>();
+        Collection<Throwable> errors = new LinkedList<>();
         PointOfInterest poi = PointOfInterest.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -161,38 +169,41 @@ public class PointOfInterestController {
                 .build();
         if (dto.getId() != null) { // Set the images; we'll replace them later if necessary.
             PointOfInterest existing = pointOfInterestService.findById(dto.getId());
-            poi.setPreviewImage1(existing.getPreviewImage1());
-            poi.setPreviewImage2(existing.getPreviewImage2());
+            poi.setCoverImage1(existing.getCoverImage1());
+            poi.setCoverImage2(existing.getCoverImage2());
         }
 
         poi = pointOfInterestService.save(poi);
         dto.setId(poi.getId());
 
-        CompletableFuture<Image> previewImage1 = null;
-        CompletableFuture<Image> previewImage2 = null;
-        if (!dto.getPreviewImage1().getFile().isEmpty()) {
-            previewImage1 = imageService.saveAsync(RawImage.builder()
-                    .id(dto.getPreviewImage1().getId())
-                    .title(dto.getPreviewImage1().getTitle())
-                    .description(dto.getPreviewImage1().getDescription())
-                    .inputStream(dto.getPreviewImage1().getFile().getInputStream())
+        final PointOfInterest reference = poi;
+
+        CompletableFuture<Image> coverImage1 = null;
+        CompletableFuture<Image> coverImage2 = null;
+        if (!dto.getCoverImage1().getFile().isEmpty()) {
+            coverImage1 = imageService.saveAsync(RawImage.builder()
+                    .id(dto.getCoverImage1().getId())
+                    .title(dto.getCoverImage1().getTitle())
+                    .description(dto.getCoverImage1().getDescription())
+                    .inputStream(dto.getCoverImage1().getFile().getInputStream())
                     .build());
         }
-        if (!dto.getPreviewImage2().getFile().isEmpty()) {
-            previewImage2 = imageService.saveAsync(RawImage.builder()
-                    .id(dto.getPreviewImage2().getId())
-                    .title(dto.getPreviewImage2().getTitle())
-                    .description(dto.getPreviewImage2().getDescription())
-                    .inputStream(dto.getPreviewImage2().getFile().getInputStream())
+        if (!dto.getCoverImage2().getFile().isEmpty()) {
+            coverImage2 = imageService.saveAsync(RawImage.builder()
+                    .id(dto.getCoverImage2().getId())
+                    .title(dto.getCoverImage2().getTitle())
+                    .description(dto.getCoverImage2().getDescription())
+                    .inputStream(dto.getCoverImage2().getFile().getInputStream())
                     .build());
         }
 
-        if (previewImage1 != null) {
+        if (coverImage1 != null) {
             try {
-                poi.setPreviewImage1(previewImage1.get());
+                poi.setCoverImage1(coverImage1.get());
+                logger.trace("Finished saving cover image one");
             } catch (Exception e) {
                 if (logger.isErrorEnabled()) {
-                    logger.error("Couldn't save preview image one", e);
+                    logger.error("Couldn't save cover image one", e);
                 }
                 if (e instanceof ExecutionException) {
                     e = (Exception) e.getCause();
@@ -200,12 +211,13 @@ public class PointOfInterestController {
                 errors.add(e);
             }
         }
-        if (previewImage2 != null) {
+        if (coverImage2 != null) {
             try {
-                poi.setPreviewImage2(previewImage2.get());
+                poi.setCoverImage2(coverImage2.get());
+                logger.trace("Finished saving cover image two");
             } catch (Exception e) {
                 if (logger.isErrorEnabled()) {
-                    logger.error("Couldn't save preview image two", e);
+                    logger.error("Couldn't save cover image two", e);
                 }
                 if (e instanceof ExecutionException) {
                     e = (Exception) e.getCause();
@@ -217,8 +229,9 @@ public class PointOfInterestController {
         poi = pointOfInterestService.save(poi);
 
         if (!errors.isEmpty()) {
-            redirectAttributes.addFlashAttribute(
-                    "errors", errors.stream().map(Exception::getMessage).collect(Collectors.toList()));
+            redirectAttributes.addFlashAttribute("errors", errors.stream()
+                    .map(Throwable::getMessage)
+                    .collect(Collectors.toList()));
         }
         return "redirect:" + Urls.POI + "/" + poi.getId();
     }
@@ -230,11 +243,11 @@ public class PointOfInterestController {
             pointOfInterestService.deleteById(id);
 
             // TODO: Hide?
-            if (poi.getPreviewImage1() != null) {
-                imageService.deleteById(poi.getPreviewImage1().getId());
+            if (poi.getCoverImage1() != null) {
+                imageService.deleteById(poi.getCoverImage1().getId());
             }
-            if (poi.getPreviewImage2() != null) {
-                imageService.deleteById(poi.getPreviewImage2().getId());
+            if (poi.getCoverImage2() != null) {
+                imageService.deleteById(poi.getCoverImage2().getId());
             }
             for (Image image : poi.getImages()) {
                 imageService.deleteById(image.getId());
@@ -361,19 +374,6 @@ public class PointOfInterestController {
         return "poi/image/all";
     }
 
-    private static ImageDto toDto(PointOfInterest poi, Image image) {
-        if (image == null || poi == null) {
-            return null;
-        }
-        return ImageDto.builder()
-                .poiId(poi.getId())
-                .id(image.getId())
-                .title(image.getTitle())
-                .description(image.getDescription())
-                .uri(image.getPreview())
-                .build();
-    }
-
     @Data
     @NoArgsConstructor(access = AccessLevel.PUBLIC)
     @AllArgsConstructor
@@ -398,8 +398,8 @@ public class PointOfInterestController {
         private Double latitude;
         @NotNull(message = "{poi.geometry.point.longitude.blank.message}")
         private Double longitude;
-        private ImageDto previewImage1;
-        private ImageDto previewImage2;
+        private ImageDto coverImage1;
+        private ImageDto coverImage2;
         private Set<ImageDto> images;
 
     }

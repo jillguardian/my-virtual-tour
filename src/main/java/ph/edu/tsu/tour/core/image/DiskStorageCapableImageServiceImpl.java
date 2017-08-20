@@ -194,6 +194,7 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
             storageService.write(destination, Files.readAllBytes(temporary));
             image.setLocation(destination);
             image.setPreview(destination);
+            logger.trace("Successfully wrote image to [" + destination + "]");
             if (!temporary.equals(path)) {
                 boolean deleted = temporary.toFile().delete();
                 if (!deleted) {
@@ -213,6 +214,7 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
                 URI previewDestination = destinationUri.get().resolve(image.getId() + "_PREVIEW" + extension);
                 storageService.write(previewDestination, Files.readAllBytes(temporary));
                 image.setPreview(previewDestination);
+                logger.trace("Successfully wrote preview of image to [" + previewDestination + "]");
 
                 boolean deleted = temporary.toFile().delete();
                 if (!deleted) {

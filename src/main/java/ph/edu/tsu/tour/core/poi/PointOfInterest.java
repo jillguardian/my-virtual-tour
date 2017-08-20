@@ -57,14 +57,14 @@ public class PointOfInterest implements Serializable {
     private String contactNumber;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="preview_image_one_id", referencedColumnName = "id")
+    @JoinColumn(name="cover_image_one_id", referencedColumnName = "id")
     @JsonProperty("IMAGE")
-    private Image previewImage1;
+    private Image coverImage1;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="preview_image_two_id", referencedColumnName = "id")
+    @JoinColumn(name="cover_image_two_id", referencedColumnName = "id")
     @JsonProperty("IMAGEBACK")
-    private Image previewImage2;
+    private Image coverImage2;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.EAGER)
@@ -135,8 +135,8 @@ public class PointOfInterest implements Serializable {
                 .city(pointOfInterest.getCity())
                 .zipCode(pointOfInterest.getZipCode())
                 .geometry(pointOfInterest.getGeometry())
-                .previewImage1(pointOfInterest.getPreviewImage1())
-                .previewImage2(pointOfInterest.getPreviewImage2())
+                .coverImage1(pointOfInterest.getCoverImage1())
+                .coverImage2(pointOfInterest.getCoverImage2())
                 .images(pointOfInterest.getImages());
     }
 

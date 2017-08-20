@@ -36,7 +36,7 @@
                         <img src="http://via.placeholder.com/350x250?text=X"
                              alt="Preview."
                              class="img-rounded"
-                             th:src="${poi?.previewImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}"
+                             th:src="${poi?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}"
                              th:alt="#{poi.image.primary.description}" />
                         <div class="caption">
                             <h2 class="text-center" th:text="${poi.name}">Point of Interest</h2>

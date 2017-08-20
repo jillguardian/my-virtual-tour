@@ -82,21 +82,21 @@
                     <input type="number" step="any" th:field="*{longitude}" class="form-control" id="longitude" th:placeholder="#{poi.geometry.point.longitude.placeholder}" placeholder="120.58683700000006" />
                     <p class="help-block" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></p>
                 </div>
-                <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('previewImage1')} ? has-error : ''">
+                <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('coverImage1')} ? has-error : ''">
                     <label for="primary-image-one" th:text="#{poi.image.primary(1)}">Primary Image 1</label>
                     <div class="thumbnail">
-                        <img id="primary-image-one-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${poi?.previewImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                        <img id="primary-image-one-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${poi?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
                     </div>
-                    <input type="file" th:field="*{previewImage1.file}" id="primary-image-one" accept="image/*" />
-                    <input type="hidden" th:field="*{previewImage1.id}" />
+                    <input type="file" th:field="*{coverImage1.file}" id="primary-image-one" accept="image/*" />
+                    <input type="hidden" th:field="*{coverImage1.id}" />
                 </div>
-                <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('previewImage2')} ? has-error : ''">
+                <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('coverImage2')} ? has-error : ''">
                     <label for="primary-image-two" th:text="#{poi.image.primary(2)}">Primary Image 2</label>
                     <div class="thumbnail">
-                        <img id="primary-image-two-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${poi?.previewImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                        <img id="primary-image-two-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${poi?.coverImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
                     </div>
-                    <input type="file" th:field="*{previewImage2.file}" id="primary-image-two" accept="image/*" />
-                    <input type="hidden" th:field="*{previewImage2.id}" />
+                    <input type="file" th:field="*{coverImage2.file}" id="primary-image-two" accept="image/*" />
+                    <input type="hidden" th:field="*{coverImage2.id}" />
                 </div>
                 <div class="btn-group btn-group-vertical col-xs-6" role="group" aria-label="...">
                     <div class="btn-group" role="group" th:if="${poi.id}">
@@ -138,8 +138,8 @@
                 $(this).siblings('.thumbnail').children('img:first').attr('src', url);
             });
             $('#reset').click(function(e) {
-                $('#primary-image-one-preview').attr('src', /*[[${poi?.previewImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
-                $('#primary-image-two-preview').attr('src', /*[[${poi?.previewImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+                $('#primary-image-one-preview').attr('src', /*[[${poi?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+                $('#primary-image-two-preview').attr('src', /*[[${poi?.coverImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
             });
         });
         /*]]>*/
