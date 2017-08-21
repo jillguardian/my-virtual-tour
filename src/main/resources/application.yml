@@ -44,3 +44,10 @@ application:
             max-height: 250
             # The quality of the preview image. Input should range from 0 to 1, with 1 having the most optimal quality.
             quality:
+---
+spring:
+    profiles: production
+    datasource:
+        url: jdbc:mysql://localhost:3306/my-virtual-tour
+        username: root
+        password:
