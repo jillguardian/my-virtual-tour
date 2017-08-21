@@ -84,12 +84,7 @@ public class Main {
         StreamingStorageServiceAdapter<String, URI, URI, URI> dropboxStorageServiceAdapter =
                 new StreamingStorageServiceAdapter<>(dropboxStorageService, URI::getPath, uri -> uri);
 
-        LocalFileSystemStorageService localFileSystemStorageService = new LocalFileSystemStorageService();
-        StreamingStorageServiceAdapter<Path, Path, URI, URI> localFileSystemStorageServiceAdapter =
-                new StreamingStorageServiceAdapter<>(localFileSystemStorageService, Paths::get, Path::toUri);
-
         schemeToStreamingStorageService.put("dropbox", dropboxStorageServiceAdapter);
-        schemeToStreamingStorageService.put("file", localFileSystemStorageServiceAdapter);
 
         return new VfsBasedDelegatingStreamingStorageService(
                 schemeToStreamingStorageService, storageProperties.getBaseUri());

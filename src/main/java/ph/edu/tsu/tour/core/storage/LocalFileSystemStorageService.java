@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class LocalFileSystemStorageService implements StreamingStorageService<Path, Path> {
+public class LocalFileSystemStorageService implements StorageService<Path> {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalFileSystemStorageService.class);
 
@@ -24,11 +24,6 @@ public class LocalFileSystemStorageService implements StreamingStorageService<Pa
     @Override
     public void delete(Path path) throws Exception {
         Files.deleteIfExists(path);
-    }
-
-    @Override
-    public Path getStream(Path path) throws Exception {
-        return path;
     }
 
 }

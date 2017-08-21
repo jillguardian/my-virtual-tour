@@ -14,7 +14,7 @@ logging:
 # Properties related to disk storage.
 storage:
     # The default base directory where files are to be saved at.
-    # Supported schemes are: "dropbox" and "file" (not recommended).
+    # Supported schemes are: "dropbox".
     base-uri: dropbox:///
     # Dropbox storage configuration.
     dropbox:
