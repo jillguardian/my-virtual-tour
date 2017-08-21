@@ -8,10 +8,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+import ph.edu.tsu.tour.core.access.AccessManagementService;
 import ph.edu.tsu.tour.core.access.Privilege;
 import ph.edu.tsu.tour.core.access.Role;
 import ph.edu.tsu.tour.core.access.User;
-import ph.edu.tsu.tour.core.access.AccessManagementService;
 import ph.edu.tsu.tour.security.Privileges;
 
 import java.util.Arrays;

@@ -2,7 +2,6 @@ package org.apache.commons.vfs2.provider.dropbox;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Date;

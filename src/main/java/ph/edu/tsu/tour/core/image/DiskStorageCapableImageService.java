@@ -1,7 +1,6 @@
 package ph.edu.tsu.tour.core.image;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 public interface DiskStorageCapableImageService extends ImageService {
 

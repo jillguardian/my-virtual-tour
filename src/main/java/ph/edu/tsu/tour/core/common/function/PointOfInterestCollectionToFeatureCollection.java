@@ -4,7 +4,6 @@ import org.geojson.Feature;
 import org.geojson.FeatureCollection;
 import ph.edu.tsu.tour.core.poi.PointOfInterest;
 
-import java.util.Collection;
 import java.util.function.Function;
 
 public class PointOfInterestCollectionToFeatureCollection

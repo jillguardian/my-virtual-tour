@@ -1,10 +1,7 @@
 package ph.edu.tsu.tour.web.api;
 
 import org.geojson.Feature;
-import org.geojson.FeatureCollection;
-import ph.edu.tsu.tour.core.common.function.PointOfInterestCollectionToFeatureCollection;
 import ph.edu.tsu.tour.core.common.function.PointOfInterestToFeature;
-import ph.edu.tsu.tour.core.poi.PointOfInterest;
 import ph.edu.tsu.tour.core.poi.PointOfInterestModifiedEvent;
 
 import java.util.function.Function;

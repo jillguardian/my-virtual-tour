@@ -2,10 +2,7 @@ package ph.edu.tsu.tour.core.poi;
 
 import ph.edu.tsu.tour.core.EntityAction;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Observable;
-import java.util.Observer;
 
 public class PublishingPointOfInterestService extends Observable implements PointOfInterestService {
 

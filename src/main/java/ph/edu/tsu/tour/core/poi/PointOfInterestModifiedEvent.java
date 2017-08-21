@@ -1,7 +1,7 @@
 package ph.edu.tsu.tour.core.poi;
 
-import ph.edu.tsu.tour.core.EntityModifiedEvent;
 import ph.edu.tsu.tour.core.EntityAction;
+import ph.edu.tsu.tour.core.EntityModifiedEvent;
 
 public class PointOfInterestModifiedEvent extends EntityModifiedEvent<PointOfInterest> {
 

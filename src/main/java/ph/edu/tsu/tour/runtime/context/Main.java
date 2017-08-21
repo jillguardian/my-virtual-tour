@@ -24,7 +24,6 @@ import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.core.storage.DelegatingStreamingStorageService;
 import ph.edu.tsu.tour.core.storage.DropboxStorageService;
-import ph.edu.tsu.tour.core.storage.LocalFileSystemStorageService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageServiceAdapter;
@@ -32,15 +31,8 @@ import ph.edu.tsu.tour.core.storage.VfsBasedDelegatingStreamingStorageService;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @Configuration
 public class Main {

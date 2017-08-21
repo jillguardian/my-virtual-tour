@@ -1,8 +1,8 @@
 package ph.edu.tsu.tour.web.api;
 
 import org.geojson.Feature;
-import ph.edu.tsu.tour.core.EntityModifiedEvent;
 import ph.edu.tsu.tour.core.EntityAction;
+import ph.edu.tsu.tour.core.EntityModifiedEvent;
 
 class FeatureModifiedEvent extends EntityModifiedEvent<Feature> {
 
