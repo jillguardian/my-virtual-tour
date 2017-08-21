@@ -58,7 +58,7 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
         this.storageService = Objects.requireNonNull(storageService, "[storageService] must be set");
         this.mainSettings = Objects.requireNonNull(mainSettings, "[mainSettings] must be set");
         this.previewSettings = Objects.requireNonNull(previewSettings, "[previewSettings] must be set");
-        this.destinationUri = () -> URI.create("/" + DEFAULT_IMAGE_DIRECTORY + "/");
+        this.destinationUri = () -> URI.create(DEFAULT_IMAGE_DIRECTORY + "/");
     }
 
     public Executor getExecutor() {

@@ -8,21 +8,19 @@ spring:
         multipart:
             max-file-size: 50MB
             max-request-size: 1000MB
-server:
-    port: 9000
 logging:
     level:
         ph.edu.tsu.tour: TRACE
 # Properties related to disk storage.
 storage:
     # The default base directory where files are to be saved at.
+    # Supported schemes are: "dropbox" and "file" (not recommended).
     base-uri: dropbox:///
     # Dropbox storage configuration.
     dropbox:
         access-token: E95Ro-m6k8AAAAAAAAAADZRS4lBiZeXN6q5BGBsF6KyayvKhhJIc5uNATEUkAT3-
-# Configuration properties for points of interest.
-poi:
-    # Configuration for point of interest images.
+application:
+    # Configuration for images.
     image:
         # Indicates if image should be resized. Possible values: "true" and "false".
         resize: false

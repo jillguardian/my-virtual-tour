@@ -18,7 +18,7 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.Optional;
 
-public class DropboxStorageService implements StreamingStorageService<URI, URI> {
+public class DropboxStorageService implements StreamingStorageService<String, URI> {
 
     private static Logger logger = LoggerFactory.getLogger(DropboxStorageService.class);
 
@@ -48,23 +48,23 @@ public class DropboxStorageService implements StreamingStorageService<URI, URI> 
     }
 
     @Override
-    public void write(URI uri, byte[] bytes) throws Exception {
+    public void write(String path, byte[] bytes) throws Exception {
         InputStream inputStream = new ByteArrayInputStream(bytes);
         inputStream = new BufferedInputStream(inputStream);
-        DbxUploader uploader = dropboxClient.files().upload(uri.toASCIIString());
+        DbxUploader uploader = dropboxClient.files().upload(path);
         uploader.uploadAndFinish(inputStream);
     }
 
     @Override
-    public void delete(URI uri) throws Exception {
-        dropboxClient.files().delete(uri.toASCIIString());
+    public void delete(String path) throws Exception {
+        dropboxClient.files().delete(path);
     }
 
     @Override
-    public URI getStream(URI uri) throws Exception {
-        String publicUrl;
+    public URI getStream(String path) throws Exception {
+        String link;
         Optional<SharedLinkMetadata> existingSharedLink = dropboxClient.sharing().listSharedLinksBuilder()
-                .withPath(uri.toASCIIString())
+                .withPath(path)
                 .withDirectOnly(true)
                 .start()
                 .getLinks().stream()
@@ -72,16 +72,16 @@ public class DropboxStorageService implements StreamingStorageService<URI, URI> 
                         metadata.getLinkPermissions().getRequestedVisibility() == RequestedVisibility.PUBLIC)
                 .findFirst();
         if (existingSharedLink.isPresent()) {
-            publicUrl = existingSharedLink.get().getUrl();
+            link = existingSharedLink.get().getUrl();
         } else {
-            SharedLinkMetadata sharedLink = dropboxClient.sharing()
-                    .createSharedLinkWithSettings(uri.toASCIIString(), SharedLinkSettings.newBuilder()
+            SharedLinkMetadata newSharedLink = dropboxClient.sharing()
+                    .createSharedLinkWithSettings(path, SharedLinkSettings.newBuilder()
                             .withRequestedVisibility(RequestedVisibility.PUBLIC)
                             .build());
-            publicUrl = sharedLink.getUrl();
+            link = newSharedLink.getUrl();
         }
 
-        return new URIBuilder(publicUrl)
+        return new URIBuilder(link)
                 .removeQuery()
                 .addParameter("dl", "1") // Direct link
                 .build();

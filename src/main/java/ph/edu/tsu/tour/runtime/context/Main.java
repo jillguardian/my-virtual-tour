@@ -1,18 +1,9 @@
 package ph.edu.tsu.tour.runtime.context;
 
-import org.apache.commons.vfs2.CacheStrategy;
-import org.apache.commons.vfs2.FileSystemException;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.FileSystemOptions;
-import org.apache.commons.vfs2.cache.WeakRefFilesCache;
-import org.apache.commons.vfs2.impl.StandardFileSystemManager;
-import org.apache.commons.vfs2.provider.dropbox.DropboxFileProvider;
-import org.apache.commons.vfs2.provider.dropbox.DropboxFileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ph.edu.tsu.tour.Project;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
@@ -33,14 +24,23 @@ import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.core.storage.DelegatingStreamingStorageService;
 import ph.edu.tsu.tour.core.storage.DropboxStorageService;
+import ph.edu.tsu.tour.core.storage.LocalFileSystemStorageService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
-import ph.edu.tsu.tour.core.storage.VfsStorageService;
+import ph.edu.tsu.tour.core.storage.StreamingStorageServiceAdapter;
+import ph.edu.tsu.tour.core.storage.VfsBasedDelegatingStreamingStorageService;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @Configuration
 public class Main {
@@ -73,14 +73,26 @@ public class Main {
     }
 
     @Bean
-    public DelegatingStreamingStorageService delegatingStreamingStorageService(StorageProperties storageProperties) {
-        DropboxStorageService dropboxStorageService = new DropboxStorageService(
-                storageProperties.getDropboxStorageProperties().getAccessToken(),
-                Project.getName() + "/" + Project.getVersion());
+    public DelegatingStreamingStorageService<URI, URI> delegatingStreamingStorageService(
+            StorageProperties storageProperties) {
         Map<String, StreamingStorageService<URI, URI>> schemeToStreamingStorageService = new HashMap<>();
-        schemeToStreamingStorageService.put("dropbox", dropboxStorageService);
 
-        return new DelegatingStreamingStorageService(schemeToStreamingStorageService, storageProperties.getBaseUri());
+        StorageProperties.DropboxStorageProperties dropboxStorageProperties =
+                storageProperties.getDropboxStorageProperties();
+        DropboxStorageService dropboxStorageService = new DropboxStorageService(
+                dropboxStorageProperties.getAccessToken(), Project.getName() + "/" + Project.getVersion());
+        StreamingStorageServiceAdapter<String, URI, URI, URI> dropboxStorageServiceAdapter =
+                new StreamingStorageServiceAdapter<>(dropboxStorageService, URI::getPath, uri -> uri);
+
+        LocalFileSystemStorageService localFileSystemStorageService = new LocalFileSystemStorageService();
+        StreamingStorageServiceAdapter<Path, Path, URI, URI> localFileSystemStorageServiceAdapter =
+                new StreamingStorageServiceAdapter<>(localFileSystemStorageService, Paths::get, Path::toUri);
+
+        schemeToStreamingStorageService.put("dropbox", dropboxStorageServiceAdapter);
+        schemeToStreamingStorageService.put("file", localFileSystemStorageServiceAdapter);
+
+        return new VfsBasedDelegatingStreamingStorageService(
+                schemeToStreamingStorageService, storageProperties.getBaseUri());
     }
 
     @Bean
