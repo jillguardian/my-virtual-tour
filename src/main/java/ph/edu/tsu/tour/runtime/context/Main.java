@@ -1,5 +1,13 @@
 package ph.edu.tsu.tour.runtime.context;
 
+import org.apache.commons.vfs2.CacheStrategy;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.cache.SoftRefFilesCache;
+import org.apache.commons.vfs2.impl.StandardFileSystemManager;
+import org.apache.commons.vfs2.provider.dropbox.DropboxFileProvider;
+import org.apache.commons.vfs2.provider.dropbox.DropboxFileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +36,7 @@ import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageServiceAdapter;
 import ph.edu.tsu.tour.core.storage.VfsBasedDelegatingStreamingStorageService;
+import ph.edu.tsu.tour.core.storage.VfsStorageService;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
@@ -65,21 +74,37 @@ public class Main {
     }
 
     @Bean
-    public DelegatingStreamingStorageService<URI, URI> delegatingStreamingStorageService(
-            StorageProperties storageProperties) {
-        Map<String, StreamingStorageService<URI, URI>> schemeToStreamingStorageService = new HashMap<>();
+    public FileSystemManager fileSystemManager(StorageProperties storageProperties,
+                                               FileSystemOptions fileSystemOptions) throws FileSystemException {
+        StandardFileSystemManager fileSystemManager = new StandardFileSystemManager();
+        fileSystemManager.setCacheStrategy(CacheStrategy.ON_RESOLVE);
+        fileSystemManager.setFilesCache(new SoftRefFilesCache());
 
-        StorageProperties.DropboxStorageProperties dropboxStorageProperties =
-                storageProperties.getDropboxStorageProperties();
-        DropboxStorageService dropboxStorageService = new DropboxStorageService(
-                dropboxStorageProperties.getAccessToken(), Project.getName() + "/" + Project.getVersion());
-        StreamingStorageServiceAdapter<String, URI, URI, URI> dropboxStorageServiceAdapter =
-                new StreamingStorageServiceAdapter<>(dropboxStorageService, URI::getPath, uri -> uri);
+        fileSystemManager.addProvider("dropbox", new DropboxFileProvider());
+        fileSystemManager.init();
 
-        schemeToStreamingStorageService.put("dropbox", dropboxStorageServiceAdapter);
+        if (storageProperties.getBaseUri() != null) {
+            fileSystemManager.setBaseFile(fileSystemManager.resolveFile(
+                    storageProperties.getBaseUri().toASCIIString(), fileSystemOptions));
+        }
+        return fileSystemManager;
+    }
 
-        return new VfsBasedDelegatingStreamingStorageService(
-                schemeToStreamingStorageService, storageProperties.getBaseUri());
+    @Bean
+    public FileSystemOptions fileSystemOptions(StorageProperties storageProperties) {
+        FileSystemOptions fileSystemOptions = new FileSystemOptions();
+
+        DropboxFileSystemConfigBuilder builder = DropboxFileSystemConfigBuilder.getInstance();
+        builder.setClientIdentifier(fileSystemOptions, Project.getName() + "/" + Project.getVersion());
+        builder.setAccessToken(fileSystemOptions, storageProperties.getDropboxStorageProperties().getAccessToken());
+
+        return fileSystemOptions;
+    }
+
+    @Bean
+    public VfsStorageService vfsStorageService(FileSystemManager fileSystemManager,
+                                               FileSystemOptions fileSystemOptions) {
+        return new VfsStorageService(fileSystemManager, fileSystemOptions);
     }
 
     @Bean
