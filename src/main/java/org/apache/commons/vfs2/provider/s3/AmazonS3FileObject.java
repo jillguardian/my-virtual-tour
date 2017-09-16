@@ -1,4 +1,4 @@
-package org.apache.commons.vfs2.provider.dropbox;
+package org.apache.commons.vfs2.provider.s3;
 
 import org.apache.commons.vfs2.Capability;
 import org.apache.commons.vfs2.FileObject;
@@ -13,37 +13,37 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collection;
 
-public class DropboxFileObject extends AbstractFileObject<DropboxFileSystem> implements PubliclyAccessibleFileObject {
+public class AmazonS3FileObject extends AbstractFileObject<AmazonS3FileSystem> implements PubliclyAccessibleFileObject {
 
-    private static final Logger logger = LoggerFactory.getLogger(DropboxFileObject.class);
+    private static final Logger logger = LoggerFactory.getLogger(AmazonS3FileObject.class);
 
-    public DropboxFileObject(AbstractFileName name, DropboxFileSystem fileSystem) {
-        super(name, fileSystem);
+    protected AmazonS3FileObject(AbstractFileName name, AmazonS3FileSystem fs) {
+        super(name, fs);
     }
 
-    /**
-     * @return Dropbox file path
-     * @see #getName()
-     */
-    private String getPath() {
-        return getName().getPath();
+    private String getBucketId() {
+        return ((AmazonS3FileSystem) getFileSystem()).getBucketId();
     }
 
-    /**
-     * @return client responsible for handling actual operations
-     */
-    private DropboxClientWrapper getDropboxService() {
-        DropboxFileSystem fileSystem = (DropboxFileSystem) getFileSystem();
-        return fileSystem.getDropboxClientWrapper();
+    private String getKey() {
+        String key = getName().getPath();
+        if (key.startsWith("/")) {
+            key = key.substring(1);
+        }
+        return key;
+    }
+
+    private AmazonS3ClientWrapper getAmazonS3Service() {
+        AmazonS3FileSystem fileSystem = (AmazonS3FileSystem) getFileSystem();
+        return fileSystem.getAmazonS3Service();
     }
 
     @Override
     protected FileType doGetType() throws Exception {
-        boolean isFile = this.getDropboxService().isFile(getPath());
-        boolean isFolder = this.getDropboxService().isFolder(getPath());
+        boolean isFile = getAmazonS3Service().isFile(getBucketId(), getKey());
+        boolean isFolder = getAmazonS3Service().isFolder(getBucketId(), getKey());
         if (isFile && isFolder) {
             return FileType.FILE_OR_FOLDER;
         } else if (isFolder) {
@@ -56,61 +56,55 @@ public class DropboxFileObject extends AbstractFileObject<DropboxFileSystem> imp
 
     @Override
     protected void doCreateFolder() throws Exception {
-        this.getDropboxService().createFolder(getPath());
+        getAmazonS3Service().createFolder(getBucketId(), getKey());
     }
 
     @Override
     protected long doGetContentSize() throws Exception {
-        return this.getDropboxService().getSize(getPath());
+        return getAmazonS3Service().getSize(getBucketId(), getKey());
     }
 
     @Override
     protected long doGetLastModifiedTime() throws Exception {
-        return this.getDropboxService().getLastModifiedDate(getPath()).getTime();
+        return getAmazonS3Service().getLastModifiedDate(getBucketId(), getKey()).getTime();
     }
 
     @Override
     protected InputStream doGetInputStream() throws Exception {
-        return this.getDropboxService().getInputStream(getPath());
+        return getAmazonS3Service().getInputStream(getBucketId(), getKey());
     }
 
-    /**
-     * @throws UnsupportedOperationException if {@code boolAppend} is set to {@literal true} and the file system does
-     *                                       not support appending contents
-     */
     @Override
     protected OutputStream doGetOutputStream(boolean boolAppend) throws Exception {
         if (boolAppend && !getFileSystem().hasCapability(Capability.APPEND_CONTENT)) {
             throw new UnsupportedOperationException("Only overwrite operation is supported");
         }
-        return this.getDropboxService().getOutputStream(getPath());
+        return getAmazonS3Service().getOutputStream(getBucketId(), getKey());
     }
 
     @Override
     protected String[] doListChildren() throws Exception {
-        Collection<String> children = this.getDropboxService().listChildren(getPath());
+        Collection<String> children = getAmazonS3Service().listChildren(getBucketId(), getKey());
         return children != null ? children.toArray(new String[0]) : null;
     }
 
     @Override
     protected void doRename(FileObject newFile) throws Exception {
-        this.getDropboxService().rename(getPath(), newFile.getName().getPath());
+        getAmazonS3Service().rename(getBucketId(), getKey(), getBucketId(), newFile.getName().getPath());
     }
 
     @Override
     protected void doDelete() throws Exception {
-        this.getDropboxService().delete(getPath());
+        getAmazonS3Service().delete(getBucketId(), getKey());
     }
 
     @Override
     public URI getPubliclyAccessibleUri() {
-        URL url = null;
         try {
-            url = this.getDropboxService().getDirectUrl(getPath());
-            return url.toURI();
+            return getAmazonS3Service().getStreamingUrl(getBucketId(), getKey()).toURI();
         } catch (URISyntaxException e) {
             if (logger.isErrorEnabled()) {
-                logger.error("Unable to convert URL [" + url + "] to URI");
+                logger.error("Could not get public URI of [" + getBucketId() + "][" + getKey() + "]", e);
             }
             return null;
         }

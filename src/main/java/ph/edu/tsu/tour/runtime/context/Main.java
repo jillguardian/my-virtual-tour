@@ -8,6 +8,8 @@ import org.apache.commons.vfs2.cache.SoftRefFilesCache;
 import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 import org.apache.commons.vfs2.provider.dropbox.DropboxFileProvider;
 import org.apache.commons.vfs2.provider.dropbox.DropboxFileSystemConfigBuilder;
+import org.apache.commons.vfs2.provider.s3.AmazonS3FileProvider;
+import org.apache.commons.vfs2.provider.s3.AmazonS3FileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -81,9 +83,11 @@ public class Main {
         fileSystemManager.setFilesCache(new SoftRefFilesCache());
 
         fileSystemManager.addProvider("dropbox", new DropboxFileProvider());
+        fileSystemManager.addProvider("s3", new AmazonS3FileProvider());
         fileSystemManager.init();
 
         if (storageProperties.getDefaultDirectory() != null) {
+            logger.info("Setting default directory to [" + storageProperties.getDefaultDirectory() + "]...");
             fileSystemManager.setBaseFile(fileSystemManager.resolveFile(
                     storageProperties.getDefaultDirectory().toASCIIString(), fileSystemOptions));
         }
@@ -94,9 +98,18 @@ public class Main {
     public FileSystemOptions fileSystemOptions(StorageProperties storageProperties) {
         FileSystemOptions fileSystemOptions = new FileSystemOptions();
 
-        DropboxFileSystemConfigBuilder builder = DropboxFileSystemConfigBuilder.getInstance();
-        builder.setClientIdentifier(fileSystemOptions, Project.getName() + "/" + Project.getVersion());
-        builder.setAccessToken(fileSystemOptions, storageProperties.getDropboxProperties().getAccessToken());
+        DropboxFileSystemConfigBuilder dropboxConfig = DropboxFileSystemConfigBuilder.getInstance();
+        dropboxConfig.setClientIdentifier(fileSystemOptions, Project.getName() + "/" + Project.getVersion());
+        dropboxConfig.setAccessToken(fileSystemOptions, storageProperties.getDropboxProperties().getAccessToken());
+
+        AmazonS3FileSystemConfigBuilder amazonS3Config = AmazonS3FileSystemConfigBuilder.getInstance();
+        amazonS3Config.setSecretKey(fileSystemOptions, storageProperties.getAmazonS3Properties().getSecretKey());
+        amazonS3Config.setAccessKey(fileSystemOptions, storageProperties.getAmazonS3Properties().getAccessKey());
+        amazonS3Config.setRegion(fileSystemOptions, storageProperties.getAmazonS3Properties().getRegion());
+        amazonS3Config.setEndpoint(fileSystemOptions, storageProperties.getAmazonS3Properties().getEndpoint());
+        if (storageProperties.getAmazonS3Properties().getMaxRetries() != null) {
+            amazonS3Config.setMaxRetries(fileSystemOptions, storageProperties.getAmazonS3Properties().getMaxRetries());
+        }
 
         return fileSystemOptions;
     }

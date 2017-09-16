@@ -21,8 +21,8 @@ public class DropboxFileSystem extends AbstractFileSystem {
     }
 
     @Override
-    protected void addCapabilities(Collection<Capability> collection) {
-        collection.addAll(DropboxFileProvider.CAPABILITIES);
+    protected void addCapabilities(Collection<Capability> capabilities) {
+        capabilities.addAll(DropboxFileProvider.CAPABILITIES);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DropboxFileSystem extends AbstractFileSystem {
         return new DropboxFileObject(name, this);
     }
 
-    public DropboxClientWrapper getDropboxClientWrapper() {
+    DropboxClientWrapper getDropboxClientWrapper() {
         return dropboxClientWrapper;
     }
 

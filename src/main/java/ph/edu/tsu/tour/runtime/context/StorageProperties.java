@@ -15,11 +15,14 @@ final class StorageProperties {
 
     @Value("${application.storage.default-directory}")
     private URI defaultDirectory;
+
     private DropboxProperties dropboxProperties;
+    private AmazonS3Properties amazonS3Properties;
 
     @Autowired
-    public StorageProperties(DropboxProperties dropboxProperties) {
+    public StorageProperties(DropboxProperties dropboxProperties, AmazonS3Properties amazonS3Properties) {
         this.dropboxProperties = dropboxProperties;
+        this.amazonS3Properties = amazonS3Properties;
     }
 
 }
