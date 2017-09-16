@@ -83,9 +83,9 @@ public class Main {
         fileSystemManager.addProvider("dropbox", new DropboxFileProvider());
         fileSystemManager.init();
 
-        if (storageProperties.getBaseUri() != null) {
+        if (storageProperties.getDefaultDirectory() != null) {
             fileSystemManager.setBaseFile(fileSystemManager.resolveFile(
-                    storageProperties.getBaseUri().toASCIIString(), fileSystemOptions));
+                    storageProperties.getDefaultDirectory().toASCIIString(), fileSystemOptions));
         }
         return fileSystemManager;
     }
@@ -96,7 +96,7 @@ public class Main {
 
         DropboxFileSystemConfigBuilder builder = DropboxFileSystemConfigBuilder.getInstance();
         builder.setClientIdentifier(fileSystemOptions, Project.getName() + "/" + Project.getVersion());
-        builder.setAccessToken(fileSystemOptions, storageProperties.getDropboxStorageProperties().getAccessToken());
+        builder.setAccessToken(fileSystemOptions, storageProperties.getDropboxProperties().getAccessToken());
 
         return fileSystemOptions;
     }

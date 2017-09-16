@@ -13,23 +13,13 @@ import java.net.URI;
 @EqualsAndHashCode
 final class StorageProperties {
 
-    @Value("${storage.base-uri}")
-    private URI baseUri;
-    private DropboxStorageProperties dropboxStorageProperties;
+    @Value("${application.storage.default-directory}")
+    private URI defaultDirectory;
+    private DropboxProperties dropboxProperties;
 
     @Autowired
-    public StorageProperties(DropboxStorageProperties dropboxStorageProperties) {
-        this.dropboxStorageProperties = dropboxStorageProperties;
-    }
-
-    @Service
-    @Getter
-    @EqualsAndHashCode
-    static final class DropboxStorageProperties {
-
-        @Value("${storage.dropbox.access-token}")
-        private String accessToken;
-
+    public StorageProperties(DropboxProperties dropboxProperties) {
+        this.dropboxProperties = dropboxProperties;
     }
 
 }
