@@ -1,15 +1,17 @@
 package ph.edu.tsu.tour.core;
 
-public interface CrudService<T> {
+public interface CrudService<T, ID> {
 
-    T findById(long id);
+    T findById(ID id);
 
     Iterable<T> findAll();
 
+    Iterable<T> findAll(Iterable<ID> ids);
+
     T save(T entity);
 
-    boolean deleteById(long id);
+    boolean deleteById(ID id);
 
-    boolean exists(long id);
+    boolean exists(ID id);
 
 }

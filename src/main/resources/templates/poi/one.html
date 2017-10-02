@@ -72,15 +72,15 @@
                     <input type="text" th:field="*{zipCode}" class="form-control" id="zip" th:placeholder="#{poi.zip-code.placeholder}" placeholder="2003" />
                     <p class="help-block" th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}"></p>
                 </div>
-                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('latitude')} ? has-error : ''">
-                    <label for="latitude" th:text="#{latitude}">Latitude</label>
-                    <input type="number" step="any" th:field="*{latitude}" class="form-control" id="latitude" th:placeholder="#{poi.geometry.point.latitude.placeholder}" placeholder="120.58683700000006" />
-                    <p class="help-block" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></p>
-                </div>
                 <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('longitude')} ? has-error : ''">
                     <label for="longitude" th:text="#{longitude}">Longitude</label>
                     <input type="number" step="any" th:field="*{longitude}" class="form-control" id="longitude" th:placeholder="#{poi.geometry.point.longitude.placeholder}" placeholder="120.58683700000006" />
                     <p class="help-block" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></p>
+                </div>
+                <div class="form-group col-sm-6" th:classappend="${#fields.hasErrors('latitude')} ? has-error : ''">
+                    <label for="latitude" th:text="#{latitude}">Latitude</label>
+                    <input type="number" step="any" th:field="*{latitude}" class="form-control" id="latitude" th:placeholder="#{poi.geometry.point.latitude.placeholder}" placeholder="120.58683700000006" />
+                    <p class="help-block" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></p>
                 </div>
                 <div class="form-group col-xs-6 poi-image" th:classappend="${#fields.hasErrors('coverImage1')} ? has-error : ''">
                     <label for="primary-image-one" th:text="#{poi.image.primary(1)}">Primary Image 1</label>

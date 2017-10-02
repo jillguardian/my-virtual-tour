@@ -22,7 +22,7 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
     }
 
     @Override
-    public PointOfInterest findById(long id) {
+    public PointOfInterest findById(Long id) {
         PointOfInterest found = poiRepository.findOne(id);
         if (found != null) {
             entityManager.detach(found);
@@ -40,12 +40,21 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
     }
 
     @Override
+    public Iterable<PointOfInterest> findAll(Iterable<Long> ids) {
+        Iterable<PointOfInterest> all = poiRepository.findAll(ids);
+        for (PointOfInterest poi : all) {
+            entityManager.detach(poi);
+        }
+        return all;
+    }
+
+    @Override
     public PointOfInterest save(PointOfInterest entity) {
         return poiRepository.save(entity);
     }
 
     @Override
-    public boolean deleteById(long id) {
+    public boolean deleteById(Long id) {
         poiRepository.delete(id);
         boolean exists = poiRepository.exists(id);
         if (exists) {
@@ -55,7 +64,7 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
     }
 
     @Override
-    public boolean exists(long id) {
+    public boolean exists(Long id) {
         return poiRepository.exists(id);
     }
 

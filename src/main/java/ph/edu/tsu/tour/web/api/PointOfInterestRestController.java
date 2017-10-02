@@ -31,7 +31,7 @@ import java.util.function.Function;
 @CrossOrigin
 @RestController
 @RequestMapping(Urls.REST_POI)
-public class PointOfInterestRestController implements Observer {
+class PointOfInterestRestController implements Observer {
 
     private static final Logger logger = LoggerFactory.getLogger(PointOfInterestRestController.class);
 
@@ -45,7 +45,7 @@ public class PointOfInterestRestController implements Observer {
             pointOfInterestModifiedEventToFeatureModifiedEvent;
 
     @Autowired
-    public PointOfInterestRestController(PublishingPointOfInterestService pointOfInterestService,
+    PointOfInterestRestController(PublishingPointOfInterestService pointOfInterestService,
                                          ToPublicPointOfInterestService toPublicPointOfInterestService,
                                          SimpMessagingTemplate simpMessagingTemplate) {
         pointOfInterestService.addObserver(this);

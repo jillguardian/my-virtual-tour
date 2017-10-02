@@ -1,5 +1,6 @@
 package ph.edu.tsu.tour.core.access;
 
+// TODO: Breakdown into multiple interfaces.
 public interface AccessManagementService {
 
     Privilege savePrivilege(Privilege privilege);

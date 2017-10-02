@@ -12,6 +12,7 @@ import org.apache.commons.vfs2.provider.s3.AmazonS3FileProvider;
 import org.apache.commons.vfs2.provider.s3.AmazonS3FileSystemConfigBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,23 +28,21 @@ import ph.edu.tsu.tour.core.image.ImageRepository;
 import ph.edu.tsu.tour.core.image.ImageService;
 import ph.edu.tsu.tour.core.image.ImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ToPublicImageServiceImpl;
+import ph.edu.tsu.tour.core.map.DefaultDomainMapService;
+import ph.edu.tsu.tour.core.map.DomainMapService;
+import ph.edu.tsu.tour.core.map.MapboxMapService;
+import ph.edu.tsu.tour.core.map.MapService;
 import ph.edu.tsu.tour.core.poi.PointOfInterestRepository;
 import ph.edu.tsu.tour.core.poi.PointOfInterestService;
 import ph.edu.tsu.tour.core.poi.PointOfInterestServiceImpl;
 import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
-import ph.edu.tsu.tour.core.storage.DelegatingStreamingStorageService;
-import ph.edu.tsu.tour.core.storage.DropboxStorageService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
-import ph.edu.tsu.tour.core.storage.StreamingStorageServiceAdapter;
-import ph.edu.tsu.tour.core.storage.VfsBasedDelegatingStreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 public class Main {
@@ -149,6 +148,16 @@ public class Main {
     @Bean
     public ToPublicPointOfInterestService toPublicPointOfInterestService(ToPublicImageServiceImpl toPublicImageService) {
         return new ToPublicPointOfInterestService(toPublicImageService);
+    }
+
+    @Bean
+    public MapService mapService(@Value("${application.map.mapbox.access-token}") String accessToken) {
+        return new MapboxMapService(Project.getName() + "/" + Project.getVersion(), accessToken);
+    }
+
+    @Bean
+    public DomainMapService domainMapService(MapService mapService) {
+        return new DefaultDomainMapService(mapService);
     }
 
 }

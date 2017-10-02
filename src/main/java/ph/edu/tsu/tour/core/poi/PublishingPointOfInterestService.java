@@ -13,13 +13,18 @@ public class PublishingPointOfInterestService extends Observable implements Poin
     }
 
     @Override
-    public PointOfInterest findById(long id) {
+    public PointOfInterest findById(Long id) {
         return pointOfInterestService.findById(id);
     }
 
     @Override
     public Iterable<PointOfInterest> findAll() {
         return pointOfInterestService.findAll();
+    }
+
+    @Override
+    public Iterable<PointOfInterest> findAll(Iterable<Long> ids) {
+        return pointOfInterestService.findAll(ids);
     }
 
     @Override
@@ -35,7 +40,7 @@ public class PublishingPointOfInterestService extends Observable implements Poin
     }
 
     @Override
-    public boolean deleteById(long id) {
+    public boolean deleteById(Long id) {
         PointOfInterest poi = pointOfInterestService.findById(id);
         boolean deleted = pointOfInterestService.deleteById(id);
         if (deleted) {
@@ -47,7 +52,7 @@ public class PublishingPointOfInterestService extends Observable implements Poin
     }
 
     @Override
-    public boolean exists(long id) {
+    public boolean exists(Long id) {
         return pointOfInterestService.exists(id);
     }
 

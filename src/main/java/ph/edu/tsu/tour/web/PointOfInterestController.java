@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 // TODO: Show error messages in view
 @Controller
 @RequestMapping(Urls.POI)
-public class PointOfInterestController {
+class PointOfInterestController {
 
     private static final Logger logger = LoggerFactory.getLogger(PointOfInterestController.class);
 
@@ -58,7 +58,7 @@ public class PointOfInterestController {
     private ToPublicImageService toPublicImageService;
 
     @Autowired
-    public PointOfInterestController(PublishingPointOfInterestService pointOfInterestService,
+    PointOfInterestController(PublishingPointOfInterestService pointOfInterestService,
                                      DiskStorageCapableImageService diskStorageCapableImageService,
                                      ToPublicPointOfInterestService toPublicPointOfInterestService,
                                      ToPublicImageService toPublicImageService) throws IOException {

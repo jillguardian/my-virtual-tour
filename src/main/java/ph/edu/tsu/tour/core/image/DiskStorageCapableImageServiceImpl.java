@@ -65,7 +65,7 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
     }
 
     @Override
-    public Image findById(long id) {
+    public Image findById(Long id) {
         return imageService.findById(id);
     }
 
@@ -75,12 +75,17 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
     }
 
     @Override
+    public Iterable<Image> findAll(Iterable<Long> ids) {
+        return imageService.findAll(ids);
+    }
+
+    @Override
     public Image save(Image image) {
         return imageService.save(image);
     }
 
     @Override
-    public boolean deleteById(long id) {
+    public boolean deleteById(Long id) {
         Image image = findById(id);
         if (image != null) {
             URI mainLocation = image.getLocation();
@@ -100,7 +105,7 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
     }
 
     @Override
-    public boolean exists(long id) {
+    public boolean exists(Long id) {
         return imageService.exists(id);
     }
 

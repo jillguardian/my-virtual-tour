@@ -22,7 +22,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image findById(long id) {
+    public Image findById(Long id) {
         Image found = imageRepository.findOne(id);
         if (found != null) {
             entityManager.detach(found);
@@ -40,12 +40,21 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    public Iterable<Image> findAll(Iterable<Long> ids) {
+        Iterable<Image> found = imageRepository.findAll(ids);
+        for (Image image : found) {
+            entityManager.detach(image);
+        }
+        return found;
+    }
+
+    @Override
     public Image save(Image image) {
         return imageRepository.save(image);
     }
 
     @Override
-    public boolean deleteById(long id) {
+    public boolean deleteById(Long id) {
         imageRepository.delete(id);
         boolean exists = imageRepository.exists(id);
         if (exists) {
@@ -55,7 +64,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public boolean exists(long id) {
+    public boolean exists(Long id) {
         return imageRepository.exists(id);
     }
 

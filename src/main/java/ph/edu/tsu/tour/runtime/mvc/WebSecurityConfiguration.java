@@ -93,6 +93,7 @@ public class WebSecurityConfiguration {
             http.antMatcher(Urls.REST_PREFIX + "/**")
                     .authorizeRequests()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_POI + "/**", "GET")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_MAP + "/**", "GET")).permitAll()
                     .anyRequest().denyAll()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

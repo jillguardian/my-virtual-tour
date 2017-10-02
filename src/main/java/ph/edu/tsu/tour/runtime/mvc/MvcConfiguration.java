@@ -1,11 +1,19 @@
 package ph.edu.tsu.tour.runtime.mvc;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import ph.edu.tsu.tour.runtime.mvc.converter.ProfileConverter;
 
 @Configuration
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        super.addFormatters(registry);
+        registry.addConverter(new ProfileConverter());
+    }
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {

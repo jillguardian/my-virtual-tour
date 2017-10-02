@@ -28,12 +28,12 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(Urls.ACCESS_MANAGEMENT)
-public class AccessManagementController {
+class AccessManagementController {
 
     private AccessManagementService accessManagementService;
 
     @Autowired
-    public AccessManagementController(AccessManagementService accessManagementService) {
+    AccessManagementController(AccessManagementService accessManagementService) {
         this.accessManagementService = accessManagementService;
     }
 
