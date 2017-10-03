@@ -7,7 +7,7 @@
 
 ## Quick Start
 1. Build the project using `mvn install`.
-2. Run the web application via `ph.edu.tsu.tour.Application#main(String[])`.
+2. Run the web application via `mvn spring-boot:run`. Optionally, you can also start the application via `ph.edu.tsu.tour.Application#main(String[])`.
 3. Profit!
 
 Default Credentials:
@@ -59,6 +59,14 @@ The following properties are also supported:
   If resize is set to true, then this field should be specified. Otherwise, it's optional.
 * `application.domain.poi.image.preview.quality`: the quality of the preview image. Input should range from `0` to `1`, 
   with `1` having the most optimal quality.
+  
+### Maps
+
+#### Mapbox
+
+Internally, this web application uses the [Mapbox](http://www.mapbox.com) APIs. To use the RESTful map APIs exposed by 
+this application, you must configure the Mapbox access token in the `application.properties` file via the 
+`application.map.mapbox.access-token` key.
 
 ## References
 * [Maven](https://maven.apache.org)
