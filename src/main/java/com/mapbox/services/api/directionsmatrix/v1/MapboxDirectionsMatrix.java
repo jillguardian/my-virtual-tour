@@ -92,7 +92,7 @@ public class MapboxDirectionsMatrix extends MapboxService<DirectionsMatrixRespon
      * Execute the call
      *
      * @return The Directions Matrix v1 response
-     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws IOException Signals that an I/O exception of some sortDestinations has occurred.
      * @since 2.1.0
      */
     @Override

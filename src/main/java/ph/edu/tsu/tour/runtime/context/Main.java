@@ -28,7 +28,7 @@ import ph.edu.tsu.tour.core.image.ImageRepository;
 import ph.edu.tsu.tour.core.image.ImageService;
 import ph.edu.tsu.tour.core.image.ImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ToPublicImageServiceImpl;
-import ph.edu.tsu.tour.core.map.DefaultDomainMapService;
+import ph.edu.tsu.tour.core.map.MapboxDomainMapService;
 import ph.edu.tsu.tour.core.map.DomainMapService;
 import ph.edu.tsu.tour.core.map.MapboxMapService;
 import ph.edu.tsu.tour.core.map.MapService;
@@ -152,12 +152,12 @@ public class Main {
 
     @Bean
     public MapService mapService(@Value("${application.map.mapbox.access-token}") String accessToken) {
-        return new MapboxMapService(Project.getName() + "/" + Project.getVersion(), accessToken);
+        return new MapboxMapService(accessToken);
     }
 
     @Bean
     public DomainMapService domainMapService(MapService mapService) {
-        return new DefaultDomainMapService(mapService);
+        return new MapboxDomainMapService(mapService);
     }
 
 }
