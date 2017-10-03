@@ -24,6 +24,7 @@ To see other Spring Boot-specific configurable properties, you may consult
 ### Storage
 
 As of now, only the following storage options are supported:
+
 - [Amazon S3](https://aws.amazon.com/s3/)
 - [Dropbox](https://www.dropbox.com/)
 

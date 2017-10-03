@@ -285,7 +285,7 @@ public class AmazonS3ClientWrapperImpl implements AmazonS3ClientWrapper {
                     object.getKey(),
                     inputStream,
                     object.getObjectMetadata())
-                    .withCannedAcl(CannedAccessControlList.PublicRead); // TODO: Externalize.
+                    .withCannedAcl(CannedAccessControlList.PublicRead); //TODO: Externalize.
             service.putObject(request);
             inputStream.close();
             outputStream.close();
