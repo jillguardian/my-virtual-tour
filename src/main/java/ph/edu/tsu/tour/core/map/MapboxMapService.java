@@ -98,13 +98,15 @@ public class MapboxMapService implements MapService {
     }
 
     @Override
-    public List<GeoJsonObject> sortDestinations(Profile profile, GeoJsonObject source, Set<GeoJsonObject> destinations) {
-        Objects.requireNonNull(profile, "[profile] must be specified");
-        Objects.requireNonNull(source, "[source] must be specified");
-        Objects.requireNonNull(destinations, "[destinations] must be specified");
+    public List<GeoJsonObject> sortDestinations(Profile profile,
+                                                GeoJsonObject source,
+                                                Set<GeoJsonObject> destinations) {
+        Objects.requireNonNull(profile, "Profile must be specified");
+        Objects.requireNonNull(source, "Source must be specified");
+        Objects.requireNonNull(destinations, "Destinations must be specified");
 
         if (destinations.isEmpty()) {
-            throw new IllegalArgumentException("[destinations] is empty");
+            throw new IllegalArgumentException("Destinations collection is empty");
         }
 
         Set<GeoJsonObject> original = new HashSet<>(destinations);

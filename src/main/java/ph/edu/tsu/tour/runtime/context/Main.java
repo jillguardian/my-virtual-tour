@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import ph.edu.tsu.tour.Project;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
@@ -28,7 +29,8 @@ import ph.edu.tsu.tour.core.image.ImageRepository;
 import ph.edu.tsu.tour.core.image.ImageService;
 import ph.edu.tsu.tour.core.image.ImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ToPublicImageServiceImpl;
-import ph.edu.tsu.tour.core.map.MapboxDomainMapService;
+import ph.edu.tsu.tour.core.map.DecoratedMapboxDomainMapService;
+import ph.edu.tsu.tour.core.map.DefaultDomainMapService;
 import ph.edu.tsu.tour.core.map.DomainMapService;
 import ph.edu.tsu.tour.core.map.MapboxMapService;
 import ph.edu.tsu.tour.core.map.MapService;
@@ -155,9 +157,16 @@ public class Main {
         return new MapboxMapService(accessToken);
     }
 
+    @Primary
     @Bean
     public DomainMapService domainMapService(MapService mapService) {
-        return new MapboxDomainMapService(mapService);
+        return new DefaultDomainMapService(mapService);
+    }
+
+    @Bean
+    public DecoratedMapboxDomainMapService decoratedMapboxDomainMapService(
+            @Value("${application.map.mapbox.access-token}") String accessToken) {
+        return new DecoratedMapboxDomainMapService(accessToken);
     }
 
 }

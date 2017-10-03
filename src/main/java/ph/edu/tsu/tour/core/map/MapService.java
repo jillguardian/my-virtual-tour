@@ -1,10 +1,7 @@
 package ph.edu.tsu.tour.core.map;
 
 import org.geojson.GeoJsonObject;
-import org.geojson.Geometry;
-import org.geojson.GeometryCollection;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 

@@ -12,17 +12,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class MapboxDomainMapService implements DomainMapService {
+public class DefaultDomainMapService implements DomainMapService {
 
-    private static final Logger logger = LoggerFactory.getLogger(MapboxDomainMapService.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultDomainMapService.class);
     private final MapService mapService;
 
-    public MapboxDomainMapService(MapService mapService) {
+    public DefaultDomainMapService(MapService mapService) {
         this.mapService = mapService;
     }
 
     @Override
-    public PointOfInterest getNearestDestination(Profile profile, GeoJsonObject source, Set<PointOfInterest> destinations) {
+    public PointOfInterest getNearestDestination(Profile profile,
+                                                 GeoJsonObject source,
+                                                 Set<PointOfInterest> destinations) {
         Objects.requireNonNull(profile, "Profile must be specified");
         Objects.requireNonNull(source, "Source must be specified");
         Objects.requireNonNull(destinations, "Destinations must be specified");
@@ -41,7 +43,9 @@ public class MapboxDomainMapService implements DomainMapService {
     }
 
     @Override
-    public List<PointOfInterest> sortDestinations(Profile profile, GeoJsonObject source, Set<PointOfInterest> destinations) {
+    public List<PointOfInterest> sortDestinations(Profile profile,
+                                                  GeoJsonObject source,
+                                                  Set<PointOfInterest> destinations) {
         Objects.requireNonNull(profile, "Profile must be specified");
         Objects.requireNonNull(source, "Source must be specified");
         Objects.requireNonNull(destinations, "Destinations must be specified");
