@@ -53,8 +53,8 @@ public final class DecoratedMapboxDomainMapService implements DomainMapService {
     }
 
     public DirectionsResponse getDirections(Profile profile,
-                                                      GeoJsonObject source,
-                                                      Set<PointOfInterest> destinations) {
+                                            GeoJsonObject source,
+                                            Set<PointOfInterest> destinations) {
         Objects.requireNonNull(profile, "Profile must be specified");
         Objects.requireNonNull(source, "Source must be specified");
         Objects.requireNonNull(destinations, "Destinations must be specified");
@@ -69,6 +69,13 @@ public final class DecoratedMapboxDomainMapService implements DomainMapService {
                 .map(Point.class::cast)
                 .map(pointToPosition)
                 .collect(Collectors.toList());
+
+        Point casted = Point.class.cast(source);
+        coordinates.add(0, Position.fromCoordinates(
+                casted.getCoordinates().getLongitude(),
+                casted.getCoordinates().getLatitude(),
+                casted.getCoordinates().getAltitude()));
+
         MapboxDirections.Builder builder = new MapboxDirections.Builder()
                 .setClientAppName(applicationName)
                 .setAccessToken(accessToken)
