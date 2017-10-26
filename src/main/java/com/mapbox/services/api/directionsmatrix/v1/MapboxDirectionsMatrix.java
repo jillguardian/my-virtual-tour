@@ -161,7 +161,7 @@ public class MapboxDirectionsMatrix extends MapboxService<DirectionsMatrixRespon
      */
 
         /**
-         * @param user User string
+         * @param user Administrator string
          * @return Builder
          * @since 2.1.0
          */
@@ -345,7 +345,7 @@ public class MapboxDirectionsMatrix extends MapboxService<DirectionsMatrixRespon
         }
 
         /**
-         * @return the user as String
+         * @return the administrator as String
          * @since 2.1.0
          */
         public String getUser() {

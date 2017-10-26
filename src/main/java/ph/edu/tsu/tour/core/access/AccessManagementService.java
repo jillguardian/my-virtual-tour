@@ -7,32 +7,36 @@ public interface AccessManagementService {
 
     Role saveRole(Role role);
 
-    User saveUser(User user);
+    Administrator saveAdministrator(Administrator administrator);
 
     Iterable<Privilege> savePrivileges(Iterable<Privilege> privileges);
 
     Iterable<Role> saveRoles(Iterable<Role> roles);
 
-    Iterable<User> saveUsers(Iterable<User> users);
+    Iterable<Administrator> saveAdministrators(Iterable<Administrator> administrators);
 
     Iterable<Privilege> findAllPrivileges();
 
     Iterable<Role> findAllRoles();
 
-    Iterable<User> findAllUsers();
+    Iterable<Administrator> findAllAdministrators();
 
     boolean deletePrivilegeById(long id);
 
     boolean deleteRoleById(long id);
 
-    boolean deleteUserById(long id);
+    boolean deleteAdministratorById(long id);
 
     Privilege findPrivilegeById(long id);
 
+    Privilege findPrivilegeByName(String name);
+
     Role findRoleById(long id);
 
-    User findUserById(long id);
+    Administrator findAdministratorById(long id);
 
     Role findRoleByName(String name);
+
+    Administrator findAdministratorByUsername(String username);
 
 }

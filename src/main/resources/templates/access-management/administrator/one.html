@@ -7,47 +7,47 @@
 <div layout:fragment="breadcrumbs">
     <ol class="breadcrumb">
         <li><a href="/" th:href="@{/}" th:text="#{home}">Home</a></li>
-        <li><a href="/user" th:href="@{/access-management/user}" th:text="#{user}">User</a></li>
+        <li><a href="/administrator" th:href="@{/access-management/administrator}" th:text="#{administrator}">Administrator</a></li>
         <th:block th:with="text=#{new}">
-            <li class="active" th:text="${user.id != null ? user.id : text}">#</li>
+            <li class="active" th:text="${administrator.id != null ? administrator.id : text}">#</li>
         </th:block>
     </ol>
 </div>
 <div layout:fragment="content">
     <div class="row">
-        <h1 class="text-center" th:text="#{user}">User</h1>
+        <h1 class="text-center" th:text="#{administrator}">Administrator</h1>
         <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
             <hr />
-            <div class="alert alert-danger text-center" role="alert" th:if="${user == null}" th:text="#{user.empty.message}">User not bound to form.</div>
-            <form action="/access-management/user/save" th:if="${user}" th:action="@{/access-management/user/save}" th:object="${user}" method="post">
+            <div class="alert alert-danger text-center" role="alert" th:if="${administrator == null}" th:text="#{administrator.empty.message}">Administrator not bound to form.</div>
+            <form action="/access-management/administrator/save" th:if="${administrator}" th:action="@{/access-management/administrator/save}" th:object="${administrator}" method="post">
                 <div class="form-group" th:classappend="${#fields.hasErrors('id')} ? has-error : ''">
                     <input type="hidden" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#" />
                 </div>
                 <div class="form-group" th:classappend="${#fields.hasErrors('username')} ? has-error : ''">
-                    <input type="text" th:field="*{username}" class="form-control" id="username" th:placeholder="#{user.username.placeholder}" placeholder="Username" />
-                    <p class="help-block" th:if="${#fields.hasErrors('username')}" th:errors="*{username}" th:text="#{user.username.blank.message}"></p>
+                    <input type="text" th:field="*{username}" class="form-control" id="username" th:placeholder="#{administrator.username.placeholder}" placeholder="Username" />
+                    <p class="help-block" th:if="${#fields.hasErrors('username')}" th:errors="*{username}" th:text="#{administrator.username.blank.message}"></p>
                 </div>
                 <div class="form-group" th:classappend="${#fields.hasErrors('password')} ? has-error : ''">
-                    <input type="password" th:field="*{password}" class="form-control" id="password" th:placeholder="#{user.password.placeholder}" placeholder="Password" />
-                    <p class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:text="#{user.password.blank.message}"></p>
+                    <input type="password" th:field="*{password}" class="form-control" id="password" th:placeholder="#{administrator.password.placeholder}" placeholder="Password" />
+                    <p class="help-block" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:text="#{administrator.password.blank.message}"></p>
                 </div>
                 <div class="form-group" th:classappend="${#fields.hasErrors('roles')} ? has-error : ''">
                     <select th:field="*{roles}" class="form-control selectpicker show-tick" id="roles" multiple="true" data-max-options="1" th:title="#{role}" title="Role">
                         <option th:each="role: ${selectableRoles}"
-                                th:select="${#user.roles.contains(role.name)}"
+                                th:select="${#administrator.roles.contains(role.name)}"
                                 th:value="${role.name}"
                                 th:text="${role.name}">
                             Role
                         </option>
                     </select>
-                    <p class="help-block" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" th:text="#{user.roles.empty.message}"></p>
+                    <p class="help-block" th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" th:text="#{administrator.roles.empty.message}"></p>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-block btn-primary" th:text="#{save}">Save</button>
                 </div>
             </form>
-            <form th:action="@{/access-management/user/delete}" method="post" th:if="${user?.id}">
-                <input type="hidden" name="id" th:value="${user.id}" />
+            <form th:action="@{/access-management/administrator/delete}" method="post" th:if="${administrator?.id}">
+                <input type="hidden" name="id" th:value="${administrator.id}" />
                 <div class="form-group">
                     <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
                 </div>

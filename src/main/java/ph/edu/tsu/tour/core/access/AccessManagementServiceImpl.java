@@ -15,17 +15,17 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     private static final Logger logger = LoggerFactory.getLogger(AccessManagementServiceImpl.class);
 
     private PasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
+    private AdministratorRepository administratorRepository;
     private RoleRepository roleRepository;
     private PrivilegeRepository privilegeRepository;
 
     public AccessManagementServiceImpl(PrivilegeRepository privilegeRepository,
                                        RoleRepository roleRepository,
-                                       UserRepository userRepository,
+                                       AdministratorRepository administratorRepository,
                                        PasswordEncoder passwordEncoder) {
         this.privilegeRepository = Objects.requireNonNull(privilegeRepository, "[privilegeRepository] must be set");
         this.roleRepository = Objects.requireNonNull(roleRepository, "[roleRepository] must be set");
-        this.userRepository = Objects.requireNonNull(userRepository, "[userRepository] must be set");
+        this.administratorRepository = Objects.requireNonNull(administratorRepository, "[administratorRepository] must be set");
         this.passwordEncoder = Objects.requireNonNull(passwordEncoder, "[passwordEncoder] must be set");
     }
 
@@ -51,17 +51,18 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     }
 
     @Override
-    public User saveUser(User user) {
-        if (user.getId() == null && userRepository.findUserByUsername(user.getUsername()) != null) {
-            throw new IllegalArgumentException("User [" + user.getUsername() + "] already exists");
+    public Administrator saveAdministrator(Administrator administrator) {
+        if (administrator.getId() == null
+                && administratorRepository.findAdministratorByUsername(administrator.getUsername()) != null) {
+            throw new IllegalArgumentException("Administrator [" + administrator.getUsername() + "] already exists");
         }
-        for (Role role : user.getRoles()) {
+        for (Role role : administrator.getRoles()) {
             if (!roleRepository.exists(role.getId())) {
                 throw new IllegalArgumentException("Role with id [" + role.getId() + "] does not exist");
             }
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        administrator.setPassword(passwordEncoder.encode(administrator.getPassword()));
+        return administratorRepository.save(administrator);
     }
 
     @Override
@@ -85,11 +86,11 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     }
 
     @Override
-    public Iterable<User> saveUsers(Iterable<User> users) {
-        Collection<User> saved = new ArrayList<>();
-        for (User user : users) {
-            user = saveUser(user);
-            saved.add(user);
+    public Iterable<Administrator> saveAdministrators(Iterable<Administrator> administrators) {
+        Collection<Administrator> saved = new ArrayList<>();
+        for (Administrator administrator : administrators) {
+            administrator = saveAdministrator(administrator);
+            saved.add(administrator);
         }
         return saved;
     }
@@ -105,8 +106,8 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     }
 
     @Override
-    public Iterable<User> findAllUsers() {
-        return userRepository.findAll();
+    public Iterable<Administrator> findAllAdministrators() {
+        return administratorRepository.findAll();
     }
 
     @Override
@@ -128,10 +129,10 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     }
 
     @Override
-    public boolean deleteUserById(long id) {
-        if (userRepository.exists(id)) {
-            userRepository.delete(id);
-            return !userRepository.exists(id);
+    public boolean deleteAdministratorById(long id) {
+        if (administratorRepository.exists(id)) {
+            administratorRepository.delete(id);
+            return !administratorRepository.exists(id);
         }
         return false;
     }
@@ -142,18 +143,28 @@ public class AccessManagementServiceImpl implements AccessManagementService {
     }
 
     @Override
+    public Privilege findPrivilegeByName(String name) {
+        return privilegeRepository.findPrivilegeByName(name);
+    }
+
+    @Override
     public Role findRoleById(long id) {
         return roleRepository.findOne(id);
     }
 
     @Override
-    public User findUserById(long id) {
-        return userRepository.findOne(id);
+    public Administrator findAdministratorById(long id) {
+        return administratorRepository.findOne(id);
     }
 
     @Override
     public Role findRoleByName(String name) {
         return roleRepository.findRoleByName(name);
+    }
+
+    @Override
+    public Administrator findAdministratorByUsername(String username) {
+        return administratorRepository.findAdministratorByUsername(username);
     }
 
 }

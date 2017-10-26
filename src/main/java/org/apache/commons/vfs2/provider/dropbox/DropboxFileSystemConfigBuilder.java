@@ -54,7 +54,7 @@ public class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilder {
      * {@literal "Name/Version"} (e.g. {@literal "PhotoEditServer/1.3"}).
      *
      * @param fileSystemOptions file system options to work with; stores the data
-     * @param clientIdentifier  HTTP user-agent identifier for the app
+     * @param clientIdentifier  HTTP administrator-agent identifier for the app
      */
     public void setClientIdentifier(final FileSystemOptions fileSystemOptions, String clientIdentifier) {
         setParam(fileSystemOptions, KEY_CLIENT_ID, clientIdentifier);
@@ -64,7 +64,7 @@ public class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilder {
      * Gets the assigned client identifier for Dropbox requests.
      *
      * @param fileSystemOptions file system options to work with
-     * @return HTTP user-agent identifier for the app
+     * @return HTTP administrator-agent identifier for the app
      * @see DbxRequestConfig#getClientIdentifier()
      */
     public String getClientIdentifier(final FileSystemOptions fileSystemOptions) {
@@ -92,7 +92,7 @@ public class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilder {
     }
 
     /**
-     * User-visible messages returned by the Dropbox servers will be localized to this locale.
+     * Administrator-visible messages returned by the Dropbox servers will be localized to this locale.
      *
      * @param fileSystemOptions file system options to work with; stores the data
      * @param locale            desired locale, or {@code null} to use the default setting
@@ -102,7 +102,7 @@ public class DropboxFileSystemConfigBuilder extends FileSystemConfigBuilder {
     }
 
     /**
-     * Gets the assigned locale which shall be used by the Dropbox server to localize user-visible strings returned by
+     * Gets the assigned locale which shall be used by the Dropbox server to localize administrator-visible strings returned by
      * API calls.
      *
      * @param fileSystemOptions file system options to work with; stores the data

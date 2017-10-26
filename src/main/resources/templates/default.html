@@ -58,9 +58,9 @@
                        aria-expanded="false" th:value="#{access-management}">Access Management <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li class="dropdown-header" th:value="#{user}">User</li>
-                        <li><a th:href="@{/access-management/user/new}" th:value="#{add-new}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).WRITE)">Add New</a></li>
-                        <li><a th:href="@{/access-management/user}" th:value="#{view-all}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).READ)">View All</a></li>
+                        <li class="dropdown-header" th:value="#{administrator}">Administrator</li>
+                        <li><a th:href="@{/access-management/administrator/new}" th:value="#{add-new}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).WRITE)">Add New</a></li>
+                        <li><a th:href="@{/access-management/administrator}" th:value="#{view-all}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).READ)">View All</a></li>
                     </ul>
                 </li>
             </ul>

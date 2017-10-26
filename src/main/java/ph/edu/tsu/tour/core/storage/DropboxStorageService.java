@@ -23,7 +23,7 @@ public class DropboxStorageService implements StreamingStorageService<String, UR
     private static Logger logger = LoggerFactory.getLogger(DropboxStorageService.class);
 
     /**
-     * Client (for user endpoints).
+     * Client (for administrator endpoints).
      */
     private DbxClientV2Base dropboxClient;
 

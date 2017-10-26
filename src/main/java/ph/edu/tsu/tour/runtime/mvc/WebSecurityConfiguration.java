@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ph.edu.tsu.tour.core.access.UserRepository;
+import ph.edu.tsu.tour.core.access.AdministratorRepository;
 import ph.edu.tsu.tour.security.Privileges;
 import ph.edu.tsu.tour.security.UserDetailsServiceImpl;
 import ph.edu.tsu.tour.web.Urls;
@@ -26,11 +26,11 @@ public class WebSecurityConfiguration {
     @Configuration
     public static class WebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-        private UserRepository userRepository;
+        private AdministratorRepository administratorRepository;
 
         @Autowired
-        public WebSecurityConfigurationAdapter(UserRepository userRepository) {
-            this.userRepository = userRepository;
+        public WebSecurityConfigurationAdapter(AdministratorRepository administratorRepository) {
+            this.administratorRepository = administratorRepository;
         }
 
         @Override
@@ -74,7 +74,7 @@ public class WebSecurityConfiguration {
 
         @Bean
         public UserDetailsService userDetailsService() {
-            return new UserDetailsServiceImpl(userRepository);
+            return new UserDetailsServiceImpl(administratorRepository);
         }
 
         @Bean

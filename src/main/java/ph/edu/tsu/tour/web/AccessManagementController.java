@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
+import ph.edu.tsu.tour.core.access.Administrator;
 import ph.edu.tsu.tour.core.access.Role;
-import ph.edu.tsu.tour.core.access.User;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 
 import javax.validation.Valid;
@@ -37,21 +37,23 @@ class AccessManagementController {
         this.accessManagementService = accessManagementService;
     }
 
-    @RequestMapping(value = "/user/new", method = RequestMethod.GET)
-    public String saveUser(Model model) {
+    @RequestMapping(value = "/administrator/new", method = RequestMethod.GET)
+    public String saveAdministrator(Model model) {
         model.addAttribute("selectableRoles", accessManagementService.findAllRoles());
-        model.addAttribute("user", UserDto.builder().build());
-        return "access-management/user/one";
+        model.addAttribute("administrator", AdministratorDto.builder().build());
+        return "access-management/administrator/one";
     }
 
-    @RequestMapping(value = "/user/save", method = RequestMethod.POST)
-    public String saveUser(Model model, @Valid @ModelAttribute("user") UserDto dto, BindingResult bindingResult) {
+    @RequestMapping(value = "/administrator/save", method = RequestMethod.POST)
+    public String saveAdministrator(Model model,
+                                    @Valid @ModelAttribute("administrator") AdministratorDto dto,
+                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("selectableRoles", accessManagementService.findAllRoles());
-            return "access-management/user/one";
+            return "access-management/administrator/one";
         }
 
-        User user = User.builder()
+        Administrator administrator = Administrator.builder()
                 .id(dto.getId())
                 .username(dto.getUsername())
                 .password(dto.getPassword())
@@ -59,46 +61,46 @@ class AccessManagementController {
                         .map(name -> accessManagementService.findRoleByName(name))
                         .collect(Collectors.toSet()))
                 .build();
-        user = accessManagementService.saveUser(user);
-        return "redirect:" + Urls.ACCESS_MANAGEMENT + "/user/" + user.getId();
+        administrator = accessManagementService.saveAdministrator(administrator);
+        return "redirect:" + Urls.ACCESS_MANAGEMENT + "/administrator/" + administrator.getId();
     }
 
-    @RequestMapping(value = "/user/delete", method = RequestMethod.POST)
-    public String deleteUserById(@RequestParam long id) {
-        accessManagementService.deleteUserById(id);
-        return "redirect:" + Urls.ACCESS_MANAGEMENT + "/user/";
+    @RequestMapping(value = "/administrator/delete", method = RequestMethod.POST)
+    public String deleteAdministratorById(@RequestParam long id) {
+        accessManagementService.deleteAdministratorById(id);
+        return "redirect:" + Urls.ACCESS_MANAGEMENT + "/administrator/";
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-    public String findUserById(@PathVariable long id, Model model) {
-        User user = accessManagementService.findUserById(id);
-        if (user == null) {
-            throw new ResourceNotFoundException("User with id [" + id + "] does not exist");
+    @RequestMapping(value = "/administrator/{id}", method = RequestMethod.GET)
+    public String findAdministratorById(@PathVariable long id, Model model) {
+        Administrator administrator = accessManagementService.findAdministratorById(id);
+        if (administrator == null) {
+            throw new ResourceNotFoundException("Administrator with id [" + id + "] does not exist");
         }
 
-        UserDto dto = UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .password(user.getPassword())
-                .roles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
+        AdministratorDto dto = AdministratorDto.builder()
+                .id(administrator.getId())
+                .username(administrator.getUsername())
+                .password(administrator.getPassword())
+                .roles(administrator.getRoles().stream().map(Role::getName).collect(Collectors.toSet()))
                 .build();
-        model.addAttribute("user", dto);
+        model.addAttribute("administrator", dto);
         model.addAttribute("selectableRoles", accessManagementService.findAllRoles());
         model.addAttribute("exists", true);
-        return "access-management/user/one";
+        return "access-management/administrator/one";
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public String findUsers(Model model) {
-        model.addAttribute("users", accessManagementService.findAllUsers());
-        return "access-management/user/all";
+    @RequestMapping(value = "/administrator", method = RequestMethod.GET)
+    public String findAdministrators(Model model) {
+        model.addAttribute("administrators", accessManagementService.findAllAdministrators());
+        return "access-management/administrator/all";
     }
 
     @Data
     @Builder
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @AllArgsConstructor
-    private static final class UserDto {
+    private static final class AdministratorDto {
 
         private Long id;
 

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+    <title th:text="#{administrators}">Administrators</title>
+    <style>
+        a.administrator {
+            text-decoration: none !important;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="/" th:href="@{/}" th:text="#{home}">Home</a></li>
+        <li class="active" th:text="#{administrator}">Administrator</li>
+    </ol>
+</div>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+            <h1 class="text-center" th:text="#{administrators}">Administrators</h1>
+            <div class="alert alert-danger text-center" role="alert" th:if="${administrators.empty}" th:text="#{administrators.empty.message}">Found no administrators.</div>
+            <div th:each="group : ${T(com.google.common.collect.Lists).partition(administrators, 2)}" class="row">
+                <a th:each="administrator : ${group}" th:object="${poi}" class="col-xs-6 administrator" href="#" th:href="@{/access-management/administrator/} + ${administrator.id}">
+                    <div class="panel panel-default">
+                        <div class="panel-body text-center" th:text="${administrator.username}"></div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

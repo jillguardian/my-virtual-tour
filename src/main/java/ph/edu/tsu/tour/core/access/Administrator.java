@@ -16,12 +16,12 @@ import java.util.Collection;
 @Entity
 @Data
 @Builder(builderClassName = "Builder", toBuilder = true)
-public class User implements Serializable {
+public class Administrator implements Serializable {
 
     private static final long serialVersionUID = -931930487819800097L;
 
     @Tolerate
-    protected User() {
+    protected Administrator() {
         // To make JPA happy.
     }
 

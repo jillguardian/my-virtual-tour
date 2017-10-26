@@ -20,9 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import ph.edu.tsu.tour.Project;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
 import ph.edu.tsu.tour.core.access.AccessManagementServiceImpl;
+import ph.edu.tsu.tour.core.access.AdministratorRepository;
 import ph.edu.tsu.tour.core.access.PrivilegeRepository;
 import ph.edu.tsu.tour.core.access.RoleRepository;
-import ph.edu.tsu.tour.core.access.UserRepository;
 import ph.edu.tsu.tour.core.image.DiskStorageCapableImageService;
 import ph.edu.tsu.tour.core.image.DiskStorageCapableImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ImageRepository;
@@ -71,9 +71,10 @@ public class Main {
     @Bean
     public AccessManagementService accessManagementService(PrivilegeRepository privilegeRepository,
                                                            RoleRepository roleRepository,
-                                                           UserRepository userRepository,
+                                                           AdministratorRepository administratorRepository,
                                                            PasswordEncoder passwordEncoder) {
-        return new AccessManagementServiceImpl(privilegeRepository, roleRepository, userRepository, passwordEncoder);
+        return new AccessManagementServiceImpl(privilegeRepository, roleRepository,
+                                               administratorRepository, passwordEncoder);
     }
 
     @Bean

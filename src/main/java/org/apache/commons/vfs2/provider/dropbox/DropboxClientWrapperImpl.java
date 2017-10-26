@@ -42,7 +42,7 @@ public class DropboxClientWrapperImpl implements DropboxClientWrapper {
     private static Logger logger = LoggerFactory.getLogger(DropboxClientWrapperImpl.class);
 
     /**
-     * Client (for user endpoints).
+     * Client (for administrator endpoints).
      */
     private DbxClientV2Base dropboxClient;
 
@@ -55,9 +55,9 @@ public class DropboxClientWrapperImpl implements DropboxClientWrapper {
     }
 
     /**
-     * Creates a Dropbox client (user-endpoint specific) based on given configuration {@code fileSystemOptions}.
+     * Creates a Dropbox client (administrator-endpoint specific) based on given configuration {@code fileSystemOptions}.
      *
-     * @return Dropbox client for user endpoints
+     * @return Dropbox client for administrator endpoints
      * @see DropboxFileSystemConfigBuilder
      */
     private DbxClientV2Base createDropboxClient(FileSystemOptions fileSystemOptions) {
@@ -65,11 +65,11 @@ public class DropboxClientWrapperImpl implements DropboxClientWrapper {
     }
 
     /**
-     * Creates a Dropbox client (user-endpoint specific) based on the given configuration ({@code fileSystemOptions}).
+     * Creates a Dropbox client (administrator-endpoint specific) based on the given configuration ({@code fileSystemOptions}).
      *
      * @param dbxRequestConfig  describes the default request attributes to be used in Dropbox-related requests
      * @param fileSystemOptions file system options to work with
-     * @return Dropbox client for user endpoints
+     * @return Dropbox client for administrator endpoints
      * @see DropboxFileSystemConfigBuilder
      */
     protected DbxClientV2Base createDropboxClient(DbxRequestConfig dbxRequestConfig,

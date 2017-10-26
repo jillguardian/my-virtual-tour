@@ -5,10 +5,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ph.edu.tsu.tour.core.access.Administrator;
+import ph.edu.tsu.tour.core.access.AdministratorRepository;
 import ph.edu.tsu.tour.core.access.Privilege;
 import ph.edu.tsu.tour.core.access.Role;
-import ph.edu.tsu.tour.core.access.User;
-import ph.edu.tsu.tour.core.access.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,26 +16,26 @@ import java.util.Objects;
 
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private AdministratorRepository administratorRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = Objects.requireNonNull(userRepository, "[userRepository] must be set");
+    public UserDetailsServiceImpl(AdministratorRepository administratorRepository) {
+        this.administratorRepository = Objects.requireNonNull(administratorRepository, "[administratorRepository] must be set");
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("Could not find user with username [" + username + "]");
+        Administrator administrator = administratorRepository.findAdministratorByUsername(username);
+        if (administrator == null) {
+            throw new UsernameNotFoundException("Could not find administrator with username [" + username + "]");
         }
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
+                administrator.getUsername(),
+                administrator.getPassword(),
                 true,
                 true,
                 true,
                 true,
-                getAuthorities(user.getRoles()));
+                getAuthorities(administrator.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
