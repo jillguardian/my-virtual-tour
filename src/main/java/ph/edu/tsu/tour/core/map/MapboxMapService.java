@@ -1,23 +1,33 @@
 package ph.edu.tsu.tour.core.map;
 
-import com.mapbox.services.api.directionsmatrix.v1.MapboxDirectionsMatrix;
-import com.mapbox.services.api.directionsmatrix.v1.models.DirectionsMatrixResponse;
+import com.mapbox.services.api.directions.v5.MapboxDirections;
+import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
+import com.mapbox.services.api.directions.v5.models.DirectionsWaypoint;
 import com.mapbox.services.commons.models.Position;
 import org.geojson.GeoJsonObject;
 import org.geojson.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ph.edu.tsu.tour.Project;
+import ph.edu.tsu.tour.exception.FailedDependencyException;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,50 +61,52 @@ public class MapboxMapService implements MapService {
             throw new UnsupportedOperationException("Implementation supports only point-based locations");
         }
 
-        // Keep items in order.
-        destinations = new LinkedHashSet<>(destinations);
-        List<GeoJsonObject> copy = new ArrayList<>(destinations);
-
+        Position convertedSource = pointToPosition.apply(Point.class.cast(source));
         List<Position> convertedDestinations = destinations.stream()
                 .map(Point.class::cast)
                 .map(pointToPosition)
                 .collect(Collectors.toList());
-        List<Position> coordinates = new ArrayList<>();
-        coordinates.add(pointToPosition.apply(Point.class.cast(source)));
-        coordinates.addAll(convertedDestinations);
 
-        // Get the indexes of destination elements in the coordinates collection.
-        int[] indexDestinations = convertedDestinations.stream()
-                .map(coordinates::indexOf)
-                .mapToInt(coordinate -> coordinate)
-                .toArray();
-        MapboxDirectionsMatrix.Builder builder = new MapboxDirectionsMatrix.Builder<>()
-                .setClientAppName(applicationName)
-                .setAccessToken(accessToken)
-                .setProfile(profileToProfile.apply(profile))
-                .setCoordinates(coordinates)
-                .setSources(0)
-                .setDestinations(indexDestinations);
+        Map<GeoJsonObject, MapboxDirections> destinationToRequestMap = new HashMap<>();
+        for (GeoJsonObject destination : destinations) {
+            Position converted = pointToPosition.apply(Point.class.cast(destination));
+            MapboxDirections request = new MapboxDirections.Builder()
+                    .setAccessToken(accessToken)
+                    .setClientAppName(applicationName)
+                    .setProfile(profileToProfile.apply(profile))
+                    .setOrigin(convertedSource)
+                    .setDestination(converted)
+                    .build();
+            destinationToRequestMap.put(destination, request);
+        }
+
+        Map<GeoJsonObject, DirectionsResponse> destinationToResponseMap = new HashMap<>();
+        BiConsumer<GeoJsonObject, DirectionsResponse> responseBiConsumer = destinationToResponseMap::put;
+
+        CountDownLatch latch = new CountDownLatch(destinationToRequestMap.size());
+        for (GeoJsonObject destination : destinationToRequestMap.keySet()) {
+            MapboxDirections request = destinationToRequestMap.get(destination);
+            request.enqueueCall(new MapboxDirectionsCallback(destination, responseBiConsumer, latch));
+        }
 
         try {
-            MapboxDirectionsMatrix client = builder.build();
-            Response<DirectionsMatrixResponse> response = client.executeCall();
-            if (response.isSuccessful()) {
-                double[] durations = response.body().getDurations()[0];
-                if (durations != null && durations.length != 0) {
-                    int shortest = 0;
-                    for (int i = 0; i < durations.length; i++) {
-                        if (durations[i] < durations[shortest]) {
-                            shortest = i;
-                        }
-                    }
-                    return copy.get(shortest);
-                }
-            }
-            throw new UnsupportedOperationException("Could not get travel durations");
-        } catch (IOException e) {
-            throw new UncheckedIOException("Request to get information regarding locations failed", e);
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new IllegalArgumentException("Unable to properly execute requests", e);
         }
+
+        GeoJsonObject nearest = destinationToResponseMap.keySet().stream()
+                .min((o1, o2) -> {
+                    DirectionsResponse o1Response = destinationToResponseMap.get(o1);
+                    DirectionsResponse o2Response = destinationToResponseMap.get(o2);
+                    if (o1Response.getRoutes().size() != 1 || o2Response.getRoutes().size() != 1) {
+                        throw new AssertionError("Found more than one route");
+                    }
+                    return Double.compare(o1Response.getRoutes().get(0).getDistance(),
+                                          o2Response.getRoutes().get(0).getDistance());
+                }).orElseThrow(() -> new FailedDependencyException("Couldn't find shortest route via supporting API"));
+
+       return nearest;
     }
 
     @Override
@@ -119,6 +131,35 @@ public class MapboxMapService implements MapService {
         }
 
         return sorted;
+    }
+
+    private static class MapboxDirectionsCallback implements Callback<DirectionsResponse> {
+
+        private final GeoJsonObject destination;
+        private final BiConsumer<GeoJsonObject, DirectionsResponse> consumer;
+        private final CountDownLatch latch;
+
+        private MapboxDirectionsCallback(GeoJsonObject destination,
+                                         BiConsumer<GeoJsonObject, DirectionsResponse> consumer,
+                                         CountDownLatch latch) {
+            this.destination = destination;
+            this.latch = latch;
+            this.consumer = consumer;
+        }
+
+        @Override
+        public void onResponse(Call<DirectionsResponse> call,
+                               Response<DirectionsResponse> response) {
+            consumer.accept(destination, response.body());
+            latch.countDown();
+        }
+
+        @Override
+        public void onFailure(Call<DirectionsResponse> call,
+                              Throwable throwable) {
+            latch.countDown();
+            throw new IllegalArgumentException("Unable to get directions", throwable);
+        }
     }
 
 }

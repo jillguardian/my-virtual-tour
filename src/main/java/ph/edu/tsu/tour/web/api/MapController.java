@@ -89,9 +89,9 @@ class MapController {
 
     @RequestMapping(value = "/directions", method = RequestMethod.GET)
     public ResponseEntity<DirectionsResponse> getDirections(@RequestParam("profile") Profile profile,
-                                        @RequestParam("source-longitude") double sourceLongitude,
-                                        @RequestParam("source-latitude") double sourceLatitude,
-                                        @RequestParam("destination") long[] ids) {
+                                                            @RequestParam("source-longitude") double sourceLongitude,
+                                                            @RequestParam("source-latitude") double sourceLatitude,
+                                                            @RequestParam("destination") long[] ids) {
         Set<PointOfInterest> destinations = new HashSet<>();
         for (long id : ids) {
             PointOfInterest poi = pointOfInterestService.findById(id);

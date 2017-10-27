@@ -31,17 +31,11 @@ public class AccessManagementServiceImpl implements AccessManagementService {
 
     @Override
     public Privilege savePrivilege(Privilege privilege) {
-        if (privilegeRepository.findPrivilegeByName(privilege.getName()) != null) {
-            throw new IllegalArgumentException("Privilege [" + privilege.getName() + "] already exists");
-        }
         return privilegeRepository.save(privilege);
     }
 
     @Override
     public Role saveRole(Role role) {
-        if (roleRepository.findRoleByName(role.getName()) != null) {
-            throw new IllegalArgumentException("Role [" + role.getName() + "] already exists");
-        }
         for (Privilege privilege : role.getPrivileges()) {
             if (!privilegeRepository.exists(privilege.getId())) {
                 throw new IllegalArgumentException("Privilege with id [" + privilege.getId() + "] does not exist");

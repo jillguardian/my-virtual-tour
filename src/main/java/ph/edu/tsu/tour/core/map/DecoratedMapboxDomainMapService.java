@@ -7,6 +7,7 @@ import org.geojson.GeoJsonObject;
 import org.geojson.Point;
 import ph.edu.tsu.tour.Project;
 import ph.edu.tsu.tour.core.poi.PointOfInterest;
+import ph.edu.tsu.tour.exception.FailedDependencyException;
 import retrofit2.Response;
 
 import java.io.IOException;
@@ -87,7 +88,7 @@ public final class DecoratedMapboxDomainMapService implements DomainMapService {
             Response<DirectionsResponse> response = client.executeCall();
             return response.body();
         } catch (IOException e) {
-            throw new UncheckedIOException("Unable to get directions", e);
+            throw new FailedDependencyException("Unable to get directions", e);
         }
     }
 
