@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 @RestController
 @RequestMapping(Urls.REST_MAP)
-class MapController {
+class MapRestController {
 
     private final DecoratedMapboxDomainMapService domainMapService;
     private final PointOfInterestService pointOfInterestService;
@@ -39,8 +39,8 @@ class MapController {
     private final Function<Iterable<PointOfInterest>, FeatureCollection> pointOfInterestCollectionToFeatureCollection;
 
     @Autowired
-    MapController(DecoratedMapboxDomainMapService domainMapService,
-                  PointOfInterestService pointOfInterestService) {
+    MapRestController(DecoratedMapboxDomainMapService domainMapService,
+                      PointOfInterestService pointOfInterestService) {
         this.domainMapService = domainMapService;
         this.pointOfInterestService = pointOfInterestService;
         this.pointOfInterestToFeature = new PointOfInterestToFeature();
