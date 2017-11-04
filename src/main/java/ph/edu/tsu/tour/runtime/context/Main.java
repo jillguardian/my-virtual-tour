@@ -42,10 +42,19 @@ import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
+import ph.edu.tsu.tour.core.user.PublishingUserService;
+import ph.edu.tsu.tour.core.user.PublishingVerificationTokenService;
+import ph.edu.tsu.tour.core.user.UserRepository;
+import ph.edu.tsu.tour.core.user.UserService;
+import ph.edu.tsu.tour.core.user.UserServiceImpl;
+import ph.edu.tsu.tour.core.user.VerificationTokenRepository;
+import ph.edu.tsu.tour.core.user.VerificationTokenService;
+import ph.edu.tsu.tour.core.user.VerificationTokenServiceImpl;
 
 import javax.persistence.EntityManager;
 import java.net.URI;
 
+// TODO: Remove vanilla service beans and solely expose publishing service beans instead.
 @Configuration
 public class Main {
 
@@ -59,12 +68,8 @@ public class Main {
     @Bean
     public PointOfInterestService pointOfInterestService(EntityManager entityManager,
                                                          PointOfInterestRepository pointOfInterestRepository) {
-        return new PointOfInterestServiceImpl(entityManager, pointOfInterestRepository);
-    }
-
-    @Bean
-    public PublishingPointOfInterestService publishingPointOfInterestService(
-            PointOfInterestService pointOfInterestService) {
+        PointOfInterestService pointOfInterestService = new PointOfInterestServiceImpl(entityManager,
+                                                                                       pointOfInterestRepository);
         return new PublishingPointOfInterestService(pointOfInterestService);
     }
 
@@ -73,8 +78,26 @@ public class Main {
                                                            RoleRepository roleRepository,
                                                            AdministratorRepository administratorRepository,
                                                            PasswordEncoder passwordEncoder) {
-        return new AccessManagementServiceImpl(privilegeRepository, roleRepository,
-                                               administratorRepository, passwordEncoder);
+        return new AccessManagementServiceImpl(privilegeRepository,
+                                               roleRepository,
+                                               administratorRepository,
+                                               passwordEncoder);
+    }
+
+    @Bean
+    public PublishingUserService userService(EntityManager entityManager,
+                                             UserRepository userRepository,
+                                             PasswordEncoder passwordEncoder) {
+        UserService userService =  new UserServiceImpl(entityManager, userRepository, passwordEncoder);
+        return new PublishingUserService(userService);
+    }
+
+    @Bean
+    public PublishingVerificationTokenService verificationTokenService(
+            EntityManager entityManager, VerificationTokenRepository verificationTokenRepository) {
+        VerificationTokenService verificationTokenService =
+                new VerificationTokenServiceImpl(entityManager, verificationTokenRepository);
+        return new PublishingVerificationTokenService(verificationTokenService);
     }
 
     @Bean

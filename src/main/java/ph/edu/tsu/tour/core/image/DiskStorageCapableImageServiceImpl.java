@@ -14,7 +14,6 @@ import org.apache.tika.mime.MimeTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ph.edu.tsu.tour.core.storage.StorageService;
-import ph.edu.tsu.tour.exception.ImageFileUnsavedException;
 
 import java.io.File;
 import java.io.FileInputStream;

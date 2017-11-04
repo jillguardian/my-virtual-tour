@@ -16,8 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ph.edu.tsu.tour.core.access.AdministratorRepository;
-import ph.edu.tsu.tour.security.Privileges;
-import ph.edu.tsu.tour.security.UserDetailsServiceImpl;
+import ph.edu.tsu.tour.core.access.Privileges;
+import ph.edu.tsu.tour.core.access.UserDetailsServiceImpl;
 import ph.edu.tsu.tour.web.Urls;
 
 @EnableWebSecurity
@@ -94,6 +94,7 @@ public class WebSecurityConfiguration {
                     .authorizeRequests()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_POI + "/**", "GET")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_MAP + "/**", "GET")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/new", "POST")).permitAll()
                     .anyRequest().denyAll()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

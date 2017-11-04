@@ -46,8 +46,8 @@ class PointOfInterestRestController implements Observer {
 
     @Autowired
     PointOfInterestRestController(PublishingPointOfInterestService pointOfInterestService,
-                                         ToPublicPointOfInterestService toPublicPointOfInterestService,
-                                         SimpMessagingTemplate simpMessagingTemplate) {
+                                  ToPublicPointOfInterestService toPublicPointOfInterestService,
+                                  SimpMessagingTemplate simpMessagingTemplate) {
         pointOfInterestService.addObserver(this);
 
         this.pointOfInterestService = pointOfInterestService;

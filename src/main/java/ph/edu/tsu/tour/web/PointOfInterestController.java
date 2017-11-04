@@ -58,10 +58,10 @@ class PointOfInterestController {
     private ToPublicImageService toPublicImageService;
 
     @Autowired
-    PointOfInterestController(PublishingPointOfInterestService pointOfInterestService,
-                                     DiskStorageCapableImageService diskStorageCapableImageService,
-                                     ToPublicPointOfInterestService toPublicPointOfInterestService,
-                                     ToPublicImageService toPublicImageService) throws IOException {
+    PointOfInterestController(PointOfInterestService pointOfInterestService,
+                              DiskStorageCapableImageService diskStorageCapableImageService,
+                              ToPublicPointOfInterestService toPublicPointOfInterestService,
+                              ToPublicImageService toPublicImageService) throws IOException {
         this.pointOfInterestService = pointOfInterestService;
         this.imageService = diskStorageCapableImageService;
         this.toPublicPointOfInterestService = toPublicPointOfInterestService;

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<body>
+<div layout:fragment="content">
+    <div class="row">
+        <div class="panel panel-success">
+            <div class="panel-body">
+                <p th:text="user.verification.success.message">Your account is now verified!</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

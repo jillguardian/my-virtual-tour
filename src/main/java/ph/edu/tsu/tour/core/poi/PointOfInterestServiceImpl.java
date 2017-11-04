@@ -18,6 +18,7 @@ public class PointOfInterestServiceImpl implements PointOfInterestService {
     private PointOfInterestRepository poiRepository;
 
     public PointOfInterestServiceImpl(EntityManager entityManager, PointOfInterestRepository poiRepository) {
+        this.entityManager = entityManager;
         this.poiRepository = Objects.requireNonNull(poiRepository, "[poiRepository] must be set");
     }
 

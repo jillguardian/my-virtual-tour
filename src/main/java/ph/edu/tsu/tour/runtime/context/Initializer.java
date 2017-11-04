@@ -7,15 +7,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.MailSender;
 import org.springframework.stereotype.Component;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
 import ph.edu.tsu.tour.core.access.Administrator;
 import ph.edu.tsu.tour.core.access.Privilege;
 import ph.edu.tsu.tour.core.access.Role;
-import ph.edu.tsu.tour.security.Privileges;
+import ph.edu.tsu.tour.core.access.Privileges;
+import ph.edu.tsu.tour.core.user.PublishingUserService;
+import ph.edu.tsu.tour.core.user.PublishingVerificationTokenService;
+import ph.edu.tsu.tour.core.user.VerificationTokenCreatingListener;
+import ph.edu.tsu.tour.core.user.VerificationUrlSendingListener;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,12 +32,35 @@ public class Initializer {
     private static final Logger logger = LoggerFactory.getLogger(Initializer.class);
 
     @Component
-    private static class DataLoader implements ApplicationRunner {
+    private static class UserRegistrationComponentsInitializer implements ApplicationRunner {
+
+        private final PublishingUserService userService;
+        private final PublishingVerificationTokenService verificationTokenService;
+
+        @Autowired
+        public UserRegistrationComponentsInitializer(PublishingUserService userService,
+                                                     PublishingVerificationTokenService verificationTokenService) {
+            this.userService = userService;
+            this.verificationTokenService = verificationTokenService;
+        }
+
+        @Override
+        public void run(ApplicationArguments args) throws Exception {
+            userService.addObserver(new VerificationTokenCreatingListener(verificationTokenService));
+            // TODO: Add a new VerificationUrlSendingListener as an observer to verificationTokenService.
+        }
+    }
+
+    /**
+     * <p>Adds default privileges, roles, and administrators to the database, if they do not exist.</p>
+     */
+    @Component
+    private static class DatabaseInitializer implements ApplicationRunner {
 
         private AccessManagementService accessManagementService;
 
         @Autowired
-        public DataLoader(AccessManagementService accessManagementService) {
+        public DatabaseInitializer(AccessManagementService accessManagementService) {
             this.accessManagementService = accessManagementService;
         }
 
@@ -79,14 +107,14 @@ public class Initializer {
             Administrator administrator = Administrator.builder()
                     .username("admin")
                     .password("admin")
-                    .roles(new HashSet<>(Collections.singleton(superAdministratorRole)))
+                    .roles(new HashSet<>(Collections.singleton(roles.get(0))))
                     .build();
             Administrator found = accessManagementService.findAdministratorByUsername(administrator.getUsername());
             if (found != null) {
                 found.setPassword(administrator.getPassword());
-                administrator = accessManagementService.saveAdministrator(found);
+                accessManagementService.saveAdministrator(found);
             } else {
-                administrator = accessManagementService.saveAdministrator(administrator);
+                accessManagementService.saveAdministrator(administrator);
             }
 
             logger.info("Database initialized!");

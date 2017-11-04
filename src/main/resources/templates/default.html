@@ -33,10 +33,10 @@
         </div>
         <div class="collapse navbar-collapse" id="my-navbar-collapse">
             <ul class="nav navbar-nav">
-                <li sec:authorize="isAnonymous() or (not hasAuthority(T(ph.edu.tsu.tour.security.Privileges.PointOfInterest).WRITE))">
+                <li sec:authorize="isAnonymous() or (not hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.PointOfInterest).WRITE))">
                     <a href="/poi" th:href="@{/poi}" th:value="#{pois}">Points of Interest</a>
                 </li>
-                <li class="dropdown" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.PointOfInterest).WRITE)">
+                <li class="dropdown" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.PointOfInterest).WRITE)">
                     <a href="#"
                        class="dropdown-toggle"
                        data-toggle="dropdown"
@@ -49,7 +49,7 @@
                         <li><a th:href="@{/poi/}" th:value="#{view-all}">View All</a></li>
                     </ul>
                 </li>
-                <li class="dropdown" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).READ, T(ph.edu.tsu.tour.security.Privileges.Access).WRITE)">
+                <li class="dropdown" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).READ, T(ph.edu.tsu.tour.core.access.Privileges.Access).WRITE)">
                     <a href="#"
                        class="dropdown-toggle"
                        data-toggle="dropdown"
@@ -59,8 +59,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li class="dropdown-header" th:value="#{administrator}">Administrator</li>
-                        <li><a th:href="@{/access-management/administrator/new}" th:value="#{add-new}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).WRITE)">Add New</a></li>
-                        <li><a th:href="@{/access-management/administrator}" th:value="#{view-all}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.security.Privileges.Access).READ)">View All</a></li>
+                        <li><a th:href="@{/access-management/administrator/new}" th:value="#{add-new}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).WRITE)">Add New</a></li>
+                        <li><a th:href="@{/access-management/administrator}" th:value="#{view-all}" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).READ)">View All</a></li>
                     </ul>
                 </li>
             </ul>
