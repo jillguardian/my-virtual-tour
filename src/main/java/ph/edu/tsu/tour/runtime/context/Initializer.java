@@ -19,6 +19,7 @@ import ph.edu.tsu.tour.core.access.Privileges;
 import ph.edu.tsu.tour.core.user.PublishingUserService;
 import ph.edu.tsu.tour.core.user.PublishingVerificationTokenService;
 import ph.edu.tsu.tour.core.user.VerificationTokenCreatingListener;
+import ph.edu.tsu.tour.core.user.VerificationTokenDeletingListener;
 import ph.edu.tsu.tour.core.user.VerificationUrlSendingListener;
 
 import java.util.Arrays;
@@ -47,6 +48,7 @@ public class Initializer {
         @Override
         public void run(ApplicationArguments args) throws Exception {
             userService.addObserver(new VerificationTokenCreatingListener(verificationTokenService));
+            userService.addObserver(new VerificationTokenDeletingListener(verificationTokenService));
             // TODO: Add a new VerificationUrlSendingListener as an observer to verificationTokenService.
         }
     }
