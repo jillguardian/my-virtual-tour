@@ -35,6 +35,10 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
 
     @Override
     public VerificationToken save(VerificationToken verificationToken) {
+        // TODO: Remove; affixed for now for debugging purposes.
+        String username = verificationToken.getUser().getUsername();
+        logger.info("Created verification token [" + verificationToken.getContent() + "] for user [" + username + "]");
+
         return verificationTokenRepository.save(verificationToken);
     }
 
@@ -89,6 +93,13 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         if (user.isActivated()) {
             throw new IllegalArgumentException("User [" + user.getUsername() + "] is already verified");
         }
+
+        VerificationToken existing = verificationTokenRepository.findByUser(user);
+        if (existing != null) {
+            logger.debug("There's already an existing verification token for user [" + user.getUsername() + "]");
+            verificationTokenRepository.delete(existing);
+            logger.debug("Existing verification token deleted");
+        }
         VerificationToken verificationToken = new VerificationToken(user, UUID.randomUUID().toString());
         return save(verificationToken);
     }
@@ -100,7 +111,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
             throw new IllegalArgumentException("User [" + user.getUsername() + "] is already verified");
         } else {
             OffsetDateTime expiration = verificationToken.getCreated().plusDays(verificationTokenLifeSpanInDays);
-            if (expiration.isBefore(verificationToken.getCreated())) {
+            if (verificationToken.getCreated().isBefore(expiration)) {
                 // We have to use the repository instance instead of the service to avoid double-password encryption.
                 // Currently implementation of the service encrypts the password before saving it.
                 user.setActivated(true);

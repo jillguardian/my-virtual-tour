@@ -26,10 +26,6 @@ public class VerificationTokenCreatingListener implements Observer {
             UserModifiedEvent event = (UserModifiedEvent) arg;
             if (event.getAction() == EntityAction.CREATED) {
                 VerificationToken token = verificationTokenService.produce(event.getEntity());
-
-                // TODO: Remove; affixed for now for debugging purposes.
-                String username = event.getEntity().getUsername();
-                logger.info("Created verification token [" + token.getContent() + "] for user [" + username + "]");
             }
         }
     }

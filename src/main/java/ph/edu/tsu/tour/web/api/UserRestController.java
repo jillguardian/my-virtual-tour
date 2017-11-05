@@ -9,14 +9,16 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ph.edu.tsu.tour.core.common.function.NewUserPayloadToUser;
 import ph.edu.tsu.tour.core.user.User;
 import ph.edu.tsu.tour.core.user.UserService;
+import ph.edu.tsu.tour.core.user.VerificationTokenService;
 import ph.edu.tsu.tour.exception.ResourceConflictException;
+import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 import ph.edu.tsu.tour.web.Urls;
 
-import java.security.Principal;
 import java.util.function.Function;
 
 @CrossOrigin
@@ -29,9 +31,13 @@ class UserRestController {
     private final UserService userService;
     private final Function<User.Payload, User> newUserPayloadToUser;
 
+    private final VerificationTokenService verificationTokenService;
+
     @Autowired
-    UserRestController(UserService userService) {
+    UserRestController(UserService userService,
+                       VerificationTokenService verificationTokenService) {
         this.userService = userService;
+        this.verificationTokenService = verificationTokenService;
         newUserPayloadToUser = new NewUserPayloadToUser();
     }
 
@@ -66,8 +72,18 @@ class UserRestController {
         return ResponseEntity.ok(saved);
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public ResponseEntity<?> test(Authentication authentication) {
+    @RequestMapping(value = "/reverify", method = RequestMethod.GET)
+    public ResponseEntity<?> reverify(@RequestParam String email) {
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("User with email [" + email + "] does not exist");
+        }
+
+        if (user.isActivated()) {
+            throw new IllegalStateException("User with email [" + email + "] is already activated");
+        }
+
+        verificationTokenService.produce(user);
         return ResponseEntity.accepted().build();
     }
 

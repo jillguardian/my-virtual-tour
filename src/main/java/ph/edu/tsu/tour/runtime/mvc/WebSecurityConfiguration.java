@@ -67,6 +67,7 @@ public class WebSecurityConfiguration {
             http.antMatcher(Urls.REST_USER + "/**")
                     .authorizeRequests()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/new", "POST")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/reverify", "GET")).permitAll()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/**")).authenticated()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
