@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,22 +32,22 @@ class UserController {
         this.verificationTokenService = verificationTokenService;
     }
 
-    @RequestMapping(value = "verify", method = RequestMethod.GET)
-    public String verify(@RequestParam String token) {
+    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    public String verify(Model model, @RequestParam String token) {
         VerificationToken verificationToken = verificationTokenService.findByContent(token);
         if (verificationToken == null) {
-            throw new ResourceNotFoundException("Token [" + token + "] does not exist");
+            throw new ResourceNotFoundException("Token [" + token + "] is invalid");
         }
 
         User user = verificationToken.getUser();
-        if (!user.isActivated()) {
-            user.setActivated(true);
-            userService.save(user);
-            verificationTokenService.deleteById(verificationToken.getId());
+        boolean activated = user.isActivated();
+        if (!activated) {
+            verificationTokenService.consume(verificationToken);
         } else {
             logger.debug("User [" + user.getUsername() + "] is already activated");
-            verificationTokenService.deleteById(verificationToken.getId());
         }
+
+        model.addAttribute("activated", activated);
         return "/user/verified";
     }
 

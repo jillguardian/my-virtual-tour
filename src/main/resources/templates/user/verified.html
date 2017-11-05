@@ -6,9 +6,12 @@
 <body>
 <div layout:fragment="content">
     <div class="row">
-        <div class="panel panel-success">
+        <div class="panel" th:classappend="${activated} ? panel-danger : panel-success">
+            <div class="panel-heading" th:text="#{user.verification}">
+                Account Verification
+            </div>
             <div class="panel-body">
-                <p th:text="user.verification.success.message">Your account is now verified!</p>
+                <p th:text="${activated} ? #{user.verification.already-verified.message} : #{user.verification.success.message}">Your account is now verified!</p>
             </div>
         </div>
     </div>

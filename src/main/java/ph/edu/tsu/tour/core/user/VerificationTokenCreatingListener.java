@@ -6,6 +6,7 @@ import ph.edu.tsu.tour.core.EntityAction;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.UUID;
 
 /**
  * <p>A listener that produces and persists a verification token for newly-added users.</p>
@@ -24,8 +25,7 @@ public class VerificationTokenCreatingListener implements Observer {
         if (arg instanceof UserModifiedEvent) {
             UserModifiedEvent event = (UserModifiedEvent) arg;
             if (event.getAction() == EntityAction.CREATED) {
-                VerificationToken token = verificationTokenService.create(event.getEntity());
-                verificationTokenService.save(token);
+                VerificationToken token = verificationTokenService.produce(event.getEntity());
 
                 // TODO: Remove; affixed for now for debugging purposes.
                 String username = event.getEntity().getUsername();

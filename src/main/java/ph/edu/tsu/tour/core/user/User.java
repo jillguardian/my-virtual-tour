@@ -46,7 +46,7 @@ public class User implements Serializable {
 
     @Data
     @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-    public static class NewUserPayload implements Serializable {
+    public static class Payload implements Serializable {
 
         private static final long serialVersionUID = -5428176942386069327L;
 

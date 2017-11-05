@@ -46,11 +46,6 @@ public class PublishingVerificationTokenService extends Observable implements Ve
     }
 
     @Override
-    public VerificationToken create(User user) {
-        return verificationTokenService.create(user);
-    }
-
-    @Override
     public boolean deleteById(long id) {
         VerificationToken verificationToken = verificationTokenService.findById(id);
         boolean deleted = verificationTokenService.deleteById(id);
@@ -60,6 +55,16 @@ public class PublishingVerificationTokenService extends Observable implements Ve
             publish(verificationTokenModifiedEvent);
         }
         return deleted;
+    }
+
+    @Override
+    public VerificationToken produce(User user) {
+        return verificationTokenService.produce(user);
+    }
+
+    @Override
+    public void consume(VerificationToken verificationToken) {
+        verificationTokenService.consume(verificationToken);
     }
 
     private void publish(VerificationTokenModifiedEvent verificationTokenModifiedEvent) {

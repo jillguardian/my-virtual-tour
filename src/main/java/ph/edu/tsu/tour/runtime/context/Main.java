@@ -94,9 +94,11 @@ public class Main {
 
     @Bean
     public PublishingVerificationTokenService verificationTokenService(
-            EntityManager entityManager, VerificationTokenRepository verificationTokenRepository) {
+            EntityManager entityManager,
+            UserRepository userRepository,
+            VerificationTokenRepository verificationTokenRepository) {
         VerificationTokenService verificationTokenService =
-                new VerificationTokenServiceImpl(entityManager, verificationTokenRepository);
+                new VerificationTokenServiceImpl(entityManager, userRepository, verificationTokenRepository);
         return new PublishingVerificationTokenService(verificationTokenService);
     }
 

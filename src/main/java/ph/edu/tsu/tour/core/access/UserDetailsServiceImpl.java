@@ -5,10 +5,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ph.edu.tsu.tour.core.access.Administrator;
-import ph.edu.tsu.tour.core.access.AdministratorRepository;
-import ph.edu.tsu.tour.core.access.Privilege;
-import ph.edu.tsu.tour.core.access.Role;
 
 import java.util.ArrayList;
 import java.util.Collection;

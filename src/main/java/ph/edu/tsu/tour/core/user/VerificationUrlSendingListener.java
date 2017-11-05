@@ -13,7 +13,7 @@ import java.util.Observer;
  */
 public class VerificationUrlSendingListener implements Observer {
 
-    private static final String EMAIL_SUBJECT_CODE = "user.verification.email.subject";
+    private static final String EMAIL_SUBJECT_CODE = "user.verification";
     private static final String CONFIRMATION_URL = Urls.USER + "/verify";
 
     private final MessageSource messages;

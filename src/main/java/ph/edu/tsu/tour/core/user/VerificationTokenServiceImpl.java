@@ -14,12 +14,15 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     private static final Logger logger = LoggerFactory.getLogger(VerificationTokenServiceImpl.class);
 
     @PersistenceContext
-    private EntityManager entityManager;
-    private VerificationTokenRepository verificationTokenRepository;
+    private final EntityManager entityManager;
+    private final UserRepository userRepository;
+    private final VerificationTokenRepository verificationTokenRepository;
 
     public VerificationTokenServiceImpl(EntityManager entityManager,
+                                        UserRepository userRepository,
                                         VerificationTokenRepository verificationTokenRepository) {
         this.entityManager = entityManager;
+        this.userRepository = userRepository;
         this.verificationTokenRepository = verificationTokenRepository;
     }
 
@@ -66,14 +69,6 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     }
 
     @Override
-    public VerificationToken create(User user) {
-        if (user.isActivated()) {
-            throw new IllegalArgumentException("User [" + user.getUsername() + "] is already verified");
-        }
-        return new VerificationToken(user, UUID.randomUUID().toString());
-    }
-
-    @Override
     public boolean deleteById(long id) {
         verificationTokenRepository.delete(id);
         boolean exists = verificationTokenRepository.exists(id);
@@ -82,4 +77,27 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         }
         return !exists;
     }
+
+    @Override
+    public VerificationToken produce(User user) {
+        if (user.isActivated()) {
+            throw new IllegalArgumentException("User [" + user.getUsername() + "] is already verified");
+        }
+        VerificationToken verificationToken = new VerificationToken(user, UUID.randomUUID().toString());
+        return save(verificationToken);
+    }
+
+    @Override
+    public void consume(VerificationToken verificationToken) {
+        User user = verificationToken.getUser();
+        if (user.isActivated()) {
+            throw new IllegalArgumentException("User [" + user.getUsername() + "] is already verified");
+        } else {
+            // We have to use the repository instance instead of the service to avoid double-password encryption.
+            // Currently implementation of the service encrypts the password before saving it.
+            user.setActivated(true);
+            userRepository.save(user);
+        }
+    }
+
 }

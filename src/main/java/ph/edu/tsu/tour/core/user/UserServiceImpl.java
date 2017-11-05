@@ -36,6 +36,7 @@ public class UserServiceImpl implements UserService {
                 throw new IllegalArgumentException("Email address [" + user.getEmail() + "] is unavailable for use");
             }
         }
+        // FIXME: Causes double encryption.
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
