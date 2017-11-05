@@ -2,15 +2,18 @@ package ph.edu.tsu.tour.core.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ph.edu.tsu.tour.exception.ExpiredResourceException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Transactional
 public class VerificationTokenServiceImpl implements VerificationTokenService {
 
+    private static final int DEFAULT_VERIFICATION_TOKEN_LIFE_SPAN_IN_DAYS = 1;
     private static final Logger logger = LoggerFactory.getLogger(VerificationTokenServiceImpl.class);
 
     @PersistenceContext
@@ -18,12 +21,15 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
 
+    private final int verificationTokenLifeSpanInDays;
+
     public VerificationTokenServiceImpl(EntityManager entityManager,
                                         UserRepository userRepository,
                                         VerificationTokenRepository verificationTokenRepository) {
         this.entityManager = entityManager;
         this.userRepository = userRepository;
         this.verificationTokenRepository = verificationTokenRepository;
+        verificationTokenLifeSpanInDays = VerificationTokenServiceImpl.DEFAULT_VERIFICATION_TOKEN_LIFE_SPAN_IN_DAYS;
     }
 
 
@@ -93,10 +99,16 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         if (user.isActivated()) {
             throw new IllegalArgumentException("User [" + user.getUsername() + "] is already verified");
         } else {
-            // We have to use the repository instance instead of the service to avoid double-password encryption.
-            // Currently implementation of the service encrypts the password before saving it.
-            user.setActivated(true);
-            userRepository.save(user);
+            OffsetDateTime expiration = verificationToken.getCreated().plusDays(verificationTokenLifeSpanInDays);
+            if (expiration.isBefore(verificationToken.getCreated())) {
+                // We have to use the repository instance instead of the service to avoid double-password encryption.
+                // Currently implementation of the service encrypts the password before saving it.
+                user.setActivated(true);
+                userRepository.save(user);
+            } else {
+                throw new ExpiredResourceException(
+                        "Verification token [" + verificationToken.getContent() + "] has already expired");
+            }
         }
     }
 
