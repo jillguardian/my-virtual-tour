@@ -1,5 +1,7 @@
 package ph.edu.tsu.tour.web.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,8 @@ import java.util.function.Function;
 @RestController
 @RequestMapping(Urls.REST_USER)
 class UserRestController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
 
     private final UserService userService;
     private final Function<User.Payload, User> newUserPayloadToUser;
@@ -47,8 +51,24 @@ class UserRestController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public ResponseEntity<User> update(Authentication authentication, @RequestBody User.Payload payload) {
-        // TODO: Get currently authenticated user and update user's info.
-        throw new UnsupportedOperationException();
+        String username = authentication.getName();
+        User user = userService.findByUsername(username);
+
+        if (!payload.getUsername().equals(user.getUsername())) {
+            throw new UnsupportedOperationException("Username changes are not allowed");
+        }
+        if (!payload.getEmail().equals(user.getEmail())) {
+            throw new UnsupportedOperationException("Changing of email is not allowed");
+        }
+
+        user.setPassword(payload.getPassword());
+        User saved = userService.save(user);
+        return ResponseEntity.ok(saved);
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public ResponseEntity<?> test(Authentication authentication) {
+        return ResponseEntity.accepted().build();
     }
 
 }
