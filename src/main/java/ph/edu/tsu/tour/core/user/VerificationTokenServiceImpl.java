@@ -97,7 +97,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationToken existing = verificationTokenRepository.findByUser(user);
         if (existing != null) {
             logger.debug("There's already an existing verification token for user [" + user.getUsername() + "]");
-            verificationTokenRepository.delete(existing);
+            deleteById(existing.getId());
             logger.debug("Existing verification token deleted");
         }
         VerificationToken verificationToken = new VerificationToken(user, UUID.randomUUID().toString());
