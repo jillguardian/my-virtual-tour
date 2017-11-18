@@ -1,5 +1,7 @@
 package ph.edu.tsu.tour.core.user;
 
+import java.time.OffsetDateTime;
+
 public interface VerificationTokenService {
 
     VerificationToken save(VerificationToken verificationToken);

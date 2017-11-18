@@ -59,7 +59,16 @@ public class PublishingVerificationTokenService extends Observable implements Ve
 
     @Override
     public VerificationToken produce(User user) {
-        return verificationTokenService.produce(user);
+        boolean exists = verificationTokenService.findByUser(user) != null;
+
+        VerificationToken newVerificationToken = verificationTokenService.produce(user);
+
+        EntityAction action = exists ? EntityAction.MODIFIED : EntityAction.CREATED;
+        VerificationTokenModifiedEvent verificationTokenModifiedEvent =
+                new VerificationTokenModifiedEvent(action, newVerificationToken);
+        publish(verificationTokenModifiedEvent);
+
+        return newVerificationToken;
     }
 
     @Override

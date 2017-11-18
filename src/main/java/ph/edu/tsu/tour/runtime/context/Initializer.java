@@ -9,8 +9,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.MailSender;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.TemplateEngine;
 import ph.edu.tsu.tour.core.access.AccessManagementService;
 import ph.edu.tsu.tour.core.access.Administrator;
 import ph.edu.tsu.tour.core.access.Privilege;
@@ -20,7 +21,7 @@ import ph.edu.tsu.tour.core.user.PublishingUserService;
 import ph.edu.tsu.tour.core.user.PublishingVerificationTokenService;
 import ph.edu.tsu.tour.core.user.VerificationTokenCreatingListener;
 import ph.edu.tsu.tour.core.user.VerificationTokenDeletingListener;
-import ph.edu.tsu.tour.core.user.VerificationUrlSendingListener;
+import ph.edu.tsu.tour.core.user.VerificationTokenSendingListener;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,18 +39,31 @@ public class Initializer {
         private final PublishingUserService userService;
         private final PublishingVerificationTokenService verificationTokenService;
 
+        private final TemplateEngine templateEngine;
+        private final MessageSource messages;
+        private final JavaMailSender mailSender;
+
         @Autowired
         public UserRegistrationComponentsInitializer(PublishingUserService userService,
-                                                     PublishingVerificationTokenService verificationTokenService) {
+                                                     PublishingVerificationTokenService verificationTokenService,
+                                                     TemplateEngine templateEngine,
+                                                     MessageSource messages,
+                                                     JavaMailSender mailSender) {
             this.userService = userService;
             this.verificationTokenService = verificationTokenService;
+
+            this.templateEngine = templateEngine;
+            this.messages = messages;
+            this.mailSender = mailSender;
         }
 
         @Override
         public void run(ApplicationArguments args) throws Exception {
             userService.addObserver(new VerificationTokenCreatingListener(verificationTokenService));
             userService.addObserver(new VerificationTokenDeletingListener(verificationTokenService));
-            // TODO: Add a new VerificationUrlSendingListener as an observer to verificationTokenService.
+            verificationTokenService.addObserver(new VerificationTokenSendingListener(templateEngine,
+                                                                                      messages,
+                                                                                      mailSender));
         }
     }
 
