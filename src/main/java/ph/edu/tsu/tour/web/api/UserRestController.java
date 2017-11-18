@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ph.edu.tsu.tour.core.common.function.NewUserPayloadToUser;
 import ph.edu.tsu.tour.core.user.User;
 import ph.edu.tsu.tour.core.user.UserService;
+import ph.edu.tsu.tour.core.user.VerificationToken;
 import ph.edu.tsu.tour.core.user.VerificationTokenService;
 import ph.edu.tsu.tour.exception.ResourceConflictException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
@@ -78,12 +79,30 @@ class UserRestController {
         if (user == null) {
             throw new ResourceNotFoundException("User with email [" + email + "] does not exist");
         }
-
         if (user.isActivated()) {
             throw new IllegalStateException("User with email [" + email + "] is already activated");
         }
 
         verificationTokenService.produce(user);
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    public ResponseEntity<?> verify(@RequestParam String token) {
+        VerificationToken verificationToken = verificationTokenService.findByContent(token);
+        if (verificationToken == null) {
+            throw new ResourceNotFoundException("Token [" + token + "] is invalid");
+        }
+
+        User user = verificationToken.getUser();
+        boolean activated = user.isActivated();
+        if (!activated) {
+            verificationTokenService.consume(verificationToken);
+        } else {
+            throw new IllegalStateException(
+                    "User [" + verificationToken.getUser().getUsername() + "] is already activated");
+        }
+
         return ResponseEntity.accepted().build();
     }
 
