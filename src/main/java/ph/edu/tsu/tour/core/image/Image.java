@@ -39,14 +39,16 @@ public class Image implements Serializable {
     @JsonProperty("TITLE")
     private String title;
 
+    @Column(length = 5000)
     @JsonProperty("DESC")
     private String description;
 
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false, unique = false, length = 2000)
     @Convert(converter = UriPersistenceConverter.class)
     @JsonProperty("IMAGE")
     private URI location;
 
+    @Column(length = 2000)
     @JsonProperty("THUMBNAIL")
     @Convert(converter = UriPersistenceConverter.class)
     private URI preview;
