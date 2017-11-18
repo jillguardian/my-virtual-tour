@@ -42,6 +42,10 @@ import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
+import ph.edu.tsu.tour.core.user.NewPasswordTokenRepository;
+import ph.edu.tsu.tour.core.user.NewPasswordTokenService;
+import ph.edu.tsu.tour.core.user.NewPasswordTokenServiceImpl;
+import ph.edu.tsu.tour.core.user.PublishingNewPasswordTokenService;
 import ph.edu.tsu.tour.core.user.PublishingUserService;
 import ph.edu.tsu.tour.core.user.PublishingVerificationTokenService;
 import ph.edu.tsu.tour.core.user.UserRepository;
@@ -100,6 +104,14 @@ public class Main {
         VerificationTokenService verificationTokenService =
                 new VerificationTokenServiceImpl(entityManager, userRepository, verificationTokenRepository);
         return new PublishingVerificationTokenService(verificationTokenService);
+    }
+
+    @Bean
+    public PublishingNewPasswordTokenService newPasswordTokenService(
+            EntityManager entityManager, NewPasswordTokenRepository newPasswordTokenRepository) {
+        NewPasswordTokenService newPasswordTokenService =
+                new NewPasswordTokenServiceImpl(entityManager, newPasswordTokenRepository);
+        return new PublishingNewPasswordTokenService(newPasswordTokenService);
     }
 
     @Bean

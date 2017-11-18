@@ -116,6 +116,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
                 // Currently implementation of the service encrypts the password before saving it.
                 user.setActivated(true);
                 userRepository.save(user);
+                deleteById(verificationToken.getId());
             } else {
                 throw new ExpiredResourceException(
                         "Verification token [" + verificationToken.getContent() + "] has already expired");

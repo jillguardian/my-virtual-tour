@@ -66,8 +66,16 @@ public class WebSecurityConfiguration {
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher(Urls.REST_USER + "/**")
                     .authorizeRequests()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/new", "POST")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/reverify", "GET")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/new", "POST"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/verify", "POST"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/reverify", "POST"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/request-password-reset", "POST"))
+                    .permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/reset-password", "POST"))
+                    .permitAll()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/**")).authenticated()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

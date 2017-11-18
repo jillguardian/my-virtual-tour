@@ -55,4 +55,18 @@ public class User implements Serializable {
         private String email;
     }
 
+    @Data
+    @lombok.Builder(builderClassName = "Builder", toBuilder = true)
+    public static class ChangeUserPasswordPayload implements Serializable {
+
+        private static final long serialVersionUID = -3525318407975978104L;
+
+        @JsonProperty("token")
+        private String newPasswordToken;
+
+        @JsonProperty("password")
+        private String newPassword;
+
+    }
+
 }

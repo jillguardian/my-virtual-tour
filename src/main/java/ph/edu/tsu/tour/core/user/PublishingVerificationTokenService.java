@@ -62,7 +62,6 @@ public class PublishingVerificationTokenService extends Observable implements Ve
         boolean exists = verificationTokenService.findByUser(user) != null;
 
         VerificationToken newVerificationToken = verificationTokenService.produce(user);
-
         EntityAction action = exists ? EntityAction.MODIFIED : EntityAction.CREATED;
         VerificationTokenModifiedEvent verificationTokenModifiedEvent =
                 new VerificationTokenModifiedEvent(action, newVerificationToken);

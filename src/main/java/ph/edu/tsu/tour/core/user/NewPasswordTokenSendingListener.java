@@ -16,21 +16,18 @@ import java.nio.charset.StandardCharsets;
 import java.util.Observable;
 import java.util.Observer;
 
-/**
- * <p>A listener that sends the verification url to the specified email of the target user.</p>
- */
-public class VerificationTokenSendingListener implements Observer {
+public class NewPasswordTokenSendingListener implements Observer {
 
-    private static final Logger logger = LoggerFactory.getLogger(VerificationTokenSendingListener.class);
-    private static final String CODE_SUBJECT = "user.verification-email.subject";
+    private static final Logger logger = LoggerFactory.getLogger(NewPasswordTokenSendingListener.class);
+    private static final String CODE_SUBJECT = "user.reset-password-email.subject";
 
     private final TemplateEngine templateEngine;
     private final MessageSource messageSource;
     private final JavaMailSender mailSender;
 
-    public VerificationTokenSendingListener(TemplateEngine templateEngine,
-                                            MessageSource messageSource,
-                                            JavaMailSender mailSender) {
+    public NewPasswordTokenSendingListener(TemplateEngine templateEngine,
+                                           MessageSource messageSource,
+                                           JavaMailSender mailSender) {
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
         this.mailSender = mailSender;
@@ -38,8 +35,8 @@ public class VerificationTokenSendingListener implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (arg instanceof VerificationTokenModifiedEvent) {
-            VerificationTokenModifiedEvent event = (VerificationTokenModifiedEvent) arg;
+        if (arg instanceof NewPasswordTokenModifiedEvent) {
+            NewPasswordTokenModifiedEvent event = (NewPasswordTokenModifiedEvent) arg;
             if (event.getAction() == EntityAction.CREATED || event.getAction() == EntityAction.MODIFIED) {
                 try {
                     User user = event.getEntity().getUser();
@@ -52,8 +49,8 @@ public class VerificationTokenSendingListener implements Observer {
                     context.setVariable("user", user);
                     context.setVariable("token", event.getEntity().getContent());
 
-                    String html = templateEngine.process("/user/email/verification", context);
-                    String subject = messageSource.getMessage(VerificationTokenSendingListener.CODE_SUBJECT,
+                    String html = templateEngine.process("/user/email/password-reset", context);
+                    String subject = messageSource.getMessage(NewPasswordTokenSendingListener.CODE_SUBJECT,
                                                               null,
                                                               LocaleContextHolder.getLocale());
 
@@ -62,9 +59,9 @@ public class VerificationTokenSendingListener implements Observer {
                     mimeMessageHelper.setSubject(subject);
 
                     mailSender.send(mimeMessage);
-                    logger.info("Verification email sent to [" + user.getUsername() + "]");
+                    logger.info("Sent password reset email to user [" + user.getUsername() + "]");
                 } catch (Throwable e) {
-                    throw new FailedDependencyException("Unable to send verification mail to user", e);
+                    throw new FailedDependencyException("Unable to send password reset token to user", e);
                 }
             }
         }

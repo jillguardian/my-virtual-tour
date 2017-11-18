@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ph.edu.tsu.tour.core.common.function.NewUserPayloadToUser;
+import ph.edu.tsu.tour.core.user.NewPasswordToken;
+import ph.edu.tsu.tour.core.user.NewPasswordTokenService;
 import ph.edu.tsu.tour.core.user.User;
 import ph.edu.tsu.tour.core.user.UserService;
 import ph.edu.tsu.tour.core.user.VerificationToken;
@@ -33,12 +35,15 @@ class UserRestController {
     private final Function<User.Payload, User> newUserPayloadToUser;
 
     private final VerificationTokenService verificationTokenService;
+    private final NewPasswordTokenService newPasswordTokenService;
 
     @Autowired
     UserRestController(UserService userService,
-                       VerificationTokenService verificationTokenService) {
+                       VerificationTokenService verificationTokenService,
+                       NewPasswordTokenService newPasswordTokenService) {
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
+        this.newPasswordTokenService = newPasswordTokenService;
         newUserPayloadToUser = new NewUserPayloadToUser();
     }
 
@@ -73,12 +78,13 @@ class UserRestController {
         return ResponseEntity.ok(saved);
     }
 
-    @RequestMapping(value = "/reverify", method = RequestMethod.GET)
+    @RequestMapping(value = "/reverify", method = RequestMethod.POST)
     public ResponseEntity<?> reverify(@RequestParam String email) {
         User user = userService.findByEmail(email);
         if (user == null) {
             throw new ResourceNotFoundException("User with email [" + email + "] does not exist");
         }
+
         if (user.isActivated()) {
             throw new IllegalStateException("User with email [" + email + "] is already activated");
         }
@@ -87,7 +93,7 @@ class UserRestController {
         return ResponseEntity.accepted().build();
     }
 
-    @RequestMapping(value = "/verify", method = RequestMethod.GET)
+    @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public ResponseEntity<?> verify(@RequestParam String token) {
         VerificationToken verificationToken = verificationTokenService.findByContent(token);
         if (verificationToken == null) {
@@ -103,6 +109,35 @@ class UserRestController {
                     "User [" + verificationToken.getUser().getUsername() + "] is already activated");
         }
 
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value = "request-password-reset", method = RequestMethod.POST)
+    public ResponseEntity<?> requestPasswordReset(@RequestParam String email) {
+        User user = userService.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("User with email [" + email + "] does not exist");
+        }
+
+        newPasswordTokenService.produce(user);
+        logger.info("Created a password reset token for user [" + user.getUsername() + "]");
+
+        return ResponseEntity.accepted().build();
+    }
+
+    @RequestMapping(value = "reset-password", method = RequestMethod.POST)
+    public ResponseEntity<?> resetPassword(@RequestBody User.ChangeUserPasswordPayload payload) {
+        NewPasswordToken newPasswordToken = newPasswordTokenService.findByContent(payload.getNewPasswordToken());
+        if (newPasswordToken == null) {
+            throw new ResourceNotFoundException("Token [" + payload.getNewPasswordToken() + "] is invalid");
+        }
+
+        User user = newPasswordToken.getUser();
+        user.setPassword(payload.getNewPassword());
+        userService.save(user);
+        logger.info("User [" + user.getUsername() + "]'s password has been successfully reset");
+
+        newPasswordTokenService.consume(newPasswordToken);
         return ResponseEntity.accepted().build();
     }
 

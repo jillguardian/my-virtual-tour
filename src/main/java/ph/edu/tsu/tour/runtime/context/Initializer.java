@@ -17,6 +17,9 @@ import ph.edu.tsu.tour.core.access.Administrator;
 import ph.edu.tsu.tour.core.access.Privilege;
 import ph.edu.tsu.tour.core.access.Role;
 import ph.edu.tsu.tour.core.access.Privileges;
+import ph.edu.tsu.tour.core.user.NewPasswordTokenDeletingListener;
+import ph.edu.tsu.tour.core.user.NewPasswordTokenSendingListener;
+import ph.edu.tsu.tour.core.user.PublishingNewPasswordTokenService;
 import ph.edu.tsu.tour.core.user.PublishingUserService;
 import ph.edu.tsu.tour.core.user.PublishingVerificationTokenService;
 import ph.edu.tsu.tour.core.user.VerificationTokenCreatingListener;
@@ -38,22 +41,25 @@ public class Initializer {
 
         private final PublishingUserService userService;
         private final PublishingVerificationTokenService verificationTokenService;
+        private final PublishingNewPasswordTokenService newPasswordTokenService;
 
         private final TemplateEngine templateEngine;
-        private final MessageSource messages;
+        private final MessageSource messageSource;
         private final JavaMailSender mailSender;
 
         @Autowired
         public UserRegistrationComponentsInitializer(PublishingUserService userService,
                                                      PublishingVerificationTokenService verificationTokenService,
+                                                     PublishingNewPasswordTokenService newPasswordTokenService,
                                                      TemplateEngine templateEngine,
-                                                     MessageSource messages,
+                                                     MessageSource messageSource,
                                                      JavaMailSender mailSender) {
             this.userService = userService;
             this.verificationTokenService = verificationTokenService;
+            this.newPasswordTokenService = newPasswordTokenService;
 
             this.templateEngine = templateEngine;
-            this.messages = messages;
+            this.messageSource = messageSource;
             this.mailSender = mailSender;
         }
 
@@ -61,9 +67,11 @@ public class Initializer {
         public void run(ApplicationArguments args) throws Exception {
             userService.addObserver(new VerificationTokenCreatingListener(verificationTokenService));
             userService.addObserver(new VerificationTokenDeletingListener(verificationTokenService));
-            verificationTokenService.addObserver(new VerificationTokenSendingListener(templateEngine,
-                                                                                      messages,
-                                                                                      mailSender));
+            userService.addObserver(new NewPasswordTokenDeletingListener(newPasswordTokenService));
+            verificationTokenService.addObserver(
+                    new VerificationTokenSendingListener(templateEngine, messageSource, mailSender));
+            newPasswordTokenService.addObserver(
+                    new NewPasswordTokenSendingListener(templateEngine, messageSource, mailSender));
         }
     }
 
