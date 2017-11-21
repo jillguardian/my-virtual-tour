@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ph.edu.tsu.tour.core.common.function.NewUserPayloadToUser;
+import ph.edu.tsu.tour.core.common.function.UserPayloadToUser;
 import ph.edu.tsu.tour.core.user.NewPasswordToken;
 import ph.edu.tsu.tour.core.user.NewPasswordTokenService;
 import ph.edu.tsu.tour.core.user.User;
@@ -21,6 +21,8 @@ import ph.edu.tsu.tour.core.user.VerificationTokenService;
 import ph.edu.tsu.tour.exception.ResourceConflictException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 import ph.edu.tsu.tour.web.Urls;
+import ph.edu.tsu.tour.web.common.dto.ChangePasswordPayload;
+import ph.edu.tsu.tour.web.common.dto.UserPayload;
 
 import java.util.function.Function;
 
@@ -32,7 +34,7 @@ class UserRestController {
     private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
 
     private final UserService userService;
-    private final Function<User.Payload, User> newUserPayloadToUser;
+    private final Function<UserPayload, User> newUserPayloadToUser;
 
     private final VerificationTokenService verificationTokenService;
     private final NewPasswordTokenService newPasswordTokenService;
@@ -44,11 +46,11 @@ class UserRestController {
         this.userService = userService;
         this.verificationTokenService = verificationTokenService;
         this.newPasswordTokenService = newPasswordTokenService;
-        newUserPayloadToUser = new NewUserPayloadToUser();
+        newUserPayloadToUser = new UserPayloadToUser();
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public ResponseEntity<User> save(@RequestBody User.Payload payload) {
+    public ResponseEntity<User> save(@RequestBody UserPayload payload) {
         if (userService.findByUsername(payload.getUsername()) != null) {
             throw new ResourceConflictException(
                     "A user with the username [" + payload.getUsername() + "] already exists");
@@ -62,7 +64,7 @@ class UserRestController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<User> update(Authentication authentication, @RequestBody User.Payload payload) {
+    public ResponseEntity<User> update(Authentication authentication, @RequestBody UserPayload payload) {
         String username = authentication.getName();
         User user = userService.findByUsername(username);
 
@@ -126,7 +128,7 @@ class UserRestController {
     }
 
     @RequestMapping(value = "reset-password", method = RequestMethod.POST)
-    public ResponseEntity<?> resetPassword(@RequestBody User.ChangeUserPasswordPayload payload) {
+    public ResponseEntity<?> resetPassword(@RequestBody ChangePasswordPayload payload) {
         NewPasswordToken newPasswordToken = newPasswordTokenService.findByContent(payload.getNewPasswordToken());
         if (newPasswordToken == null) {
             throw new ResourceNotFoundException("Token [" + payload.getNewPasswordToken() + "] is invalid");

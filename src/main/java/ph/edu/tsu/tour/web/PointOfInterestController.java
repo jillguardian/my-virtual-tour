@@ -1,10 +1,5 @@
 package ph.edu.tsu.tour.web;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.geojson.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ph.edu.tsu.tour.core.image.DiskStorageCapableImageService;
 import ph.edu.tsu.tour.core.image.Image;
@@ -25,17 +19,15 @@ import ph.edu.tsu.tour.core.image.RawImage;
 import ph.edu.tsu.tour.core.image.ToPublicImageService;
 import ph.edu.tsu.tour.core.poi.PointOfInterest;
 import ph.edu.tsu.tour.core.poi.PointOfInterestService;
-import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
 import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
 import ph.edu.tsu.tour.exception.FunctionalityNotImplementedException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
+import ph.edu.tsu.tour.web.common.dto.ImagePayload;
+import ph.edu.tsu.tour.web.common.dto.PointOfInterestPayload;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -68,12 +60,12 @@ class PointOfInterestController {
         this.toPublicImageService = toPublicImageService;
     }
 
-    private static ImageDto toDto(PointOfInterest poi, Image image) {
+    private static ImagePayload toDto(PointOfInterest poi, Image image) {
         if (image == null || poi == null) {
             return null;
         }
-        return ImageDto.builder()
-                .poiId(poi.getId())
+        return ImagePayload.builder()
+                .reference(poi.getId())
                 .id(image.getId())
                 .title(image.getTitle())
                 .description(image.getDescription())
@@ -84,10 +76,10 @@ class PointOfInterestController {
     @RequestMapping(method = RequestMethod.GET)
     public String findAll(Model model) {
         Iterable<PointOfInterest> pois = pointOfInterestService.findAll();
-        Collection<PointOfInterestDto> dtos = new HashSet<>();
+        Collection<PointOfInterestPayload> dtos = new HashSet<>();
         for (PointOfInterest poi : pois) {
             PointOfInterest publicPoi = toPublicPointOfInterestService.apply(poi);
-            PointOfInterestDto dto = PointOfInterestDto.builder()
+            PointOfInterestPayload dto = PointOfInterestPayload.builder()
                     .id(publicPoi.getId())
                     .name(publicPoi.getName())
                     .website(publicPoi.getWebsite())
@@ -119,7 +111,7 @@ class PointOfInterestController {
         }
 
         PointOfInterest publicPoi = toPublicPointOfInterestService.apply(poi);
-        PointOfInterestDto dto = PointOfInterestDto.builder()
+        PointOfInterestPayload dto = PointOfInterestPayload.builder()
                 .id(publicPoi.getId())
                 .name(publicPoi.getName())
                 .website(publicPoi.getWebsite())
@@ -142,13 +134,13 @@ class PointOfInterestController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String save(Model model) {
-        model.addAttribute("poi", PointOfInterestDto.builder().build());
+        model.addAttribute("poi", PointOfInterestPayload.builder().build());
         return "poi/one";
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(Model model,
-                       @Valid @ModelAttribute("poi") PointOfInterestDto dto,
+                       @Valid @ModelAttribute("poi") PointOfInterestPayload dto,
                        BindingResult bindingResult,
                        RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
@@ -262,7 +254,7 @@ class PointOfInterestController {
         if (!pointOfInterestService.exists(poiId)) {
             throw new ResourceNotFoundException("Point of interest with ID [" + poiId + "] does not exist");
         }
-        model.addAttribute("image", ImageDto.builder().poiId(poiId).build());
+        model.addAttribute("image", ImagePayload.builder().reference(poiId).build());
         return "poi/image/one";
     }
 
@@ -281,13 +273,13 @@ class PointOfInterestController {
             throw new ResourceNotFoundException("Image with ID [" + imageId + "] does not exist");
         }
 
-        ImageDto dto = toDto(poi, image);
+        ImagePayload dto = toDto(poi, image);
         model.addAttribute("image", dto);
         return "poi/image/one";
     }
 
     @RequestMapping(value = "/image/save", method = RequestMethod.POST)
-    public String saveImage(@ModelAttribute("image") @Valid ImageDto dto,
+    public String saveImage(@ModelAttribute("image") @Valid ImagePayload dto,
                             BindingResult bindingResult) throws IOException {
         boolean isEmptyFile = dto.getFile() == null || dto.getFile().isEmpty();
         boolean isEmptyUri = dto.getUri() == null || dto.getUri().toString().isEmpty();
@@ -299,9 +291,10 @@ class PointOfInterestController {
             return "poi/image/one";
         }
 
-        PointOfInterest poi = pointOfInterestService.findById(dto.getPoiId());
+        PointOfInterest poi = pointOfInterestService.findById(dto.getReference());
         if (poi == null) {
-            throw new ResourceNotFoundException("Point of interest with ID [" + dto.getPoiId() + "] does not exist");
+            throw new ResourceNotFoundException(
+                    "Point of interest with ID [" + dto.getReference() + "] does not exist");
         }
 
         Image image;
@@ -363,60 +356,15 @@ class PointOfInterestController {
         poi = toPublicPointOfInterestService.apply(poi);
 
         Collection<Image> images = poi.getImages();
-        Collection<ImageDto> dtos = new HashSet<>();
+        Collection<ImagePayload> dtos = new HashSet<>();
         for (Image image : images) {
-            ImageDto dto = toDto(poi, image);
+            ImagePayload dto = toDto(poi, image);
             dtos.add(dto);
         }
 
         model.addAttribute("id", id);
         model.addAttribute("images", dtos);
         return "poi/image/all";
-    }
-
-    @Data
-    @NoArgsConstructor(access = AccessLevel.PUBLIC)
-    @AllArgsConstructor
-    @Builder(builderClassName = "Builder", toBuilder = true)
-    public static final class PointOfInterestDto {
-
-        private Long id;
-        @NotNull(message = "{poi.name.blank.message}")
-        @Size(min = 1, message = "{poi.name.blank.message}")
-        private String name;
-        private URI website;
-        private String contactNumber;
-        private String addressLine1;
-        private String addressLine2;
-        @NotNull(message = "{poi.city.blank.message}")
-        @Size(min = 1, message = "{poi.city.blank.message}")
-        private String city;
-        @NotNull(message = "{poi.zip.blank.message}")
-        @Size(min = 1, message = "{poi.zip.blank.message}")
-        private String zipCode;
-        @NotNull(message = "{poi.geometry.point.latitude.blank.message}")
-        private Double latitude;
-        @NotNull(message = "{poi.geometry.point.longitude.blank.message}")
-        private Double longitude;
-        private ImageDto coverImage1;
-        private ImageDto coverImage2;
-        private Set<ImageDto> images;
-
-    }
-
-    @Data
-    @NoArgsConstructor(access = AccessLevel.PUBLIC)
-    @AllArgsConstructor
-    @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-    public static final class ImageDto {
-
-        private Long poiId;
-        private Long id;
-        private String title;
-        private String description;
-        private MultipartFile file;
-        private URI uri;
-
     }
 
 }

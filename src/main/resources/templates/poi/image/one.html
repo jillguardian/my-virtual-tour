@@ -22,8 +22,8 @@
     <ol class="breadcrumb">
         <li><a th:href="@{/}" th:text="#{home}">Home</a></li>
         <li><a th:href="@{/poi}" th:text="#{poi}">Point of Interest</a></li>
-        <li><a th:href="@{/poi/} + ${image?.poiId}" th:text="${image?.poiId}">#</a></li>
-        <li><a th:href="@{/poi/} + ${image?.poiId} + @{/image}" th:text="#{image}">Image</a></li>
+        <li><a th:href="@{/poi/} + ${image?.reference}" th:text="${image?.reference}">#</a></li>
+        <li><a th:href="@{/poi/} + ${image?.reference} + @{/image}" th:text="#{image}">Image</a></li>
         <th:block th:with="text=#{new}">
             <li class="active" th:text="${image.id != null ? image.id : text}">#</li>
         </th:block>
@@ -38,7 +38,7 @@
             <h1 class="text-center" th:text="#{image}">Image</h1>
             <div class="alert alert-danger text-center" role="alert" th:if="${image == null}" th:text="#{image.empty.message}">No image bound to form.</div>
             <form th:if="${image}" th:action="@{/poi/image/save}" th:object="${image}" method="post" enctype="multipart/form-data">
-                <input type="hidden" th:field="*{poiId}" />
+                <input type="hidden" th:field="*{reference}" />
                 <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('id')} ? has-error : ''" th:hidden="true">
                     <label for="id" th:text="#{id}">Identifier</label>
                     <input type="text" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#"/>
@@ -80,7 +80,7 @@
                 </div>
             </form>
             <form th:action="@{/poi/image/delete}" method="post" th:if="${image?.id}">
-                <input type="hidden" name="poi-id" th:value="${image.poiId}" />
+                <input type="hidden" name="poi-id" th:value="${image.reference}" />
                 <input type="hidden" name="id" th:value="${image.id}" />
                 <div class="form-group col-xs-12">
                     <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>

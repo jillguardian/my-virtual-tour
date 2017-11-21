@@ -43,7 +43,7 @@
                         <div class="caption" th:with="title=#{title.none}">
                             <h2 class="text-center" th:text="${image.title ?: title}">Title</h2>
                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                <a th:href="@{/poi/} + ${image.poiId} + @{/image/} + ${image.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
+                                <a th:href="@{/poi/} + ${image.reference} + @{/image/} + ${image.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
                             </div>
                         </div>
                     </div>

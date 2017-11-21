@@ -44,29 +44,4 @@ public class User implements Serializable {
     @Column
     private boolean activated;
 
-    @Data
-    @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-    public static class Payload implements Serializable {
-
-        private static final long serialVersionUID = -5428176942386069327L;
-
-        private String username;
-        private String password;
-        private String email;
-    }
-
-    @Data
-    @lombok.Builder(builderClassName = "Builder", toBuilder = true)
-    public static class ChangeUserPasswordPayload implements Serializable {
-
-        private static final long serialVersionUID = -3525318407975978104L;
-
-        @JsonProperty("token")
-        private String newPasswordToken;
-
-        @JsonProperty("password")
-        private String newPassword;
-
-    }
-
 }

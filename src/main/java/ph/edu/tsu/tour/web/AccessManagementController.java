@@ -1,11 +1,5 @@
 package ph.edu.tsu.tour.web;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.Singular;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +13,9 @@ import ph.edu.tsu.tour.core.access.AccessManagementService;
 import ph.edu.tsu.tour.core.access.Administrator;
 import ph.edu.tsu.tour.core.access.Role;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
+import ph.edu.tsu.tour.web.common.dto.AdministratorPayload;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 @Controller
@@ -40,13 +32,13 @@ class AccessManagementController {
     @RequestMapping(value = "/administrator/new", method = RequestMethod.GET)
     public String saveAdministrator(Model model) {
         model.addAttribute("selectableRoles", accessManagementService.findAllRoles());
-        model.addAttribute("administrator", AdministratorDto.builder().build());
+        model.addAttribute("administrator", AdministratorPayload.builder().build());
         return "access-management/administrator/one";
     }
 
     @RequestMapping(value = "/administrator/save", method = RequestMethod.POST)
     public String saveAdministrator(Model model,
-                                    @Valid @ModelAttribute("administrator") AdministratorDto dto,
+                                    @Valid @ModelAttribute("administrator") AdministratorPayload dto,
                                     BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("selectableRoles", accessManagementService.findAllRoles());
@@ -78,7 +70,7 @@ class AccessManagementController {
             throw new ResourceNotFoundException("Administrator with id [" + id + "] does not exist");
         }
 
-        AdministratorDto dto = AdministratorDto.builder()
+        AdministratorPayload dto = AdministratorPayload.builder()
                 .id(administrator.getId())
                 .username(administrator.getUsername())
                 .password(administrator.getPassword())
@@ -94,29 +86,6 @@ class AccessManagementController {
     public String findAdministrators(Model model) {
         model.addAttribute("administrators", accessManagementService.findAllAdministrators());
         return "access-management/administrator/all";
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    @AllArgsConstructor
-    private static final class AdministratorDto {
-
-        private Long id;
-
-        @NotNull
-        @Size(min = 1)
-        private String username;
-
-        @NotNull
-        @Size(min = 1)
-        private String password;
-
-        @NotNull
-        @Size(min = 1)
-        @Singular
-        private Collection<String> roles;
-
     }
 
 }
