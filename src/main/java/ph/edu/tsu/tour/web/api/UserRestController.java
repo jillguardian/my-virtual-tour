@@ -19,6 +19,7 @@ import ph.edu.tsu.tour.core.user.User;
 import ph.edu.tsu.tour.core.user.UserService;
 import ph.edu.tsu.tour.core.user.VerificationToken;
 import ph.edu.tsu.tour.core.user.VerificationTokenService;
+import ph.edu.tsu.tour.exception.IllegalArgumentException;
 import ph.edu.tsu.tour.exception.ResourceConflictException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 import ph.edu.tsu.tour.web.Urls;
@@ -54,7 +55,7 @@ class UserRestController {
     @RequestMapping(value = "/new", method = RequestMethod.POST)
     public ResponseEntity<User> save(@Valid @RequestBody UserPayload payload, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Found [" + bindingResult.getErrorCount() + "] errors in payload");
         }
 
         if (userService.findByUsername(payload.getUsername()) != null) {
@@ -74,7 +75,7 @@ class UserRestController {
                                        @Valid @RequestBody UserPayload payload,
                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Found [" + bindingResult.getErrorCount() + "] errors in payload");
         }
 
         String username = authentication.getName();
@@ -143,7 +144,7 @@ class UserRestController {
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ChangePasswordPayload payload,
                                            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Found [" + bindingResult.getErrorCount() + "] errors in payload");
         }
 
         NewPasswordToken newPasswordToken = newPasswordTokenService.findByContent(payload.getNewPasswordToken());
