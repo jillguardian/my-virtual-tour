@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ph.edu.tsu.tour.web.common.validator.Within;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Set;
 
+@Within(query = "Tarlac Province", country = "PH", message = "{poi.geometry.point.beyond-limit.message}")
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor

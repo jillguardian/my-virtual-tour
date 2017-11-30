@@ -36,6 +36,9 @@
             </th:block>
             <h1 class="text-center" th:text="#{poi}">Point of Interest</h1>
             <form action="/poi/save" th:if="${poi}" th:action="@{/poi/save}" th:object="${poi}" method="post" enctype="multipart/form-data">
+                <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}" th:if="${#fields.hasGlobalErrors()}">
+                    <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
+                </div>
                 <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('id')} ? has-error : ''">
                     <label for="id" th:text="#{id}">Identifier</label>
                     <input type="text" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#"/>

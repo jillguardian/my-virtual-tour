@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import ph.edu.tsu.tour.web.Urls;
 import ph.edu.tsu.tour.web.common.dto.ChangePasswordPayload;
 import ph.edu.tsu.tour.web.common.dto.UserPayload;
 
+import javax.validation.Valid;
 import java.util.function.Function;
 
 @CrossOrigin
@@ -50,7 +52,11 @@ class UserRestController {
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.POST)
-    public ResponseEntity<User> save(@RequestBody UserPayload payload) {
+    public ResponseEntity<User> save(@Valid @RequestBody UserPayload payload, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException();
+        }
+
         if (userService.findByUsername(payload.getUsername()) != null) {
             throw new ResourceConflictException(
                     "A user with the username [" + payload.getUsername() + "] already exists");
@@ -64,7 +70,13 @@ class UserRestController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public ResponseEntity<User> update(Authentication authentication, @RequestBody UserPayload payload) {
+    public ResponseEntity<User> update(Authentication authentication,
+                                       @Valid @RequestBody UserPayload payload,
+                                       BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException();
+        }
+
         String username = authentication.getName();
         User user = userService.findByUsername(username);
 
@@ -128,7 +140,12 @@ class UserRestController {
     }
 
     @RequestMapping(value = "reset-password", method = RequestMethod.POST)
-    public ResponseEntity<?> resetPassword(@RequestBody ChangePasswordPayload payload) {
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ChangePasswordPayload payload,
+                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException();
+        }
+
         NewPasswordToken newPasswordToken = newPasswordTokenService.findByContent(payload.getNewPasswordToken());
         if (newPasswordToken == null) {
             throw new ResourceNotFoundException("Token [" + payload.getNewPasswordToken() + "] is invalid");

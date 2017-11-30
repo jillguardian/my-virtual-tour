@@ -22,16 +22,16 @@ public final class AdministratorPayload implements Serializable {
 
     private Long id;
 
-    @NotNull
-    @Size(min = 1)
+    @NotNull(message = "{username.blank.message}")
+    @Size(min = 1, message = "{username.blank.message}")
     private String username;
 
-    @NotNull
-    @Size(min = 1)
+    @NotNull(message = "{password.blank.message}")
+    @Size(min = 1, message = "{password.blank.message}")
     private String password;
 
-    @NotNull
-    @Size(min = 1)
+    @NotNull(message = "{roles.blank.message}")
+    @Size(min = 1, message = "{roles.blank.message}")
     @Singular
     private Collection<String> roles;
 
