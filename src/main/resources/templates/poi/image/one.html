@@ -36,7 +36,6 @@
                 <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
             </th:block>
             <h1 class="text-center" th:text="#{image}">Image</h1>
-            <div class="alert alert-danger text-center" role="alert" th:if="${image == null}" th:text="#{image.empty.message}">No image bound to form.</div>
             <form th:if="${image}" th:action="@{/poi/image/save}" th:object="${image}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{reference}" />
                 <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('id')} ? has-error : ''" th:hidden="true">
