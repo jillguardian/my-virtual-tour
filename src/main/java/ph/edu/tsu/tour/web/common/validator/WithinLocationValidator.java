@@ -40,8 +40,12 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Poin
 
     @Override
     public boolean isValid(PointOfInterestPayload value, ConstraintValidatorContext context) {
-        double longitude = value.getLongitude();
-        double latitude = value.getLatitude();
+        Double longitude = value.getLongitude();
+        Double latitude = value.getLatitude();
+
+        if (longitude == null || latitude == null ) {
+            return true;
+        }
 
         MapboxGeocoding getEnclosingArea = new MapboxGeocoding.Builder<>()
                 .setAccessToken(accessToken)
