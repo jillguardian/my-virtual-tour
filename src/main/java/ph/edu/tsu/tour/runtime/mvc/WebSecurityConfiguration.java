@@ -64,8 +64,10 @@ public class WebSecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher(Urls.REST_V1_USER + "/**")
-                    .authorizeRequests()
+            http.requestMatchers()
+                    .antMatchers(Urls.REST_V1_TOUR + "/**", Urls.REST_V1_USER + "/**")
+                    .and().authorizeRequests()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_TOUR)).authenticated()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/new", "POST"))
                     .permitAll()
                     .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/verify", "POST"))
@@ -140,8 +142,7 @@ public class WebSecurityConfiguration {
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher(Urls.REST_PREFIX_V1 + "/**")
                     .authorizeRequests()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_PREFIX_V1 + "/**", "GET")).permitAll()
-                    .anyRequest().denyAll()
+                    .anyRequest().permitAll()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }

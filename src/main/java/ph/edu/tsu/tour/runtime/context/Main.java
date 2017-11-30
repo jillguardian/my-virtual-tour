@@ -42,6 +42,9 @@ import ph.edu.tsu.tour.core.location.ToPublicLocationService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
+import ph.edu.tsu.tour.core.tour.TourRepository;
+import ph.edu.tsu.tour.core.tour.TourService;
+import ph.edu.tsu.tour.core.tour.TourServiceImpl;
 import ph.edu.tsu.tour.core.user.NewPasswordTokenRepository;
 import ph.edu.tsu.tour.core.user.NewPasswordTokenService;
 import ph.edu.tsu.tour.core.user.NewPasswordTokenServiceImpl;
@@ -71,9 +74,14 @@ public class Main {
 
     @Bean
     public PublishingLocationService locationService(EntityManager entityManager,
-                                           LocationRepository locationRepository) {
+                                                     LocationRepository locationRepository) {
         LocationService locationService = new LocationServiceImpl(entityManager, locationRepository);
         return new PublishingLocationService(locationService);
+    }
+
+    @Bean
+    public TourService tourService(EntityManager entityManager, TourRepository tourRepository) {
+        return new TourServiceImpl(entityManager, tourRepository);
     }
 
     @Bean
