@@ -69,11 +69,15 @@ public class VerificationTokenSendingListener implements Observer {
                         mimeMessageHelper.setSubject(subject);
 
                         mailSender.send(mimeMessage);
-                        logger.info("Verification email sent to [" + user.getUsername() + "]");
+                        logger.info("Verification email sent to [" + user.getEmail() + "]");
                     } catch (Throwable e) {
                         throw new FailedDependencyException("Unable to send verification mail to user", e);
                     }
-                }, executorService);
+                }, executorService).whenComplete((result, error) -> {
+                    if (error != null) {
+                        logger.error("Couldn't send verification token to email", error.getCause());
+                    }
+                });
             }
         }
     }

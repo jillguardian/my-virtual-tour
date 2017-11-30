@@ -66,11 +66,15 @@ public class NewPasswordTokenSendingListener implements Observer {
                         mimeMessageHelper.setSubject(subject);
 
                         mailSender.send(mimeMessage);
-                        logger.info("Sent password reset email to user [" + user.getUsername() + "]");
+                        logger.info("Sent password reset email to [" + user.getEmail() + "]");
                     } catch (Throwable e) {
                         throw new FailedDependencyException("Unable to send password reset token to user", e);
                     }
-                }, executorService);
+                }, executorService).whenComplete((result, error) -> {
+                    if (error != null) {
+                        logger.error("Couldn't send reset-password token to email", error.getCause());
+                    }
+                });;
             }
         }
     }
