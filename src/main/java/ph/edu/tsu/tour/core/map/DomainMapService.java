@@ -1,15 +1,15 @@
 package ph.edu.tsu.tour.core.map;
 
 import org.geojson.GeoJsonObject;
-import ph.edu.tsu.tour.core.poi.PointOfInterest;
+import ph.edu.tsu.tour.core.location.Location;
 
 import java.util.List;
 import java.util.Set;
 
 public interface DomainMapService {
 
-    PointOfInterest getNearestDestination(Profile profile, GeoJsonObject source, Set<PointOfInterest> destinations);
+    Location getNearestDestination(Profile profile, GeoJsonObject source, Set<Location> destinations);
 
-    List<PointOfInterest> sortDestinations(Profile profile, GeoJsonObject source, Set<PointOfInterest> destinations);
+    List<Location> sortDestinations(Profile profile, GeoJsonObject source, Set<Location> destinations);
 
 }

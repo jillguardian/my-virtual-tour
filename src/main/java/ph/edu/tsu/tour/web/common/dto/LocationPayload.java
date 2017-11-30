@@ -13,19 +13,19 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Set;
 
-@Within(query = "Tarlac Province", country = "PH", message = "{poi.geometry.point.beyond-limit.message}")
+@Within(query = "Tarlac Province", country = "PH", message = "{location.geometry.point.beyond-limit.message}")
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder(builderClassName = "Builder", toBuilder = true)
-public final class PointOfInterestPayload implements Serializable {
+public final class LocationPayload implements Serializable {
 
     private static final long serialVersionUID = -6972769675344484349L;
 
     private Long id;
 
-    @NotNull(message = "{poi.name.blank.message}")
-    @Size(min = 1, message = "{poi.name.blank.message}")
+    @NotNull(message = "{location.name.blank.message}")
+    @Size(min = 1, message = "{location.name.blank.message}")
     private String name;
 
     private URI website;
@@ -33,18 +33,18 @@ public final class PointOfInterestPayload implements Serializable {
     private String addressLine1;
     private String addressLine2;
 
-    @NotNull(message = "{poi.city.blank.message}")
-    @Size(min = 1, message = "{poi.city.blank.message}")
+    @NotNull(message = "{location.city.blank.message}")
+    @Size(min = 1, message = "{location.city.blank.message}")
     private String city;
 
-    @NotNull(message = "{poi.zip.blank.message}")
-    @Size(min = 1, message = "{poi.zip.blank.message}")
+    @NotNull(message = "{location.zip.blank.message}")
+    @Size(min = 1, message = "{location.zip.blank.message}")
     private String zipCode;
 
-    @NotNull(message = "{poi.geometry.point.latitude.blank.message}")
+    @NotNull(message = "{location.geometry.point.latitude.blank.message}")
     private Double latitude;
 
-    @NotNull(message = "{poi.geometry.point.longitude.blank.message}")
+    @NotNull(message = "{location.geometry.point.longitude.blank.message}")
     private Double longitude;
 
     private ImagePayload coverImage1;

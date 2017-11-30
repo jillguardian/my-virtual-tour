@@ -21,8 +21,8 @@
 <div layout:fragment="breadcrumbs">
     <ol class="breadcrumb">
         <li><a th:href="@{/}" th:text="#{home}">Home</a></li>
-        <li><a th:href="@{/poi}" th:text="#{poi}">Point of Interest</a></li>
-        <li><a th:href="@{/poi/} + ${id}" th:text="${id}">#</a></li>
+        <li><a th:href="@{/location}" th:text="#{location}">Location</a></li>
+        <li><a th:href="@{/location/} + ${id}" th:text="${id}">#</a></li>
         <li class="active" th:text="#{image}">Image</li>
     </ol>
 </div>
@@ -43,7 +43,7 @@
                         <div class="caption" th:with="title=#{title.none}">
                             <h2 class="text-center" th:text="${image.title ?: title}">Title</h2>
                             <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                <a th:href="@{/poi/} + ${image.reference} + @{/image/} + ${image.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
+                                <a th:href="@{/location/} + ${image.reference} + @{/image/} + ${image.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
                             </div>
                         </div>
                     </div>

@@ -5,14 +5,14 @@
       layout:decorator="default">
 <head>
     <style>
-        .form-group.poi-image > .thumbnail > img {
+        .form-group.location-image > .thumbnail > img {
             object-fit: cover;
             height: 305px;
         }
-        .form-group.poi-image > input[type=file] {
+        .form-group.location-image > input[type=file] {
             display: none;
         }
-        .form-group.poi-image > p.help-block {
+        .form-group.location-image > p.help-block {
             margin-top: -10px;
         }
     </style>
@@ -21,9 +21,9 @@
 <div layout:fragment="breadcrumbs">
     <ol class="breadcrumb">
         <li><a th:href="@{/}" th:text="#{home}">Home</a></li>
-        <li><a th:href="@{/poi}" th:text="#{poi}">Point of Interest</a></li>
-        <li><a th:href="@{/poi/} + ${image?.reference}" th:text="${image?.reference}">#</a></li>
-        <li><a th:href="@{/poi/} + ${image?.reference} + @{/image}" th:text="#{image}">Image</a></li>
+        <li><a th:href="@{/location}" th:text="#{location}">Location</a></li>
+        <li><a th:href="@{/location/} + ${image?.reference}" th:text="${image?.reference}">#</a></li>
+        <li><a th:href="@{/location/} + ${image?.reference} + @{/image}" th:text="#{image}">Image</a></li>
         <th:block th:with="text=#{new}">
             <li class="active" th:text="${image.id != null ? image.id : text}">#</li>
         </th:block>
@@ -36,7 +36,7 @@
                 <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
             </th:block>
             <h1 class="text-center" th:text="#{image}">Image</h1>
-            <form th:if="${image}" th:action="@{/poi/image/save}" th:object="${image}" method="post" enctype="multipart/form-data">
+            <form th:if="${image}" th:action="@{/location/image/save}" th:object="${image}" method="post" enctype="multipart/form-data">
                 <input type="hidden" th:field="*{reference}" />
                 <div class="form-group col-xs-12" th:classappend="${#fields.hasErrors('id')} ? has-error : ''" th:hidden="true">
                     <label for="id" th:text="#{id}">Identifier</label>
@@ -47,7 +47,7 @@
                     <input type="text" th:field="*{title}" class="form-control" id="title" th:placeholder="#{image.title.placeholder}" placeholder="Title" />
                     <p class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
                 </div>
-                <div class="form-group col-md-6 poi-image" th:classappend="${#fields.hasErrors('file')} ? has-error : ''">
+                <div class="form-group col-md-6 location-image" th:classappend="${#fields.hasErrors('file')} ? has-error : ''">
                     <label for="file" th:text="#{file}">File</label>
                     <div class="thumbnail">
                         <img src="http://via.placeholder.com/350x250?text=X" th:src="${not #strings.isEmpty(image?.uri) ? image.uri : 'http://via.placeholder.com/350x250?text=X'}" />
@@ -78,8 +78,8 @@
                     </div>
                 </div>
             </form>
-            <form th:action="@{/poi/image/delete}" method="post" th:if="${image?.id}">
-                <input type="hidden" name="poi-id" th:value="${image.reference}" />
+            <form th:action="@{/location/image/delete}" method="post" th:if="${image?.id}">
+                <input type="hidden" name="location-id" th:value="${image.reference}" />
                 <input type="hidden" name="id" th:value="${image.id}" />
                 <div class="form-group col-xs-12">
                     <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
@@ -92,10 +92,10 @@
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         $('document').ready(function() {
-            $('.form-group.poi-image > .thumbnail').click(function(e) {
+            $('.form-group.location-image > .thumbnail').click(function(e) {
                 $(this).siblings('input[type=file]').click();
             });
-            $('.form-group.poi-image > input[type=file]').change(function() {
+            $('.form-group.location-image > input[type=file]').change(function() {
                 var url = window.URL.createObjectURL($(this)[0].files[0]);
                 $(this).siblings('.thumbnail').children('img:first').attr('src', url);
             });

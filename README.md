@@ -35,30 +35,30 @@ The following properties are also supported:
 * `application.storage.amazon.s3.secret-key`
 * `application.storage.amazon.s3.access-key`
 * `application.storage.amazon.s3.region`
-* `application.storage.amazon.s3.endpoint`
+* `application.storage.amazon.s3.endlocationnt`
 * `application.storage.amazon.s3.max-retries`
 
 ### Domain Objects
 
-#### Points of Interest
+#### Locations
 
 ##### Images
 
 The following properties are also supported:
 
-* `application.domain.poi.image.resize`: boolean property indicating if image should be resized or not.
-* `application.domain.poi.image.max-width`: the max width of an image in pixels. If resize is set to true, 
+* `application.domain.location.image.resize`: boolean property indicating if image should be resized or not.
+* `application.domain.location.image.max-width`: the max width of an image in pixels. If resize is set to true, 
   then this field should be specified. Otherwise, it's optional.
-* `application.domain.poi.image.max-height`: the max height of an image in pixels. If resize is set to true, 
+* `application.domain.location.image.max-height`: the max height of an image in pixels. If resize is set to true, 
   then this field should be specified. Otherwise, it's optional.
-* `application.domain.poi.image.quality`: the quality of the image. Input should range from `0` to `1`, 
+* `application.domain.location.image.quality`: the quality of the image. Input should range from `0` to `1`, 
   with `1` having the most optimal quality.
-* `application.domain.poi.image.preview.resize`: boolean property indicating if preview image should be resized or not.
-* `application.domain.poi.image.preview.max-width`: the max width of a preview image in pixels. 
+* `application.domain.location.image.preview.resize`: boolean property indicating if preview image should be resized or not.
+* `application.domain.location.image.preview.max-width`: the max width of a preview image in pixels. 
   If resize is set to true, then this field should be specified. Otherwise, it's optional.
-* `application.domain.poi.image.preview.max-height`: the max height of a preview image in pixels. 
+* `application.domain.location.image.preview.max-height`: the max height of a preview image in pixels. 
   If resize is set to true, then this field should be specified. Otherwise, it's optional.
-* `application.domain.poi.image.preview.quality`: the quality of the preview image. Input should range from `0` to `1`, 
+* `application.domain.location.image.preview.quality`: the quality of the preview image. Input should range from `0` to `1`, 
   with `1` having the most optimal quality.
   
 ### Maps

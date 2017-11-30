@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+    <title th:text="#{locations}">Locations</title>
+    <style>
+        .thumbnail.location-thumbnail h2 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .thumbnail.location-thumbnail > img {
+            width: 300px;
+            height: 250px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="breadcrumbs">
+    <ol class="breadcrumb">
+        <li><a href="/" th:href="@{/}" th:text="#{home}">Home</a></li>
+        <li class="active" th:text="#{location}">Location</li>
+    </ol>
+</div>
+<div layout:fragment="content">
+    <div class="row">
+        <h1 class="text-center" th:text="#{locations}">Locations</h1>
+        <div class="alert alert-danger text-center" role="alert" th:if="${locations.empty}" th:text="#{locations.empty.message}">Found no locationnts of interest.</div>
+        <div class="row" th:if="${locations}">
+            <div th:each="group : ${T(com.google.common.collect.Lists).partition(locations, 4)}" class="row">
+                <div th:each="location : ${group}" th:object="${location}" class="col-md-3 col-sm-6">
+                    <div class="location-thumbnail thumbnail">
+                        <img src="http://via.placeholder.com/350x250?text=X"
+                             alt="Preview."
+                             class="img-rounded"
+                             th:src="${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}"
+                             th:alt="#{location.image.primary.description}" />
+                        <div class="caption">
+                            <h2 class="text-center" th:text="${location.name}">Location</h2>
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                <a th:href="@{/location/} + ${location.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
+                                <a target="_blank" th:href="${location.website}" th:text="#{website}" th:if="${not #strings.isEmpty(location.website)}" class="btn btn-info">Website</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -2,9 +2,9 @@ package ph.edu.tsu.tour.core.access;
 
 public interface Privileges {
 
-    interface PointOfInterest {
+    interface Location {
 
-        String PREFIX = "POI";
+        String PREFIX = "LOCATION";
         String WRITE = PREFIX + "_" + "WRITE";
 
     }

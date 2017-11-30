@@ -24,7 +24,7 @@
             <h1 class="text-center" th:text="#{administrators}">Administrators</h1>
             <div class="alert alert-danger text-center" role="alert" th:if="${administrators.empty}" th:text="#{administrators.empty.message}">Found no administrators.</div>
             <div th:each="group : ${T(com.google.common.collect.Lists).partition(administrators, 2)}" class="row">
-                <a th:each="administrator : ${group}" th:object="${poi}" class="col-xs-6 administrator" href="#" th:href="@{/access-management/administrator/} + ${administrator.id}">
+                <a th:each="administrator : ${group}" class="col-xs-6 administrator" href="#" th:href="@{/access-management/administrator/} + ${administrator.id}">
                     <div class="panel panel-default">
                         <div class="panel-body text-center" th:text="${administrator.username}"></div>
                     </div>

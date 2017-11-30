@@ -33,20 +33,20 @@
         </div>
         <div class="collapse navbar-collapse" id="my-navbar-collapse">
             <ul class="nav navbar-nav">
-                <li sec:authorize="isAnonymous() or (not hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.PointOfInterest).WRITE))">
-                    <a href="/poi" th:href="@{/poi}" th:value="#{pois}">Points of Interest</a>
+                <li sec:authorize="isAnonymous() or (not hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Location).WRITE))">
+                    <a href="/location" th:href="@{/location}" th:value="#{locations}">Locations</a>
                 </li>
-                <li class="dropdown" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.PointOfInterest).WRITE)">
+                <li class="dropdown" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Location).WRITE)">
                     <a href="#"
                        class="dropdown-toggle"
                        data-toggle="dropdown"
                        role="button"
                        aria-haspopup="true"
-                       aria-expanded="false" th:value="#{pois}">Points of Interest <span class="caret"></span>
+                       aria-expanded="false" th:value="#{locations}">Locations <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a th:href="@{/poi/new}" th:value="#{add-new}">Add New</a></li>
-                        <li><a th:href="@{/poi/}" th:value="#{view-all}">View All</a></li>
+                        <li><a th:href="@{/location/new}" th:value="#{add-new}">Add New</a></li>
+                        <li><a th:href="@{/location/}" th:value="#{view-all}">View All</a></li>
                     </ul>
                 </li>
                 <li class="dropdown" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).READ, T(ph.edu.tsu.tour.core.access.Privileges.Access).WRITE)">

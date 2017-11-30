@@ -1,4 +1,4 @@
-package ph.edu.tsu.tour.core.poi;
+package ph.edu.tsu.tour.core.location;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -31,13 +31,13 @@ import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Entity
-@Table(name = PointOfInterest.TABLE_NAME)
+@Table(name = Location.TABLE_NAME)
 @Data
 @Builder(builderClassName = "Builder", toBuilder = true)
-public class PointOfInterest implements Serializable {
+public class Location implements Serializable {
 
     private static final long serialVersionUID = -7195733351894544107L;
-    static final String TABLE_NAME = "points_of_interest";
+    static final String TABLE_NAME = "locations";
 
     @Id
     @GeneratedValue
@@ -69,8 +69,8 @@ public class PointOfInterest implements Serializable {
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "points_of_interest_images",
-            joinColumns = @JoinColumn(name = "point_of_interest_id", referencedColumnName = "id"),
+            name = "location_images",
+            joinColumns = @JoinColumn(name = "location_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "image_id", referencedColumnName = "id"))
     @JsonProperty("IMAGES")
     private Set<Image> images = new HashSet<>();
@@ -97,7 +97,7 @@ public class PointOfInterest implements Serializable {
     private GeoJsonObject geometry;
 
     @Tolerate
-    protected PointOfInterest() {
+    protected Location() {
         // A default constructor to make JPA happy.
     }
 
@@ -124,20 +124,20 @@ public class PointOfInterest implements Serializable {
         return new Builder();
     }
 
-    public static Builder builder(PointOfInterest pointOfInterest) {
+    public static Builder builder(Location location) {
         return new Builder()
-                .id(pointOfInterest.getId())
-                .name(pointOfInterest.getName())
-                .website(pointOfInterest.getWebsite())
-                .contactNumber(pointOfInterest.getContactNumber())
-                .addressLine1(pointOfInterest.getAddressLine1())
-                .addressLine2(pointOfInterest.getAddressLine2())
-                .city(pointOfInterest.getCity())
-                .zipCode(pointOfInterest.getZipCode())
-                .geometry(pointOfInterest.getGeometry())
-                .coverImage1(pointOfInterest.getCoverImage1())
-                .coverImage2(pointOfInterest.getCoverImage2())
-                .images(pointOfInterest.getImages());
+                .id(location.getId())
+                .name(location.getName())
+                .website(location.getWebsite())
+                .contactNumber(location.getContactNumber())
+                .addressLine1(location.getAddressLine1())
+                .addressLine2(location.getAddressLine2())
+                .city(location.getCity())
+                .zipCode(location.getZipCode())
+                .geometry(location.getGeometry())
+                .coverImage1(location.getCoverImage1())
+                .coverImage2(location.getCoverImage2())
+                .images(location.getImages());
     }
 
 }

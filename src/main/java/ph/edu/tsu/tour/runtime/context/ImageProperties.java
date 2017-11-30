@@ -19,14 +19,14 @@ final class ImageProperties {
     private Wrapper preview;
 
     @Autowired
-    public ImageProperties(@Value("${application.domain.poi.image.resize}") boolean autoResize,
-                           @Value("${application.domain.poi.image.max-width}") Integer maxWidth,
-                           @Value("${application.domain.poi.image.max-height}") Integer maxHeight,
-                           @Value("${application.domain.poi.image.quality}") Double quality,
-                           @Value("${application.domain.poi.image.preview.resize}") boolean previewAutoResize,
-                           @Value("${application.domain.poi.image.preview.max-width}") Integer previewMaxWidth,
-                           @Value("${application.domain.poi.image.preview.max-height}") Integer previewMaxHeight,
-                           @Value("${application.domain.poi.image.preview.quality}") Double previewQuality) {
+    public ImageProperties(@Value("${application.domain.location.image.resize}") boolean autoResize,
+                           @Value("${application.domain.location.image.max-width}") Integer maxWidth,
+                           @Value("${application.domain.location.image.max-height}") Integer maxHeight,
+                           @Value("${application.domain.location.image.quality}") Double quality,
+                           @Value("${application.domain.location.image.preview.resize}") boolean previewAutoResize,
+                           @Value("${application.domain.location.image.preview.max-width}") Integer previewMaxWidth,
+                           @Value("${application.domain.location.image.preview.max-height}") Integer previewMaxHeight,
+                           @Value("${application.domain.location.image.preview.quality}") Double previewQuality) {
         Wrapper.Builder mainBuilder = Wrapper.builder();
         Wrapper.Builder previewBuilder = Wrapper.builder();
 

@@ -1,25 +1,21 @@
 package ph.edu.tsu.tour.web.api;
 
-import com.mapbox.services.api.directions.v5.MapboxDirections;
 import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
 import org.geojson.Point;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ph.edu.tsu.tour.Project;
-import ph.edu.tsu.tour.core.common.function.PointOfInterestCollectionToFeatureCollection;
-import ph.edu.tsu.tour.core.common.function.PointOfInterestToFeature;
+import ph.edu.tsu.tour.core.common.function.LocationCollectionToFeatureCollection;
+import ph.edu.tsu.tour.core.common.function.LocationToFeature;
 import ph.edu.tsu.tour.core.map.DecoratedMapboxDomainMapService;
-import ph.edu.tsu.tour.core.map.DomainMapService;
 import ph.edu.tsu.tour.core.map.Profile;
-import ph.edu.tsu.tour.core.poi.PointOfInterest;
-import ph.edu.tsu.tour.core.poi.PointOfInterestService;
+import ph.edu.tsu.tour.core.location.Location;
+import ph.edu.tsu.tour.core.location.LocationService;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 import ph.edu.tsu.tour.web.Urls;
 
@@ -33,18 +29,18 @@ import java.util.function.Function;
 class MapRestController {
 
     private final DecoratedMapboxDomainMapService domainMapService;
-    private final PointOfInterestService pointOfInterestService;
+    private final LocationService locationService;
 
-    private final Function<PointOfInterest, Feature> pointOfInterestToFeature;
-    private final Function<Iterable<PointOfInterest>, FeatureCollection> pointOfInterestCollectionToFeatureCollection;
+    private final Function<Location, Feature> locationToFeature;
+    private final Function<Iterable<Location>, FeatureCollection> locationCollectionToFeatureCollection;
 
     @Autowired
     MapRestController(DecoratedMapboxDomainMapService domainMapService,
-                      PointOfInterestService pointOfInterestService) {
+                      LocationService locationService) {
         this.domainMapService = domainMapService;
-        this.pointOfInterestService = pointOfInterestService;
-        this.pointOfInterestToFeature = new PointOfInterestToFeature();
-        this.pointOfInterestCollectionToFeatureCollection = new PointOfInterestCollectionToFeatureCollection();
+        this.locationService = locationService;
+        this.locationToFeature = new LocationToFeature();
+        this.locationCollectionToFeatureCollection = new LocationCollectionToFeatureCollection();
     }
 
     @RequestMapping(value = "/nearest", method = RequestMethod.GET)
@@ -52,18 +48,18 @@ class MapRestController {
                                                          @RequestParam("source-longitude") double sourceLongitude,
                                                          @RequestParam("source-latitude") double sourceLatitude,
                                                          @RequestParam("destination") long[] ids) {
-        Set<PointOfInterest> destinations = new HashSet<>();
+        Set<Location> destinations = new HashSet<>();
         for (long id : ids) {
-            PointOfInterest poi = pointOfInterestService.findById(id);
-            if (poi == null) {
-                throw new ResourceNotFoundException("Point of interest with id [" + id + "] does not exist");
+            Location location = locationService.findById(id);
+            if (location == null) {
+                throw new ResourceNotFoundException("Location with id [" + id + "] does not exist");
             }
-            destinations.add(poi);
+            destinations.add(location);
         }
 
         Point source = new Point(sourceLongitude, sourceLatitude);
-        PointOfInterest nearest = domainMapService.getNearestDestination(profile, source, destinations);
-        Feature feature = pointOfInterestToFeature.apply(nearest);
+        Location nearest = domainMapService.getNearestDestination(profile, source, destinations);
+        Feature feature = locationToFeature.apply(nearest);
         return ResponseEntity.ok(feature);
     }
 
@@ -72,18 +68,18 @@ class MapRestController {
                                                               @RequestParam("source-longitude") double sourceLongitude,
                                                               @RequestParam("source-latitude") double sourceLatitude,
                                                               @RequestParam("destination") long[] ids) {
-        Set<PointOfInterest> destinations = new HashSet<>();
+        Set<Location> destinations = new HashSet<>();
         for (long id : ids) {
-            PointOfInterest poi = pointOfInterestService.findById(id);
-            if (poi == null) {
-                throw new ResourceNotFoundException("Point of interest with id [" + id + "] does not exist");
+            Location location = locationService.findById(id);
+            if (location == null) {
+                throw new ResourceNotFoundException("Location with id [" + id + "] does not exist");
             }
-            destinations.add(poi);
+            destinations.add(location);
         }
 
         Point source = new Point(sourceLongitude, sourceLatitude);
-        List<PointOfInterest> sorted = domainMapService.sortDestinations(profile, source, destinations);
-        FeatureCollection converted = pointOfInterestCollectionToFeatureCollection.apply(sorted);
+        List<Location> sorted = domainMapService.sortDestinations(profile, source, destinations);
+        FeatureCollection converted = locationCollectionToFeatureCollection.apply(sorted);
         return ResponseEntity.ok(converted);
     }
 
@@ -92,13 +88,13 @@ class MapRestController {
                                                             @RequestParam("source-longitude") double sourceLongitude,
                                                             @RequestParam("source-latitude") double sourceLatitude,
                                                             @RequestParam("destination") long[] ids) {
-        Set<PointOfInterest> destinations = new HashSet<>();
+        Set<Location> destinations = new HashSet<>();
         for (long id : ids) {
-            PointOfInterest poi = pointOfInterestService.findById(id);
-            if (poi == null) {
-                throw new ResourceNotFoundException("Point of interest with id [" + id + "] does not exist");
+            Location location = locationService.findById(id);
+            if (location == null) {
+                throw new ResourceNotFoundException("Location with id [" + id + "] does not exist");
             }
-            destinations.add(poi);
+            destinations.add(location);
         }
 
         Point source = new Point(sourceLongitude, sourceLatitude);

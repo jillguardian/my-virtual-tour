@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import ph.edu.tsu.tour.Project;
 import ph.edu.tsu.tour.exception.FailedDependencyException;
-import ph.edu.tsu.tour.web.common.dto.PointOfInterestPayload;
+import ph.edu.tsu.tour.web.common.dto.LocationPayload;
 import retrofit2.Response;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.io.IOException;
 
-public class WithinLocationValidator implements ConstraintValidator<Within, PointOfInterestPayload> {
+public class WithinLocationValidator implements ConstraintValidator<Within, LocationPayload> {
 
     private static final String DEFAULT_APPLICATION_NAME = Project.getName() + "/" + Project.getVersion();
     private static final Logger logger = LoggerFactory.getLogger(WithinLocationValidator.class);
@@ -39,11 +39,11 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Poin
     }
 
     @Override
-    public boolean isValid(PointOfInterestPayload value, ConstraintValidatorContext context) {
+    public boolean isValid(LocationPayload value, ConstraintValidatorContext context) {
         Double longitude = value.getLongitude();
         Double latitude = value.getLatitude();
 
-        if (longitude == null || latitude == null ) {
+        if (longitude == null || latitude == null) {
             return true;
         }
 

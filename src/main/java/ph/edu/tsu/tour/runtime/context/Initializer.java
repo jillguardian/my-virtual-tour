@@ -92,7 +92,7 @@ public class Initializer {
             logger.info("Attempting to initialize database with default privilege(s), role(s), and administrator(s)...");
 
             List<Privilege> privileges = Arrays.asList(
-                    Privilege.builder().name(Privileges.PointOfInterest.WRITE).build(),
+                    Privilege.builder().name(Privileges.Location.WRITE).build(),
                     Privilege.builder().name(Privileges.Access.WRITE).build(),
                     Privilege.builder().name(Privileges.Access.READ).build() );
             for (int i = 0; i < privileges.size(); i++) {
@@ -109,11 +109,11 @@ public class Initializer {
                     .name("Super Administrator")
                     .privileges(Sets.newHashSet(privileges))
                     .build();
-            Role destinationsAdministratorRole = Role.builder()
-                    .name("Destinations Administrator")
+            Role locationsAdministratorRole = Role.builder()
+                    .name("Locations Administrator")
                     .privileges(Sets.newHashSet(privileges.get(0)))
                     .build();
-            List<Role> roles = Arrays.asList(superAdministratorRole, destinationsAdministratorRole);
+            List<Role> roles = Arrays.asList(superAdministratorRole, locationsAdministratorRole);
             for (int i = 0; i < roles.size(); i++) {
                 Role role = roles.get(i);
                 if (accessManagementService.findRoleByName(role.getName()) == null) {

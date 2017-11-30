@@ -34,11 +34,11 @@ import ph.edu.tsu.tour.core.map.DefaultDomainMapService;
 import ph.edu.tsu.tour.core.map.DomainMapService;
 import ph.edu.tsu.tour.core.map.MapboxMapService;
 import ph.edu.tsu.tour.core.map.MapService;
-import ph.edu.tsu.tour.core.poi.PointOfInterestRepository;
-import ph.edu.tsu.tour.core.poi.PointOfInterestService;
-import ph.edu.tsu.tour.core.poi.PointOfInterestServiceImpl;
-import ph.edu.tsu.tour.core.poi.PublishingPointOfInterestService;
-import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
+import ph.edu.tsu.tour.core.location.LocationRepository;
+import ph.edu.tsu.tour.core.location.LocationService;
+import ph.edu.tsu.tour.core.location.LocationServiceImpl;
+import ph.edu.tsu.tour.core.location.PublishingLocationService;
+import ph.edu.tsu.tour.core.location.ToPublicLocationService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
@@ -70,11 +70,10 @@ public class Main {
     }
 
     @Bean
-    public PointOfInterestService pointOfInterestService(EntityManager entityManager,
-                                                         PointOfInterestRepository pointOfInterestRepository) {
-        PointOfInterestService pointOfInterestService = new PointOfInterestServiceImpl(entityManager,
-                                                                                       pointOfInterestRepository);
-        return new PublishingPointOfInterestService(pointOfInterestService);
+    public PublishingLocationService locationService(EntityManager entityManager,
+                                           LocationRepository locationRepository) {
+        LocationService locationService = new LocationServiceImpl(entityManager, locationRepository);
+        return new PublishingLocationService(locationService);
     }
 
     @Bean
@@ -186,8 +185,8 @@ public class Main {
     }
 
     @Bean
-    public ToPublicPointOfInterestService toPublicPointOfInterestService(ToPublicImageServiceImpl toPublicImageService) {
-        return new ToPublicPointOfInterestService(toPublicImageService);
+    public ToPublicLocationService toPublicLocationService(ToPublicImageServiceImpl toPublicImageService) {
+        return new ToPublicLocationService(toPublicImageService);
     }
 
     @Bean

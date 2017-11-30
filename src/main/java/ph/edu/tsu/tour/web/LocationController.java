@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,18 +17,17 @@ import ph.edu.tsu.tour.core.image.DiskStorageCapableImageService;
 import ph.edu.tsu.tour.core.image.Image;
 import ph.edu.tsu.tour.core.image.RawImage;
 import ph.edu.tsu.tour.core.image.ToPublicImageService;
-import ph.edu.tsu.tour.core.poi.PointOfInterest;
-import ph.edu.tsu.tour.core.poi.PointOfInterestService;
-import ph.edu.tsu.tour.core.poi.ToPublicPointOfInterestService;
+import ph.edu.tsu.tour.core.location.Location;
+import ph.edu.tsu.tour.core.location.LocationService;
+import ph.edu.tsu.tour.core.location.ToPublicLocationService;
 import ph.edu.tsu.tour.exception.FunctionalityNotImplementedException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 import ph.edu.tsu.tour.web.common.dto.ImagePayload;
-import ph.edu.tsu.tour.web.common.dto.PointOfInterestPayload;
+import ph.edu.tsu.tour.web.common.dto.LocationPayload;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -41,33 +39,33 @@ import java.util.stream.Collectors;
 
 // TODO: Show error messages in view
 @Controller
-@RequestMapping(Urls.POI)
-class PointOfInterestController {
+@RequestMapping(Urls.LOCATION)
+class LocationController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PointOfInterestController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocationController.class);
 
-    private PointOfInterestService pointOfInterestService;
+    private LocationService locationService;
     private DiskStorageCapableImageService imageService;
-    private ToPublicPointOfInterestService toPublicPointOfInterestService;
+    private ToPublicLocationService toPublicLocationService;
     private ToPublicImageService toPublicImageService;
 
     @Autowired
-    PointOfInterestController(PointOfInterestService pointOfInterestService,
-                              DiskStorageCapableImageService diskStorageCapableImageService,
-                              ToPublicPointOfInterestService toPublicPointOfInterestService,
-                              ToPublicImageService toPublicImageService) throws IOException {
-        this.pointOfInterestService = pointOfInterestService;
+    LocationController(LocationService locationService,
+                       DiskStorageCapableImageService diskStorageCapableImageService,
+                       ToPublicLocationService toPublicLocationService,
+                       ToPublicImageService toPublicImageService) throws IOException {
+        this.locationService = locationService;
         this.imageService = diskStorageCapableImageService;
-        this.toPublicPointOfInterestService = toPublicPointOfInterestService;
+        this.toPublicLocationService = toPublicLocationService;
         this.toPublicImageService = toPublicImageService;
     }
 
-    private static ImagePayload toDto(PointOfInterest poi, Image image) {
-        if (image == null || poi == null) {
+    private static ImagePayload toDto(Location location, Image image) {
+        if (image == null || location == null) {
             return null;
         }
         return ImagePayload.builder()
-                .reference(poi.getId())
+                .reference(location.getId())
                 .id(image.getId())
                 .title(image.getTitle())
                 .description(image.getDescription())
@@ -77,80 +75,80 @@ class PointOfInterestController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String findAll(Model model) {
-        Iterable<PointOfInterest> pois = pointOfInterestService.findAll();
-        Collection<PointOfInterestPayload> dtos = new HashSet<>();
-        for (PointOfInterest poi : pois) {
-            PointOfInterest publicPoi = toPublicPointOfInterestService.apply(poi);
-            PointOfInterestPayload dto = PointOfInterestPayload.builder()
-                    .id(publicPoi.getId())
-                    .name(publicPoi.getName())
-                    .website(publicPoi.getWebsite())
-                    .contactNumber(publicPoi.getContactNumber())
-                    .addressLine1(publicPoi.getAddressLine1())
-                    .addressLine2(publicPoi.getAddressLine2())
-                    .city(publicPoi.getCity())
-                    .zipCode(publicPoi.getZipCode())
-                    .coverImage1(toDto(publicPoi, publicPoi.getCoverImage1())) // Only image displayed in view.
+        Iterable<Location> locations = locationService.findAll();
+        Collection<LocationPayload> dtos = new HashSet<>();
+        for (Location location : locations) {
+            Location publicLocation = toPublicLocationService.apply(location);
+            LocationPayload dto = LocationPayload.builder()
+                    .id(publicLocation.getId())
+                    .name(publicLocation.getName())
+                    .website(publicLocation.getWebsite())
+                    .contactNumber(publicLocation.getContactNumber())
+                    .addressLine1(publicLocation.getAddressLine1())
+                    .addressLine2(publicLocation.getAddressLine2())
+                    .city(publicLocation.getCity())
+                    .zipCode(publicLocation.getZipCode())
+                    .coverImage1(toDto(publicLocation, publicLocation.getCoverImage1())) // Only image displayed in view.
                     .build();
             dtos.add(dto);
         }
 
-        model.addAttribute("pois", dtos);
-        return "poi/all";
+        model.addAttribute("locations", dtos);
+        return "location/all";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String findById(@PathVariable long id, Model model) {
-        PointOfInterest poi = pointOfInterestService.findById(id);
-        if (poi == null) {
+        Location location = locationService.findById(id);
+        if (location == null) {
             throw new ResourceNotFoundException(
-                    "Point of interest with ID [" + id + "] does not exist");
+                    "Location with ID [" + id + "] does not exist");
         }
-        if (!(poi.getGeometry() instanceof Point)) {
-            String type = poi.getGeometry().getClass().getSimpleName();
+        if (!(location.getGeometry() instanceof Point)) {
+            String type = location.getGeometry().getClass().getSimpleName();
             throw new FunctionalityNotImplementedException(
-                    "Point of interest with ID [" + id + "] has geometry of type [" + type + "]");
+                    "Location with ID [" + id + "] has geometry of type [" + type + "]");
         }
 
-        PointOfInterest publicPoi = toPublicPointOfInterestService.apply(poi);
-        PointOfInterestPayload dto = PointOfInterestPayload.builder()
-                .id(publicPoi.getId())
-                .name(publicPoi.getName())
-                .website(publicPoi.getWebsite())
-                .contactNumber(publicPoi.getContactNumber())
-                .addressLine1(publicPoi.getAddressLine1())
-                .addressLine2(publicPoi.getAddressLine2())
-                .city(publicPoi.getCity())
-                .latitude(((Point) publicPoi.getGeometry()).getCoordinates().getLatitude())
-                .longitude(((Point) publicPoi.getGeometry()).getCoordinates().getLongitude())
-                .zipCode(publicPoi.getZipCode())
-                .coverImage1(toDto(publicPoi, publicPoi.getCoverImage1()))
-                .coverImage2(toDto(publicPoi, publicPoi.getCoverImage2()))
-                .images(publicPoi.getImages().stream().map(raw -> toDto(publicPoi, raw)).collect(Collectors.toSet()))
+        Location publicLocation = toPublicLocationService.apply(location);
+        LocationPayload dto = LocationPayload.builder()
+                .id(publicLocation.getId())
+                .name(publicLocation.getName())
+                .website(publicLocation.getWebsite())
+                .contactNumber(publicLocation.getContactNumber())
+                .addressLine1(publicLocation.getAddressLine1())
+                .addressLine2(publicLocation.getAddressLine2())
+                .city(publicLocation.getCity())
+                .latitude(((Point) publicLocation.getGeometry()).getCoordinates().getLatitude())
+                .longitude(((Point) publicLocation.getGeometry()).getCoordinates().getLongitude())
+                .zipCode(publicLocation.getZipCode())
+                .coverImage1(toDto(publicLocation, publicLocation.getCoverImage1()))
+                .coverImage2(toDto(publicLocation, publicLocation.getCoverImage2()))
+                .images(publicLocation.getImages().stream().map(raw -> toDto(publicLocation, raw)).collect(Collectors.toSet()))
                 .build();
 
-        model.addAttribute("poi", dto);
-        model.addAttribute("images", !poi.getImages().isEmpty());
-        return "poi/one";
+        model.addAttribute("location", dto);
+        model.addAttribute("images", !location.getImages().isEmpty());
+        return "location/one";
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String save(Model model) {
-        model.addAttribute("poi", PointOfInterestPayload.builder().build());
-        return "poi/one";
+        model.addAttribute("location", LocationPayload.builder().build());
+        return "location/one";
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(Model model,
-                       @Valid @ModelAttribute("poi") PointOfInterestPayload dto,
+                       @Valid @ModelAttribute("location") LocationPayload dto,
                        BindingResult bindingResult,
                        RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
-            return "poi/one";
+            return "location/one";
         }
 
         Collection<Throwable> errors = new LinkedList<>();
-        PointOfInterest poi = PointOfInterest.builder()
+        Location location = Location.builder()
                 .id(dto.getId())
                 .name(dto.getName())
                 .website(dto.getWebsite())
@@ -162,15 +160,15 @@ class PointOfInterestController {
                 .geometry(new Point(dto.getLongitude(), dto.getLatitude()))
                 .build();
         if (dto.getId() != null) { // Set the images; we'll replace them later if necessary.
-            PointOfInterest existing = pointOfInterestService.findById(dto.getId());
-            poi.setCoverImage1(existing.getCoverImage1());
-            poi.setCoverImage2(existing.getCoverImage2());
+            Location existing = locationService.findById(dto.getId());
+            location.setCoverImage1(existing.getCoverImage1());
+            location.setCoverImage2(existing.getCoverImage2());
         }
 
-        poi = pointOfInterestService.save(poi);
-        dto.setId(poi.getId());
+        location = locationService.save(location);
+        dto.setId(location.getId());
 
-        final PointOfInterest reference = poi;
+        final Location reference = location;
 
         CompletableFuture<Image> coverImage1 = null;
         CompletableFuture<Image> coverImage2 = null;
@@ -193,7 +191,7 @@ class PointOfInterestController {
 
         if (coverImage1 != null) {
             try {
-                poi.setCoverImage1(coverImage1.get());
+                location.setCoverImage1(coverImage1.get());
                 logger.trace("Finished saving cover image one");
             } catch (Exception e) {
                 if (logger.isErrorEnabled()) {
@@ -207,7 +205,7 @@ class PointOfInterestController {
         }
         if (coverImage2 != null) {
             try {
-                poi.setCoverImage2(coverImage2.get());
+                location.setCoverImage2(coverImage2.get());
                 logger.trace("Finished saving cover image two");
             } catch (Exception e) {
                 if (logger.isErrorEnabled()) {
@@ -220,53 +218,53 @@ class PointOfInterestController {
             }
         }
 
-        poi = pointOfInterestService.save(poi);
+        location = locationService.save(location);
 
         if (!errors.isEmpty()) {
             redirectAttributes.addFlashAttribute("errors", errors.stream()
                     .map(Throwable::getMessage)
                     .collect(Collectors.toList()));
         }
-        return "redirect:" + Urls.POI + "/" + poi.getId();
+        return "redirect:" + Urls.LOCATION + "/" + location.getId();
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String delete(@RequestParam long id) {
-        PointOfInterest poi = pointOfInterestService.findById(id);
-        if (poi != null) {
-            pointOfInterestService.deleteById(id);
+        Location location = locationService.findById(id);
+        if (location != null) {
+            locationService.deleteById(id);
 
             // TODO: Hide?
-            if (poi.getCoverImage1() != null) {
-                imageService.deleteById(poi.getCoverImage1().getId());
+            if (location.getCoverImage1() != null) {
+                imageService.deleteById(location.getCoverImage1().getId());
             }
-            if (poi.getCoverImage2() != null) {
-                imageService.deleteById(poi.getCoverImage2().getId());
+            if (location.getCoverImage2() != null) {
+                imageService.deleteById(location.getCoverImage2().getId());
             }
-            for (Image image : poi.getImages()) {
+            for (Image image : location.getImages()) {
                 imageService.deleteById(image.getId());
             }
         }
 
-        return "redirect:" + Urls.POI;
+        return "redirect:" + Urls.LOCATION;
     }
 
-    @RequestMapping(value = "/{poiId}/image/new", method = RequestMethod.GET)
-    public String saveImage(Model model, @PathVariable("poiId") long poiId) {
-        if (!pointOfInterestService.exists(poiId)) {
-            throw new ResourceNotFoundException("Point of interest with ID [" + poiId + "] does not exist");
+    @RequestMapping(value = "/{location-id}/image/new", method = RequestMethod.GET)
+    public String saveImage(Model model, @PathVariable("location-id") long locationId) {
+        if (!locationService.exists(locationId)) {
+            throw new ResourceNotFoundException("Location with ID [" + locationId + "] does not exist");
         }
-        model.addAttribute("image", ImagePayload.builder().reference(poiId).build());
-        return "poi/image/one";
+        model.addAttribute("image", ImagePayload.builder().reference(locationId).build());
+        return "location/image/one";
     }
 
-    @RequestMapping(value = "/{poiId}/image/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{location-id}/image/{id}", method = RequestMethod.GET)
     public String findImageById(Model model,
-                                @PathVariable long poiId,
+                                @PathVariable("location-id") long locationId,
                                 @PathVariable("id") long imageId) throws MalformedURLException {
-        PointOfInterest poi = pointOfInterestService.findById(poiId);
-        if (poi == null) {
-            throw new ResourceNotFoundException("Point of interest with ID [" + poiId + "] does not exist");
+        Location location = locationService.findById(locationId);
+        if (location == null) {
+            throw new ResourceNotFoundException("Location with ID [" + locationId + "] does not exist");
         }
 
         Image image = imageService.findById(imageId);
@@ -275,9 +273,9 @@ class PointOfInterestController {
             throw new ResourceNotFoundException("Image with ID [" + imageId + "] does not exist");
         }
 
-        ImagePayload dto = toDto(poi, image);
+        ImagePayload dto = toDto(location, image);
         model.addAttribute("image", dto);
-        return "poi/image/one";
+        return "location/image/one";
     }
 
     @RequestMapping(value = "/image/save", method = RequestMethod.POST)
@@ -290,13 +288,13 @@ class PointOfInterestController {
         }
 
         if (bindingResult.hasErrors()) {
-            return "poi/image/one";
+            return "location/image/one";
         }
 
-        PointOfInterest poi = pointOfInterestService.findById(dto.getReference());
-        if (poi == null) {
+        Location location = locationService.findById(dto.getReference());
+        if (location == null) {
             throw new ResourceNotFoundException(
-                    "Point of interest with ID [" + dto.getReference() + "] does not exist");
+                    "Location with ID [" + dto.getReference() + "] does not exist");
         }
 
         Image image;
@@ -317,56 +315,57 @@ class PointOfInterestController {
 
         Image temp = image; // Because Java wants an effectively final variable.
 
-        Set<Image> images = poi.getImages();
+        Set<Image> images = location.getImages();
         Optional<Image> existing = images.stream().filter(x -> x.getId().equals(temp.getId())).findFirst();
-        existing.ifPresent(poi::removeImage);
+        existing.ifPresent(location::removeImage);
 
-        poi.addImage(image);
-        pointOfInterestService.save(poi);
+        location.addImage(image);
+        locationService.save(location);
 
-        return "redirect:" + Urls.POI + "/" + poi.getId() + "/image/" + image.getId();
+        return "redirect:" + Urls.LOCATION + "/" + location.getId() + "/image/" + image.getId();
     }
 
     @RequestMapping(value = "/image/delete", method = RequestMethod.POST)
-    public String deleteImage(@RequestParam("poi-id") long poiId, @RequestParam("id") long imageId) {
-        PointOfInterest poi = pointOfInterestService.findById(poiId);
-        if (poi != null) {
-            Set<Image> images = poi.getImages();
+    public String deleteImage(@RequestParam("location-id") long locationId, @RequestParam("id") long imageId) {
+        Location location = locationService.findById(locationId);
+        if (location != null) {
+            Set<Image> images = location.getImages();
             Optional<Image> match = images.stream()
                     .filter(image -> image.getId().equals(imageId))
                     .findFirst();
             if (match.isPresent()) {
-                poi.removeImage(match.get());
+                location.removeImage(match.get());
+                location = locationService.save(location);
                 imageService.deleteById(match.get().getId()); // TODO: Hide me.
-                pointOfInterestService.save(poi);
+                locationService.save(location);
             } else {
-                String message = "Point of interest [" + poiId + "] has no reference to image [" + imageId + "]";
+                String message = "Location [" + locationId + "] has no reference to image [" + imageId + "]";
                 throw new ResourceNotFoundException(message);
             }
         }
 
-        return "redirect:" + Urls.POI + "/" + poiId + "/image";
+        return "redirect:" + Urls.LOCATION + "/" + locationId + "/image";
     }
 
     @RequestMapping(value = "/{id}/image", method = RequestMethod.GET)
     public String findAllImages(Model model, @PathVariable long id) {
-        PointOfInterest poi = pointOfInterestService.findById(id);
-        if (poi == null) {
-            throw new ResourceNotFoundException("Point of interest with ID [" + id + "] does not exist");
+        Location location = locationService.findById(id);
+        if (location == null) {
+            throw new ResourceNotFoundException("Location with ID [" + id + "] does not exist");
         }
 
-        poi = toPublicPointOfInterestService.apply(poi);
+        location = toPublicLocationService.apply(location);
 
-        Collection<Image> images = poi.getImages();
+        Collection<Image> images = location.getImages();
         Collection<ImagePayload> dtos = new HashSet<>();
         for (Image image : images) {
-            ImagePayload dto = toDto(poi, image);
+            ImagePayload dto = toDto(location, image);
             dtos.add(dto);
         }
 
         model.addAttribute("id", id);
         model.addAttribute("images", dtos);
-        return "poi/image/all";
+        return "location/image/all";
     }
 
 }

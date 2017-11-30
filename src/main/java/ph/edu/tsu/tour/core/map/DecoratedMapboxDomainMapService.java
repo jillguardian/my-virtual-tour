@@ -6,12 +6,11 @@ import com.mapbox.services.commons.models.Position;
 import org.geojson.GeoJsonObject;
 import org.geojson.Point;
 import ph.edu.tsu.tour.Project;
-import ph.edu.tsu.tour.core.poi.PointOfInterest;
+import ph.edu.tsu.tour.core.location.Location;
 import ph.edu.tsu.tour.exception.FailedDependencyException;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -40,22 +39,22 @@ public final class DecoratedMapboxDomainMapService implements DomainMapService {
     }
 
     @Override
-    public PointOfInterest getNearestDestination(Profile profile,
-                                                 GeoJsonObject source,
-                                                 Set<PointOfInterest> destinations) {
+    public Location getNearestDestination(Profile profile,
+                                          GeoJsonObject source,
+                                          Set<Location> destinations) {
         return domainMapService.getNearestDestination(profile, source, destinations);
     }
 
     @Override
-    public List<PointOfInterest> sortDestinations(Profile profile,
-                                                  GeoJsonObject source,
-                                                  Set<PointOfInterest> destinations) {
+    public List<Location> sortDestinations(Profile profile,
+                                           GeoJsonObject source,
+                                           Set<Location> destinations) {
         return domainMapService.sortDestinations(profile, source, destinations);
     }
 
     public DirectionsResponse getDirections(Profile profile,
                                             GeoJsonObject source,
-                                            Set<PointOfInterest> destinations) {
+                                            Set<Location> destinations) {
         Objects.requireNonNull(profile, "Profile must be specified");
         Objects.requireNonNull(source, "Source must be specified");
         Objects.requireNonNull(destinations, "Destinations must be specified");
@@ -64,9 +63,9 @@ public final class DecoratedMapboxDomainMapService implements DomainMapService {
             throw new IllegalArgumentException("Destinations collection is empty");
         }
 
-        List<PointOfInterest> sorted = domainMapService.sortDestinations(profile, source, destinations);
+        List<Location> sorted = domainMapService.sortDestinations(profile, source, destinations);
         List<Position> coordinates = sorted.stream()
-                .map(PointOfInterest::getGeometry)
+                .map(Location::getGeometry)
                 .map(Point.class::cast)
                 .map(pointToPosition)
                 .collect(Collectors.toList());
