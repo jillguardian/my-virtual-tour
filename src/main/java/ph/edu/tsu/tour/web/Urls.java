@@ -7,9 +7,9 @@ public interface Urls {
     String MAP = "/map";
     String USER = "/user";
 
-    String REST_PREFIX = "/api";
-    String REST_LOCATION = REST_PREFIX + LOCATION;
-    String REST_MAP = REST_PREFIX + MAP;
-    String REST_USER = REST_PREFIX + USER;
+    String REST_PREFIX_V1 = "/api/v1";
+    String REST_V1_LOCATION = REST_PREFIX_V1 + LOCATION;
+    String REST_V1_MAP = REST_PREFIX_V1 + MAP;
+    String REST_V1_USER = REST_PREFIX_V1 + USER;
 
 }

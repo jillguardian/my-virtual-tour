@@ -30,7 +30,7 @@ import java.util.function.Function;
 
 @CrossOrigin
 @RestController
-@RequestMapping(Urls.REST_LOCATION)
+@RequestMapping(Urls.REST_V1_LOCATION)
 class LocationRestController implements Observer {
 
     private static final Logger logger = LoggerFactory.getLogger(LocationRestController.class);

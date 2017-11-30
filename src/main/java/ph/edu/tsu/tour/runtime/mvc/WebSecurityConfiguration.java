@@ -64,19 +64,19 @@ public class WebSecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher(Urls.REST_USER + "/**")
+            http.antMatcher(Urls.REST_V1_USER + "/**")
                     .authorizeRequests()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/new", "POST"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/new", "POST"))
                     .permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/verify", "POST"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/verify", "POST"))
                     .permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/reverify", "POST"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/reverify", "POST"))
                     .permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/request-password-reset", "POST"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/request-password-reset", "POST"))
                     .permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/reset-password", "POST"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/reset-password", "POST"))
                     .permitAll()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_USER + "/**")).authenticated()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_V1_USER + "/**")).authenticated()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
@@ -138,9 +138,9 @@ public class WebSecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher(Urls.REST_PREFIX + "/**")
+            http.antMatcher(Urls.REST_PREFIX_V1 + "/**")
                     .authorizeRequests()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_PREFIX + "/**", "GET")).permitAll()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_PREFIX_V1 + "/**", "GET")).permitAll()
                     .anyRequest().denyAll()
                     .and().httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

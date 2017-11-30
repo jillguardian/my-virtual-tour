@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 @RestController
-@RequestMapping(Urls.REST_MAP)
+@RequestMapping(Urls.REST_V1_MAP)
 class MapRestController {
 
     private final DecoratedMapboxDomainMapService domainMapService;
