@@ -54,7 +54,7 @@ public class Tour implements Serializable {
     private User author;
 
     @Setter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tour_locations",
             joinColumns = @JoinColumn(name = "tour_id", referencedColumnName = "id"),

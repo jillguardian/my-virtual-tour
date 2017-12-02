@@ -78,7 +78,6 @@ public class TourRestController {
                 .locations(payload.getLocations().stream().map(locationService::findById).collect(Collectors.toSet()))
                 .build();
 
-        // FIXME: Constraint violation when two different tours contain similar locations.
         tour = tourService.save(tour);
         TourPayload saved = TourPayload.builder()
                 .id(tour.getId())
