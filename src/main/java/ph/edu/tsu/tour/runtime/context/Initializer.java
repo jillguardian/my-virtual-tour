@@ -107,7 +107,7 @@ public class Initializer {
 
             Role superAdministratorRole = Role.builder()
                     .name("Super Administrator")
-                    .privileges(Sets.newHashSet(privileges))
+                    .privileges(Sets.newHashSet(privileges.get(1), privileges.get(2)))
                     .build();
             Role locationsAdministratorRole = Role.builder()
                     .name("Locations Administrator")
@@ -129,6 +129,8 @@ public class Initializer {
             }
 
             Administrator administrator = Administrator.builder()
+                    .firstName("Default Administrator")
+                    .lastName("")
                     .username("admin")
                     .password("admin")
                     .roles(new HashSet<>(Collections.singleton(roles.get(0))))

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
+    <title layout:title-pattern="$DECORATOR_TITLE :: $CONTENT_TITLE" th:text="#{application.name}">My Virtual Tour</title>
+
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.7-1/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+          th:href="@{/webjars/font-awesome/4.7.0/css/font-awesome.min.css}" />
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
+          th:href="@{/webjars/ionicons/2.0.1/css/ionicons.min.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.2/css/AdminLTE.min.css"
+          th:href="@{/webjars/AdminLTE/2.4.2/dist/css/AdminLTE.min.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/skins/square/blue.css"
+          th:href="@{/webjars/iCheck/1.0.2/skins/square/blue.css}" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" />
+
+    <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"
+            th:src="@{/webjars/html5shiv/3.7.3/html5shiv.min.js}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"
+            th:src="@{/webjars/respond.js/1.4.2/respond.min.js}""></script>
+    <![endif]-->
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <a th:href="@{/}">
+            <strong th:text="#{virtual}">Virtual</strong><span th:text="#{tour}" th:remove="tag">Tour</span>
+        </a>
+    </div>
+    <div layout:fragment="content" class="login-box-body">
+    </div>
+</div>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"
+        th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
+<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"
+        th:src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iCheck/1.0.2/icheck.min.js"
+        th:href="@{/webjars/iCheck/1.0.2/icheck.min.js}"></script>
+<script>
+  $(function () {
+    $('input').iCheck({
+      checkboxClass: 'icheckbox_square-blue',
+      radioClass: 'iradio_square-blue',
+      increaseArea: '20%' // optional
+    });
+  });
+</script>
+<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>

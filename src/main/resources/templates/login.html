@@ -2,36 +2,50 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="default">
+      layout:decorator="boxed">
 <body>
 <div layout:fragment="content">
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-            <form role="form" th:action="@{/login}" action="/login" method="post">
-                <fieldset>
-                    <h1 class="text-center" th:text="#{sign-in}">Please Sign In</h1>
-                    <hr />
-                    <div class="alert alert-danger" role="alert" th:if="${param.error}">
-                        <p class="text-center" th:text="#{login.invalid-credentials.message}">Invalid username and password.</p>
-                    </div>
-                    <div class="alert alert-info" role="alert" th:if="${param.logout}">
-                        <p class="text-center" th:text="#{logout.success.message}">Logged out.</p>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" name="username" id="username" class="form-control"
-                               th:placeholder="#{username}" placeholder="Username"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" id="password" class="form-control"
-                               th:placeholder="#{password}" placeholder="Password"/>
-                    </div>
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <hr />
-                    <button type="submit" class="btn btn-success btn-block" th:value="#{sign-in}">Sign In</button>
-                </fieldset>
-            </form>
-        </div>
+    <div class="alert alert-danger" role="alert" th:if="${param.error}">
+        <p class="text-center" th:text="#{login.invalid-credentials.message}">Invalid username and password.</p>
     </div>
+    <div class="alert alert-info" role="alert" th:if="${param.logout}">
+        <p class="text-center" th:text="#{logout.success.message}">Logged out.</p>
+    </div>
+    <p class="login-box-msg" th:text="#{login.message}">Sign in to start your session.</p>
+    <form role="form" th:action="@{/login}" action="/login" method="post">
+        <div class="form-group has-feedback">
+            <input type="text"
+                   name="username"
+                   id="username"
+                   class="form-control"
+                   th:placeholder="#{username}"
+                   placeholder="Username" />
+            <span class="glyphicon glyphicon-user form-control-feedback"></span>
+        </div>
+        <div class="form-group has-feedback">
+            <input type="password"
+                   name="password"
+                   id="password"
+                   class="form-control"
+                   th:placeholder="#{password}"
+                   placeholder="Password"/>
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <div class="row">
+            <div class="col-xs-8">
+                <div class="checkbox icheck">
+                    <label>
+                        <input type="checkbox" />&ensp;
+                        <span th:text="#{remember-me}" th:remove="tag">Remember Me</span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <button type="submit" class="btn btn-primary btn-block btn-flat" th:value="#{sign-in}">Sign In</button>
+            </div>
+        </div>
+    </form>
 </div>
 </body>
 </html>

@@ -4,47 +4,50 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="default">
 <head>
-    <style>
-        .thumbnail > .caption > h2 {
-            font-size: 18px;
-            margin-top: 10px;
-            margin-bottom: 15px;
-        }
-        .thumbnail > img {
-            width: 300px;
-            height: 250px;
-            min-height: 250px;
-            object-fit: cover;
-        }
-    </style>
+    <title th:text="#{images}">Images</title>
 </head>
-<div layout:fragment="breadcrumbs">
-    <ol class="breadcrumb">
-        <li><a th:href="@{/}" th:text="#{home}">Home</a></li>
-        <li><a th:href="@{/location}" th:text="#{location}">Location</a></li>
-        <li><a th:href="@{/location/} + ${id}" th:text="${id}">#</a></li>
-        <li class="active" th:text="#{image}">Image</li>
-    </ol>
-</div>
 <body>
-<div layout:fragment="content">
-    <div class="row">
-        <h1 class="text-center" th:text="#{images}">Images</h1>
-        <div class="alert alert-danger text-center" role="alert" th:if="${images.empty}" th:text="#{images.empty.message}">Found no images.</div>
-        <div class="row" th:if="${images}">
-            <div th:each="group : ${T(com.google.common.collect.Lists).partition(images, 4)}" class="row">
-                <div th:each="image : ${group}" th:object="${image}" class="col-md-3 col-sm-6">
-                    <div class="thumbnail">
-                        <img src="http://via.placeholder.com/350x250?text=X"
-                             alt="Preview."
-                             class="img-rounded"
-                             th:src="${image?.uri ?: 'http://via.placeholder.com/350x250?text=X'}"
-                             th:alt="${image.description}" />
-                        <div class="caption" th:with="title=#{title.none}">
-                            <h2 class="text-center" th:text="${image.title ?: title}">Title</h2>
-                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                <a th:href="@{/location/} + ${image.reference} + @{/image/} + ${image.id}" th:text="#{edit}" class="btn btn-default">Edit</a>
-                            </div>
+<h1 layout:fragment="content-heading" th:text="#{images}">Images</h1>
+<ol th:fragment="breadcrumb" class="breadcrumb">
+    <li>
+        <a th:href="@{/}">
+            <i class="fa fa-dashboard"></i> <span th:text="#{dashboard}" th:remove="tag">Dashboard</span>
+        </a>
+    </li>
+    <li>
+        <a th:href="@{/location}">
+            <i class="fa fa-map-o"></i> <span th:text="#{locations}" th:remove="tag">Locations</span>
+        </a>
+    </li>
+    <li>
+        <a th:href="@{/location/} + ${id}">
+            <i class="fa fa-map-marker"></i> <span th:text="${id}" th:remove="tag">#</span>
+        </a>
+    </li>
+    <li class="active">
+        <a th:href="@{/location/} + ${id} + @{/image}">
+            <i class="fa fa-clone"></i> <span th:text="#{images}" th:remove="tag">Images</span>
+        </a>
+    </li>
+</ol>
+<div layout:fragment="content-body">
+    <div class="alert alert-danger text-center"
+         role="alert"
+         th:if="${images.empty}"
+         th:text="#{images.empty.message}">Found no images.</div>
+    <div th:each="group : ${T(com.google.common.collect.Lists).partition(images, 3)}" class="row">
+        <div th:each="image : ${group}" th:object="${image}" class="col-md-4">
+            <div class="box box-widget widget-user">
+                <div class="widget-user-header bg-black"
+                     th:style="'background: url(' + @{${image?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
+                    <h3 class="widget-user-username" th:text="${image.title}">Title</h3>
+                </div>
+                <div class="box-footer" style="padding-top: 10px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a th:href="@{/location/} + ${image.reference} + @{/image/} + ${image.id}" class="btn btn-block btn-primary btn-sm">
+                                Edit
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@ package ph.edu.tsu.tour.core.access;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.NamedUser;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,14 +25,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (administrator == null) {
             throw new UsernameNotFoundException("Could not find administrator with username [" + username + "]");
         }
-        return new org.springframework.security.core.userdetails.User(
-                administrator.getUsername(),
-                administrator.getPassword(),
-                true,
-                true,
-                true,
-                true,
-                getAuthorities(administrator.getRoles()));
+
+        String name = administrator.getFirstName();
+        if (administrator.getLastName() != null) {
+            name += " " + administrator.getLastName();
+        }
+
+        return new NamedUser(name,
+                             administrator.getUsername(),
+                             administrator.getPassword(),
+                             true,
+                             true,
+                             true,
+                             true,
+                             getAuthorities(administrator.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {

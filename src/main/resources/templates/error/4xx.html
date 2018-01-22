@@ -3,24 +3,37 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="default">
+<head>
+    <title th:text="${status}">4XX</title>
+    <style>
+        .error-page h1 {
+            font-size: 100px;
+        }
+        .error-page .error-content {
+            margin: 0 auto;
+        }
+    </style>
+</head>
 <body>
-<div layout:fragment="content">
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-            <div class="page-header text-center">
-                <h1 style="font-size: 72px;" th:text="${status}">4XX</h1>
-                <p class="lead" th:text="#{4xx.message}" style="margin-bottom: 0;">Uh-oh.</p>
-                <p th:text="${error}">Error</p>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-body text-center">
-                    <div class="alert alert-danger" role="alert">
-                        <p th:text="${message}">Message</p>
-                    </div>
-                    <p th:text="${timestamp}">Timestamp</p>
-                </div>
+<h1 layout:fragment="content-heading"></h1>
+<div layout:fragment="content-body">
+    <div class="error-page text-center">
+        <h1 class="text-yellow">
+            <span th:text="${status}">4XX</span>
+            <small class="hidden-xs"><strong th:text="${error}">Error</strong></small>
+        </h1>
+        <div class="error-content">
+            <p th:text="${timestamp}">Timestamp</p>
+            <p th:text="#{4xx.message}">We're sorry that happened.</p>
+            <div class="alert alert-warning" role="alert">
+                <p th:text="${message}">Message</p>
             </div>
         </div>
+    </div>
+</div>
+<div layout:fragment="content">
+    <div class="row">
+
     </div>
 </div>
 </body>

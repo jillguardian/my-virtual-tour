@@ -55,7 +55,12 @@ public class AccessManagementServiceImpl implements AccessManagementService {
                 throw new IllegalArgumentException("Role with id [" + role.getId() + "] does not exist");
             }
         }
-        administrator.setPassword(passwordEncoder.encode(administrator.getPassword()));
+        if (administrator.getId() != null && administrator.getPassword().isEmpty()) {
+            Administrator previous = administratorRepository.findOne(administrator.getId());
+            administrator.setPassword(previous.getPassword());
+        } else {
+            administrator.setPassword(passwordEncoder.encode(administrator.getPassword()));
+        }
         return administratorRepository.save(administrator);
     }
 

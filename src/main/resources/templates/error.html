@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+  <title th:text="${status}">XXX</title>
+  <style>
+        .error-page h1 {
+            font-size: 100px;
+        }
+        .error-page .error-content {
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<h1 layout:fragment="content-heading"></h1>
+<div layout:fragment="content-body">
+  <div class="error-page text-center">
+    <h1 class="text-red">
+      <span th:text="${status}">XXX</span>
+      <small class="hidden-xs"><strong th:text="${error}">Error</strong></small>
+    </h1>
+    <div class="error-content">
+      <p th:text="${timestamp}">Timestamp</p>
+      <div class="alert alert-danger" role="alert">
+        <p th:text="${message}">Message</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div layout:fragment="content">
+  <div class="row">
+
+  </div>
+</div>
+</body>
+</html>

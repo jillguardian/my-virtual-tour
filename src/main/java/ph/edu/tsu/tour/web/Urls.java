@@ -2,8 +2,10 @@ package ph.edu.tsu.tour.web;
 
 public interface Urls {
 
-    String LOCATION = "/location";
     String ACCESS_MANAGEMENT = "/access-management";
+    String ADMINISTRATOR = ACCESS_MANAGEMENT + "/administrator";
+
+    String LOCATION = "/location";
     String MAP = "/map";
     String USER = "/user";
     String TOUR = "/tour";

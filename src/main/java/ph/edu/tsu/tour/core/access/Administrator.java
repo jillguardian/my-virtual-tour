@@ -37,6 +37,14 @@ public class Administrator implements Serializable {
     @Column(nullable = false)
     private String password;
 
+    @JsonProperty("first-name")
+    @Column(nullable = false)
+    private String firstName;
+
+    @JsonProperty("last-name")
+    @Column
+    private String lastName;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<Role> roles;
 
