@@ -85,7 +85,7 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
             } else {
                 throw new FailedDependencyException("Unsuccessful response [" + response.code() + "]");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new FailedDependencyException("Couldn't get data on [" + longitude + ", " + latitude + "]", e);
         }
 
