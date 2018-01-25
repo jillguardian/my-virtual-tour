@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Set;
 
-@Within(query = "Tarlac Province", country = "PH", message = "{location.geometry.point.beyond-limit.message}")
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
