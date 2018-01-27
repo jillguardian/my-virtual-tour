@@ -137,14 +137,16 @@ public class WebSecurityConfiguration {
     }
 
     @Configuration
+    @Order(3)
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher(Urls.REST_PREFIX_V1 + "/**")
-                    .authorizeRequests()
-                    .anyRequest().permitAll()
-                    .and().httpBasic()
+            http.authorizeRequests()
+                    .requestMatchers(new AntPathRequestMatcher(Urls.REST_PREFIX_V1 + "/**", "GET"))
+                    .permitAll()
+                    .and()
+                    .httpBasic()
                     .and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
 
