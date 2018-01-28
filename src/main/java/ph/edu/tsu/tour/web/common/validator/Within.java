@@ -9,14 +9,29 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * <p>An annotation that </p>
+ */
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RUNTIME)
 @Constraint(validatedBy = WithinLocationValidator.class)
 public @interface Within {
+
     String query();
-    String country();
+
+    String[] types();
+
+    /**
+     * @return countries wherein the annotated location should be bound to
+     */
+    String[] countries();
+
+    /**
+     * @return message displayed when annotated location fails validation
+     */
     String message();
+
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

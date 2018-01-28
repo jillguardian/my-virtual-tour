@@ -24,7 +24,8 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
     private final String accessToken;
 
     private String place;
-    private String country;
+    private String[] types;
+    private String[] countries;
 
     // TODO: Remove ugly Spring-related qualifier. Keep classes like this Spring-free!
     public WithinLocationValidator(@Value("${application.map.mapbox.access-token}") String accessToken) {
@@ -35,7 +36,8 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
     @Override
     public void initialize(Within annotation) {
         this.place = annotation.query();
-        this.country = annotation.country();
+        this.types = annotation.types();
+        this.countries = annotation.countries();
     }
 
     @Override
@@ -51,7 +53,8 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
                 .setAccessToken(accessToken)
                 .setClientAppName(applicationName)
                 .setLocation(place)
-                .setCountry(country)
+                .setCountries(countries)
+                .setGeocodingTypes(types)
                 .setLimit(1)
                 .build();
 
@@ -64,7 +67,7 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
                 throw new FailedDependencyException("Unsuccessful response [" + response.code() + "]");
             }
         } catch (Exception e) {
-            throw new FailedDependencyException("Couldn't get data on [" + place + ", " + country + "]", e);
+            throw new FailedDependencyException("Couldn't get data on [" + place + "]", e);
         }
 
         // Now that we have the ID of the enclosing area, we'll check if the location in the payload belongs to the
