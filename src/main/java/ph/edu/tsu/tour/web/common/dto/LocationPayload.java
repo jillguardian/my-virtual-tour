@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Builder(builderClassName = "Builder", toBuilder = true)
-@Within(query = "Tarlac", types = "region", countries = "PH", message = "{poi.geometry.point.beyond-limit.message}")
+@Within(query = "Tarlac", types = "region", countries = "PH", message = "{location.geometry.point.beyond-limit.message}")
 public final class LocationPayload implements Serializable {
 
     private static final long serialVersionUID = -6972769675344484349L;

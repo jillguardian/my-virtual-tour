@@ -30,21 +30,23 @@
     </th:block>
 </ol>
 <div layout:fragment="content-body">
-    <!-- TODO: Alert for global form errors
-    <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}" th:if="${#fields.hasGlobalErrors()}">
-        <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
-    </div>
-    -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header with-border"></div>
-                <form action="/access-management/administrator/save"
-                      th:if="${administrator}"
-                      th:action="@{/access-management/administrator/save}"
-                      th:object="${administrator}"
-                      method="POST"
-                      role="form">
+    <form action="/access-management/administrator/save"
+          th:if="${administrator}"
+          th:action="@{/access-management/administrator/save}"
+          th:object="${administrator}"
+          method="POST"
+          role="form">
+        <div class="row" th:if="${#fields.hasGlobalErrors()}">
+            <div class="col-md-12">
+                <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}">
+                    <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='', style='')">Errors</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border"></div>
                     <div class="box-body">
                         <div class="row">
                             <div class="col-xs-12 col-sm-12 col-md-12">
@@ -142,21 +144,21 @@
                             </div>
                         </div>
                     </div>
-                </form>
-                <form th:action="@{/access-management/administrator/delete}"
-                      method="post"
-                      th:if="${administrator?.id} and ${not #authentication.name.equals(administrator.username)}"
-                      th:hidden="true">
-                    <div class="box-footer">
-                        <input type="hidden" name="id" th:value="${administrator.id}" />
-                        <button type="submit" id="delete-button" class="btn btn-danger btn-block" th:value="#{delete}">
-                            Delete
-                        </button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+    <form th:action="@{/access-management/administrator/delete}"
+          method="post"
+          th:if="${administrator?.id} and ${not #authentication.name.equals(administrator.username)}"
+          th:hidden="true">
+        <div class="box-footer">
+            <input type="hidden" name="id" th:value="${administrator.id}" />
+            <button type="submit" id="delete-button" class="btn btn-danger btn-block" th:value="#{delete}">
+                Delete
+            </button>
+        </div>
+    </form>
 </div>
 <th:block layout:fragment="scripts"
           th:with="hasWriteAccessAuthority=${#authorization.expression('hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).WRITE)')}">
