@@ -148,9 +148,14 @@
         </section>
         <section class="content container-fluid">
             <div class="row">
-                <div class="col-md-12" layout:fragment="content-body">
-                    Content.
+                <div class="col-md-12">
+                    <th:block th:with="text=#{error.message}" th:if="${errors}">
+                        <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='', style='margin-bottom: 15px;')">Errors</div>
+                    </th:block>
                 </div>
+            </div>
+            <div layout:fragment="content-body" th:remove="tag">
+                Content.
             </div>
         </section>
         <section sec:authorize="isAuthenticated()">

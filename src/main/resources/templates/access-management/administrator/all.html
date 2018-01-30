@@ -28,25 +28,30 @@
     </li>
 </ol>
 <div layout:fragment="content-body">
-    <div class="alert alert-danger text-center"
-         role="alert"
-         th:if="${administrators.empty}"
-         th:text="#{administrators.empty.message}">
-        Found no administrators.
+    <div class="row" th:if="${administrators.empty}">
+        <div class="col-md-12">
+            <div class="alert alert-danger text-center"
+                 role="alert"
+                 th:text="#{administrators.empty.message}">
+                Found no administrators.
+            </div>
+        </div>
     </div>
-    <div th:each="group : ${T(com.google.common.collect.Lists).partition(administrators, 3)}" th:remove="tag">
-        <div th:each="administrator : ${group}" class="col-md-4">
-            <div class="info-box">
-                <span class="info-box-icon"><i class="fa fa-user"></i></span>
-                <div class="info-box-content">
-                    <a th:href="@{/access-management/administrator/} + ${administrator.id}">
-                        <span class="info-box-text auto-truncate" th:text="${administrator.username}">Username</span>
-                    </a>
-                    <span class="info-box-number auto-truncate" th:text="${administrator.firstName} + ' ' + ${administrator.lastName}"></span>
-                    <span class="progress-description">
+    <div class="row">
+        <div th:each="group : ${T(com.google.common.collect.Lists).partition(administrators, 3)}" th:remove="tag">
+            <div th:each="administrator : ${group}" class="col-md-4">
+                <div class="info-box">
+                    <span class="info-box-icon"><i class="fa fa-user"></i></span>
+                    <div class="info-box-content">
+                        <a th:href="@{/access-management/administrator/} + ${administrator.id}">
+                            <span class="info-box-text auto-truncate" th:text="${administrator.username}">Username</span>
+                        </a>
+                        <span class="info-box-number auto-truncate" th:text="${administrator.firstName} + ' ' + ${administrator.lastName}"></span>
+                        <span class="progress-description">
                         <span th:text="${administrator.roles.size()}" th:remove="tag">#</span>
                         <span th:text="${administrator.roles.size()} == 1 ? #{role} : #{roles}" th:remove="tag">Role(s)</span>
                     </span>
+                    </div>
                 </div>
             </div>
         </div>

@@ -51,91 +51,90 @@
     </th:block>
 </ol>
 <div layout:fragment="content-body">
-    <!-- TODO: Alert for application errors
-    <th:block th:with="text=#{error.message}" th:if="${errors}">
-        <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
-    </th:block>
-    -->
     <!-- TODO: Alert for global form errors
     <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}" th:if="${#fields.hasGlobalErrors()}">
         <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='col-xs-12')">Errors</div>
     </div>
     -->
-    <div class="box box-primary">
-        <div class="box-header with-border"></div>
-        <form th:if="${image}"
-              th:action="@{/location/image/save}"
-              th:object="${image}"
-              method="POST"
-              role="form"
-              enctype="multipart/form-data">
-            <div class="box-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <input type="hidden" th:field="*{reference}" />
-                        <div class="form-group" th:classappend="${#fields.hasErrors('id')} ? has-error : ''" th:hidden="true">
-                            <label for="id" th:text="#{id}">Identifier</label>
-                            <input type="text" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#"/>
-                        </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('title')} ? has-error : ''">
-                            <label for="title" th:text="#{title}">Title</label>
-                            <input type="text" th:field="*{title}" class="form-control" id="title" th:placeholder="#{image.title.placeholder}" placeholder="Title" />
-                            <p class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
-                        </div>
-                        <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error : ''">
-                            <label for="description" th:text="#{description}">Description</label>
-                            <textarea id="description"
-                                      class="form-control"
-                                      rows="15"
-                                      placeholder="Description of this image."
-                                      style="resize: none;"
-                                      th:field="*{description}"
-                                      th:placeholder="#{image.description.placeholder}"></textarea>
-                            <p class="help-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group location-image" th:classappend="${#fields.hasErrors('file')} ? has-error : ''">
-                            <label for="file" th:text="#{file}">File</label>
-                            <div class="thumbnail">
-                                <img src="http://via.placeholder.com/350x250?text=X" th:src="${not #strings.isEmpty(image?.uri) ? image.uri : 'http://via.placeholder.com/350x250?text=X'}" />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border"></div>
+                <form th:if="${image}"
+                      th:action="@{/location/image/save}"
+                      th:object="${image}"
+                      method="POST"
+                      role="form"
+                      enctype="multipart/form-data">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="hidden" th:field="*{reference}" />
+                                <div class="form-group" th:classappend="${#fields.hasErrors('id')} ? has-error : ''" th:hidden="true">
+                                    <label for="id" th:text="#{id}">Identifier</label>
+                                    <input type="text" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#"/>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('title')} ? has-error : ''">
+                                    <label for="title" th:text="#{title}">Title</label>
+                                    <input type="text" th:field="*{title}" class="form-control" id="title" th:placeholder="#{image.title.placeholder}" placeholder="Title" />
+                                    <p class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error : ''">
+                                    <label for="description" th:text="#{description}">Description</label>
+                                    <textarea id="description"
+                                              class="form-control"
+                                              rows="15"
+                                              placeholder="Description of this image."
+                                              style="resize: none;"
+                                              th:field="*{description}"
+                                              th:placeholder="#{image.description.placeholder}"></textarea>
+                                    <p class="help-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                                </div>
                             </div>
-                            <input type="file" th:field="*{file}" id="file" accept="image/*" />
-                            <input type="hidden" th:field="*{uri}" />
-                            <p class="help-block" th:if="${#fields.hasErrors('file')}" th:errors="*{file}"></p>
+                            <div class="col-md-6">
+                                <div class="form-group location-image" th:classappend="${#fields.hasErrors('file')} ? has-error : ''">
+                                    <label for="file" th:text="#{file}">File</label>
+                                    <div class="thumbnail">
+                                        <img src="http://via.placeholder.com/350x250?text=X" th:src="${not #strings.isEmpty(image?.uri) ? image.uri : 'http://via.placeholder.com/350x250?text=X'}" />
+                                    </div>
+                                    <input type="file" th:field="*{file}" id="file" accept="image/*" />
+                                    <input type="hidden" th:field="*{uri}" />
+                                    <p class="help-block" th:if="${#fields.hasErrors('file')}" th:errors="*{file}"></p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="box-footer">
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                    <div class="btn-group" role="group">
-                        <button type="submit" class="btn btn-primary btn-block" th:value="#{submit}">Submit</button>
+                    <div class="box-footer">
+                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                            <div class="btn-group" role="group">
+                                <button type="submit" class="btn btn-primary btn-block" th:value="#{submit}">Submit</button>
+                            </div>
+                            <div class="btn-group"
+                                 role="group"
+                                 th:if="${image?.id}">
+                                <a id="delete-link" class="btn btn-danger btn-block" th:value="#{delete}">Delete</a>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button id="reset" type="reset" class="btn btn-default btn-block" th:value="#{reset}">Reset</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="btn-group"
-                         role="group"
-                         th:if="${image?.id}">
-                        <a id="delete-link" class="btn btn-danger btn-block" th:value="#{delete}">Delete</a>
+                </form>
+                <form action="/location/image/delete"
+                      th:action="@{/location/image/delete}"
+                      method="POST"
+                      th:if="${image?.id}"
+                      th:hidden="true">
+                    <div class="col-xs-12">
+                        <div class="form-group">
+                            <input type="hidden" name="location-id" th:value="${image.reference}" />
+                            <input type="hidden" name="id" th:value="${image.id}" />
+                        </div>
+                        <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
                     </div>
-                    <div class="btn-group" role="group">
-                        <button id="reset" type="reset" class="btn btn-default btn-block" th:value="#{reset}">Reset</button>
-                    </div>
-                </div>
+                </form>
             </div>
-        </form>
-        <form action="/location/image/delete"
-              th:action="@{/location/image/delete}"
-              method="POST"
-              th:if="${image?.id}"
-              th:hidden="true">
-            <div class="col-xs-12">
-                <div class="form-group">
-                    <input type="hidden" name="location-id" th:value="${image.reference}" />
-                    <input type="hidden" name="id" th:value="${image.id}" />
-                </div>
-                <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 <th:block layout:fragment="scripts">

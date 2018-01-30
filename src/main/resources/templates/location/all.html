@@ -23,23 +23,28 @@
     </li>
 </ol>
 <div layout:fragment="content-body">
-    <div class="alert alert-danger text-center"
-         role="alert"
-         th:if="${locations.empty}"
-         th:text="#{locations.empty.message}">Found no locations.</div>
-    <div th:each="group : ${T(com.google.common.collect.Lists).partition(locations, 3)}" class="row">
-        <div th:each="location : ${group}" th:object="${location}" class="col-md-4">
-            <div class="box box-widget widget-user">
-                <div class="widget-user-header bg-black"
-                     th:style="'background: url(' + @{${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
-                    <h3 class="widget-user-username" th:text="${location.name}">Location Name</h3>
-                </div>
-                <div class="box-footer" style="padding-top: 10px;">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <a th:href="@{/location/} + ${location.id}" class="btn btn-block btn-primary btn-sm">
-                                Edit
-                            </a>
+    <div class="row" th:if="${locations.empty}">
+        <div class="col-md-12">
+            <div class="alert alert-danger text-center"
+                 role="alert"
+                 th:text="#{locations.empty.message}">Found no locations.</div>
+        </div>
+    </div>
+    <div class="row">
+        <div th:each="group : ${T(com.google.common.collect.Lists).partition(locations, 3)}" class="row">
+            <div th:each="location : ${group}" th:object="${location}" class="col-md-4">
+                <div class="box box-widget widget-user">
+                    <div class="widget-user-header bg-black"
+                         th:style="'background: url(' + @{${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
+                        <h3 class="widget-user-username" th:text="${location.name}">Location Name</h3>
+                    </div>
+                    <div class="box-footer" style="padding-top: 10px;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <a th:href="@{/location/} + ${location.id}" class="btn btn-block btn-primary btn-sm">
+                                    Edit
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
