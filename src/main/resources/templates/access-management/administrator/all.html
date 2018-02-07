@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div>
         <div th:each="group : ${T(com.google.common.collect.Lists).partition(administrators, 3)}" th:remove="tag">
             <div th:each="administrator : ${group}" class="col-md-4">
                 <div class="info-box">

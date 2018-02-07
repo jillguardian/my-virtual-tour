@@ -30,7 +30,7 @@
                  th:text="#{locations.empty.message}">Found no locations.</div>
         </div>
     </div>
-    <div class="row">
+    <div>
         <div th:each="group : ${T(com.google.common.collect.Lists).partition(locations, 3)}" class="row">
             <div th:each="location : ${group}" th:object="${location}" class="col-md-4">
                 <div class="box box-widget widget-user">
