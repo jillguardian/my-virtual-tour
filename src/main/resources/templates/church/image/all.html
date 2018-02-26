@@ -15,17 +15,17 @@
         </a>
     </li>
     <li>
-        <a th:href="@{/location}">
-            <i class="fa fa-map-o"></i> <span th:text="#{locations}" th:remove="tag">Locations</span>
+        <a th:href="@{/location/church}">
+            <i class="fa fa-map-o"></i> <span th:text="#{churches}" th:remove="tag">Churches</span>
         </a>
     </li>
     <li>
-        <a th:href="@{/location/} + ${id}">
+        <a th:href="@{/location/church/} + ${id}">
             <i class="fa fa-map-marker"></i> <span th:text="${id}" th:remove="tag">#</span>
         </a>
     </li>
     <li class="active">
-        <a th:href="@{/location/} + ${id} + @{/image}">
+        <a th:href="@{/location/church/} + ${id} + @{/image}">
             <i class="fa fa-clone"></i> <span th:text="#{images}" th:remove="tag">Images</span>
         </a>
     </li>
@@ -49,7 +49,7 @@
                     <div class="box-footer" style="padding-top: 10px;">
                         <div class="row">
                             <div class="col-sm-12">
-                                <a th:href="@{/location/} + ${image.reference} + @{/image/} + ${image.id}" class="btn btn-block btn-primary btn-sm">
+                                <a th:href="@{/location/church/} + ${image.reference} + @{/image/} + ${image.id}" class="btn btn-block btn-primary btn-sm">
                                     Edit
                                 </a>
                             </div>

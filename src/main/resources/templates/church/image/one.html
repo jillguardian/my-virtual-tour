@@ -29,17 +29,17 @@
         </a>
     </li>
     <li>
-        <a th:href="@{/location}">
-            <i class="fa fa-map-o"></i> <span th:text="#{locations}" th:remove="tag">Locations</span>
+        <a th:href="@{/location/church}">
+            <i class="fa fa-map-o"></i> <span th:text="#{churches}" th:remove="tag">Churches</span>
         </a>
     </li>
     <li>
-        <a th:href="@{/location/} + ${image.reference}">
+        <a th:href="@{/location/church/} + ${image.reference}">
             <i class="fa fa-map-marker"></i> <span th:text="${image.reference}" th:remove="tag">#</span>
         </a>
     </li>
     <li>
-        <a th:href="@{/location/} + ${image.reference} + @{/image}">
+        <a th:href="@{/location/church/} + ${image.reference} + @{/image}">
             <i class="fa fa-clone"></i> <span th:text="#{images}" th:remove="tag">Images</span>
         </a>
     </li>
@@ -52,7 +52,7 @@
 </ol>
 <div layout:fragment="content-body">
     <form th:if="${image}"
-          th:action="@{/location/image/save}"
+          th:action="@{/location/church/image/save}"
           th:object="${image}"
           method="POST"
           role="form"
@@ -125,8 +125,8 @@
             </div>
         </div>
     </form>
-    <form action="/location/image/delete"
-          th:action="@{/location/image/delete}"
+    <form action="/location/church/image/delete"
+          th:action="@{/location/church/image/delete}"
           method="POST"
           th:if="${image?.id}"
           th:hidden="true">

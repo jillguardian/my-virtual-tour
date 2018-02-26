@@ -133,7 +133,7 @@ public class Initializer {
                     .lastName("")
                     .username("admin")
                     .password("admin")
-                    .roles(new HashSet<>(Collections.singleton(roles.get(0))))
+                    .roles(roles)
                     .build();
             Administrator found = accessManagementService.findAdministratorByUsername(administrator.getUsername());
             if (found != null) {

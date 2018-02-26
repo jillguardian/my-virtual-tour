@@ -27,15 +27,15 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(Urls.REST_V1_TOUR)
-public class TourRestController {
+public class TourRestController<T extends Location> {
 
     private final TourService tourService;
-    private final LocationService locationService;
+    private final LocationService<T> locationService;
     private final UserService userService;
 
     @Autowired
     TourRestController(TourService tourService,
-                       LocationService locationService,
+                       LocationService<T> locationService,
                        UserService userService) {
         this.tourService = tourService;
         this.locationService = locationService;

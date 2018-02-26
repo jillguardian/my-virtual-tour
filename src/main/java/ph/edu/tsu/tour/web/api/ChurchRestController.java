@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ph.edu.tsu.tour.core.common.function.LocationCollectionToFeatureCollection;
 import ph.edu.tsu.tour.core.common.function.LocationToFeature;
+import ph.edu.tsu.tour.core.location.Church;
 import ph.edu.tsu.tour.core.location.Location;
 import ph.edu.tsu.tour.core.location.LocationModifiedEvent;
 import ph.edu.tsu.tour.core.location.LocationService;
@@ -31,12 +32,12 @@ import java.util.function.Function;
 @CrossOrigin
 @RestController
 @RequestMapping(Urls.REST_V1_LOCATION)
-class LocationRestController implements Observer {
+class ChurchRestController implements Observer {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocationRestController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChurchRestController.class);
 
     private SimpMessagingTemplate simpMessagingTemplate;
-    private LocationService locationService;
+    private LocationService<Church> locationService;
     private ToPublicLocationService toPublicLocationService;
 
     private Function<Location, Feature> locationToFeature;
@@ -44,15 +45,16 @@ class LocationRestController implements Observer {
     private Function<LocationModifiedEvent, FeatureModifiedEvent> locationModifiedEventToFeatureModifiedEvent;
 
     @Autowired
-    LocationRestController(PublishingLocationService locationService,
-                           ToPublicLocationService toPublicLocationService,
-                           SimpMessagingTemplate simpMessagingTemplate) {
+    ChurchRestController(PublishingLocationService<Church> locationService,
+                         ToPublicLocationService toPublicLocationService,
+                         SimpMessagingTemplate simpMessagingTemplate) {
         locationService.addObserver(this);
 
         this.locationService = locationService;
         this.toPublicLocationService = toPublicLocationService;
         this.simpMessagingTemplate = simpMessagingTemplate;
 
+        // TODO: Use more appropriate converters.
         this.locationToFeature = new LocationToFeature();
         this.locationCollectionToFeatureCollection = new LocationCollectionToFeatureCollection();
         this.locationModifiedEventToFeatureModifiedEvent =
@@ -61,11 +63,11 @@ class LocationRestController implements Observer {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<FeatureCollection> findAll() {
-        Iterable<Location> found = locationService.findAll();
+        Iterable<Church> found = locationService.findAll();
         Collection<Location> modified = new HashSet<>();
-        for (Location location : found) {
-            location = toPublicLocationService.apply(location);
-            modified.add(location);
+        for (Church church : found) {
+            toPublicLocationService.accept(church);
+            modified.add(church);
         }
 
         FeatureCollection converted = locationCollectionToFeatureCollection.apply(modified);
@@ -74,10 +76,10 @@ class LocationRestController implements Observer {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Feature> findById(@PathVariable long id) {
-        Location location = locationService.findById(id);
-        if (location != null) {
-            location = toPublicLocationService.apply(location);
-            Feature converted = locationToFeature.apply(location);
+        Church church = locationService.findById(id);
+        if (church != null) {
+            toPublicLocationService.accept(church);
+            Feature converted = locationToFeature.apply(church);
             return ResponseEntity.ok(converted);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

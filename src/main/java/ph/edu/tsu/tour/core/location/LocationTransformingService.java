@@ -1,7 +1,7 @@
 package ph.edu.tsu.tour.core.location;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 
-public interface LocationTransformingService extends Function<Location, Location> {
+public interface LocationTransformingService extends Consumer<Location> {
 
 }

@@ -6,7 +6,10 @@ import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.util.UrlPathHelper;
+
+import ph.edu.tsu.tour.runtime.mvc.converter.MonthDayConditionalConverter;
 import ph.edu.tsu.tour.runtime.mvc.converter.ProfileConverter;
+import ph.edu.tsu.tour.runtime.mvc.formatter.YearFormatter;
 
 @Configuration
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
@@ -22,6 +25,8 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     public void addFormatters(FormatterRegistry registry) {
         super.addFormatters(registry);
         registry.addConverter(new ProfileConverter());
+        registry.addConverter(new MonthDayConditionalConverter());
+        registry.addFormatter(new YearFormatter());
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import ph.edu.tsu.tour.core.EntityAction;
+import ph.edu.tsu.tour.core.location.Church;
 import ph.edu.tsu.tour.core.location.Location;
 import ph.edu.tsu.tour.core.location.PublishingLocationService;
 
@@ -39,7 +40,7 @@ import static org.junit.Assert.fail;
 @RunWith(SpringRunner.class)
 @AutoConfigureDataJpa
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LocationRestControllerIT {
+public class ChurchRestControllerIT {
 
     @LocalServerPort
     private int port;
@@ -48,7 +49,7 @@ public class LocationRestControllerIT {
     private final WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
 
     @Autowired
-    private PublishingLocationService locationService;
+    private PublishingLocationService<Church> locationService;
 
     @Before
     public void setup() {
@@ -93,13 +94,13 @@ public class LocationRestControllerIT {
                     }
                 });
                 try {
-                    Location location = Location.builder()
+                    Church church = Church.builder()
                             .name("Tarlac State University")
                             .city("Tarlac City")
                             .zipCode("2003")
                             .geometry(new Point(120.58683700000006, 15.485415))
                             .build();
-                    locationService.save(location);
+                    locationService.save(church);
                 } catch (Throwable t) {
                     failure.set(t);
                     latch.countDown();

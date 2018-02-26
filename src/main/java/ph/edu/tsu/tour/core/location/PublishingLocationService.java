@@ -4,33 +4,33 @@ import ph.edu.tsu.tour.core.EntityAction;
 
 import java.util.Observable;
 
-public class PublishingLocationService extends Observable implements LocationService {
+public class PublishingLocationService<T extends Location> extends Observable implements LocationService<T> {
 
-    private LocationService locationService;
+    private LocationService<T> locationService;
 
-    public PublishingLocationService(LocationService locationService) {
+    public PublishingLocationService(LocationService<T> locationService) {
         this.locationService = locationService;
     }
 
     @Override
-    public Location findById(Long id) {
+    public T findById(Long id) {
         return locationService.findById(id);
     }
 
     @Override
-    public Iterable<Location> findAll() {
+    public Iterable<T> findAll() {
         return locationService.findAll();
     }
 
     @Override
-    public Iterable<Location> findAll(Iterable<Long> ids) {
+    public Iterable<T> findAll(Iterable<Long> ids) {
         return locationService.findAll(ids);
     }
 
     @Override
-    public Location save(Location entity) {
+    public T save(T entity) {
         boolean exists = entity.getId() != null;
-        Location saved = locationService.save(entity);
+        T saved = locationService.save(entity);
 
         EntityAction action = exists ? EntityAction.MODIFIED : EntityAction.CREATED;
         LocationModifiedEvent locationModifiedEvent = new LocationModifiedEvent(action, saved);
@@ -41,7 +41,7 @@ public class PublishingLocationService extends Observable implements LocationSer
 
     @Override
     public boolean deleteById(Long id) {
-        Location location = locationService.findById(id);
+        T location = locationService.findById(id);
         boolean deleted = locationService.deleteById(id);
         if (deleted) {
             LocationModifiedEvent locationModifiedEvent =

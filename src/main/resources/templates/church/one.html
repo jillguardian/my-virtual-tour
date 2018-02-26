@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+    <title th:text="${location?.id}? #{church.edit} : #{church.add}">Church</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css"
+          th:href="@{/webjars/leaflet/0.7.3/leaflet.css}" />
+    <style>
+        .form-group.location-image > .thumbnail {
+            margin-bottom: 0;
+        }
+        .form-group.location-image > .thumbnail > img {
+            object-fit: cover;
+            height: 250px;
+        }
+        .form-group.location-image > input[type=file] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1 layout:fragment="content-heading" th:text="${location?.id}? #{church.edit} : #{church.add}">
+    Church
+</h1>
+<ol th:fragment="breadcrumb" class="breadcrumb">
+    <li>
+        <a th:href="@{/}">
+            <i class="fa fa-dashboard"></i> <span th:text="#{dashboard}" th:remove="tag">Dashboard</span>
+        </a>
+    </li>
+    <li>
+        <a th:href="@{/location/church}">
+            <i class="fa fa-map-o"></i> <span th:text="#{churches}" th:remove="tag">Churches</span>
+        </a>
+    </li>
+    <th:block th:with="text=#{new}">
+        <li class="active">
+            <i class="fa fa-map-marker"></i>
+            <span th:text="${location.id != null ? location.id : text}" th:remove="tag">#</span>
+        </li>
+    </th:block>
+</ol>
+<div layout:fragment="content-body">
+    <form th:if="${location}"
+          th:action="@{/location/church/save}"
+          th:object="${location}"
+          method="POST"
+          role="form"
+          enctype="multipart/form-data">
+        <div class="row" th:if="${#fields.hasGlobalErrors()}">
+            <div class="col-md-12">
+                <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}">
+                    <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='', style='')">Errors</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header with-border"></div>
+
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('id')} ? has-error : ''" th:hidden="true">
+                                    <input type="hidden" th:field="*{id}" readonly="readonly" class="form-control" id="id" th:placeholder="#{id.placeholder}" placeholder="#"/>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('name')} ? has-error : ''">
+                                    <label for="name" th:text="#{name}">Name</label>
+                                    <input type="text" th:field="*{name}" class="form-control" id="name" th:placeholder="#{location.name.placeholder}" placeholder="Enter the name of site"/>
+                                    <p class="help-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-md-6" th:classappend="${#fields.hasErrors('website')} ? has-error : ''">
+                                        <label for="website" th:text="#{website}">Website</label>
+                                        <input type="url" th:field="*{website}" class="form-control" id="website" th:placeholder="#{location.website.placeholder}" placeholder="Enter the site's official website"/>
+                                    </div>
+                                    <div class="form-group col-xs-12 col-md-6" th:classappend="${#fields.hasErrors('contactNumber')} ? has-error : ''">
+                                        <label for="contact" th:text="#{contact-information}">Contact Information</label>
+                                        <input type="text" th:field="*{contactNumber}" class="form-control" id="contact" th:placeholder="#{location.contact.placeholder}" placeholder="Enter the site's contact number"/>
+                                    </div>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('addressLine1')} ? has-error : ''">
+                                    <label for="address-line-one" th:text="#{address-line(1)}">Address Line 1</label>
+                                    <input type="text" th:field="*{addressLine1}" class="form-control" id="address-line-one" th:placeholder="#{location.address-line-one.placeholder}" placeholder="Enter the site's address (first line)"/>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('addressLine2')} ? has-error : ''">
+                                    <label for="address-line-two" th:text="#{address-line(2)}">Address Line 2</label>
+                                    <input type="text" th:field="*{addressLine2}" class="form-control" id="address-line-two" th:placeholder="#{location.address-line-two.placeholder}" placeholder="Enter the site's address (second line)"/>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-md-6" th:classappend="${#fields.hasErrors('city')} ? has-error : ''">
+                                        <label for="city" th:text="#{city}">City</label>
+                                        <input type="text" th:field="*{city}" class="form-control" id="city" th:placeholder="#{location.city.placeholder}" placeholder="Enter the site's city"/>
+                                        <p class="help-block" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></p>
+                                    </div>
+                                    <div class="form-group col-xs-12 col-md-6" th:classappend="${#fields.hasErrors('zipCode')} ? has-error : ''">
+                                        <label for="zip" th:text="#{zip-code}">Zip Code</label>
+                                        <input type="text" th:field="*{zipCode}" class="form-control" id="zip" th:placeholder="#{location.zip-code.placeholder}" placeholder="Enter the site's zip code" />
+                                        <p class="help-block" th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}"></p>
+                                    </div>
+                                </div>
+                                <div id="map" style="width: 100%; height: 350px; margin-bottom: 15px;"></div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-md-6" th:classappend="${#fields.hasErrors('longitude')} ? has-error : ''">
+                                        <label for="longitude" th:value="#{longitude}">Longitude</label>
+                                        <input type="number"
+                                               step="any"
+                                               th:field="*{longitude}"
+                                               class="form-control"
+                                               id="longitude"
+                                               th:placeholder="#{location.geometry.point.longitude.placeholder}"
+                                               placeholder="Longitude" />
+                                        <p class="help-block" th:if="${#fields.hasErrors('longitude')}" th:errors="*{longitude}"></p>
+                                    </div>
+                                    <div class="form-group col-xs-12 col-md-6" th:classappend="${#fields.hasErrors('latitude')} ? has-error : ''">
+                                        <label for="latitude" th:value="#{latitude}">Latitude</label>
+                                        <input type="number"
+                                               step="any"
+                                               th:field="*{latitude}"
+                                               class="form-control"
+                                               id="latitude"
+                                               th:placeholder="#{location.geometry.point.latitude.placeholder}"
+                                               placeholder="Latitude" />
+                                        <p class="help-block" th:if="${#fields.hasErrors('latitude')}" th:errors="*{latitude}"></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-6 location-image" th:classappend="${#fields.hasErrors('coverImage1')} ? has-error : ''">
+                                        <label for="primary-image-one" th:text="#{location.image.primary(1)}">Primary Image 1</label>
+                                        <div class="thumbnail">
+                                            <img id="primary-image-one-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                                        </div>
+                                        <input type="file" th:field="*{coverImage1.file}" id="primary-image-one" accept="image/*" />
+                                        <input type="hidden" th:field="*{coverImage1.id}" />
+                                    </div>
+                                    <div class="form-group col-xs-6 location-image" th:classappend="${#fields.hasErrors('coverImage2')} ? has-error : ''">
+                                        <label for="primary-image-two" th:text="#{location.image.primary(2)}">Primary Image 2</label>
+                                        <div class="thumbnail">
+                                            <img id="primary-image-two-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${location?.coverImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                                        </div>
+                                        <input type="file" th:field="*{coverImage2.file}" id="primary-image-two" accept="image/*" />
+                                        <input type="hidden" th:field="*{coverImage2.id}" />
+                                    </div>
+                                </div>
+                                <div class="form-group" th:if="${location?.id}">
+                                    <a th:href="@{/location/church/} + ${location.id} + @{/image/new}"
+                                       class="btn btn-default btn-block">
+                                        <i class="fa fa-image"></i>
+                                        <span th:text="#{image.add}" th:remove="tag">Add New Image</span>
+                                    </a>
+                                    <a th:href="@{/location/church/} + ${location.id} + @{/image}"
+                                       class="btn btn-default btn-block">
+                                        <i class="fa fa-image"></i>
+                                        <span th:text="#{images.view}" th:remove="tag">View Images</span>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('type')} ? has-error : ''">
+                                    <label for="type" th:text="#{type}">Type</label>
+                                    <select th:field="*{type}"
+                                            id="type"
+                                            class="form-control"
+                                            style="width: 100%;"
+                                            tabindex="-1"
+                                            aria-hidden="true">
+                                        <option value=""></option>
+                                        <option th:text="#{parish}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).PARISH}">Parish</option>
+                                        <option th:text="#{shrine}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).SHRINE}">Shrine</option>
+                                        <option th:text="#{chapel}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).CHAPEL}">Chapel</option>
+                                    </select>
+                                    <p class="help-block" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('saint')} ? has-error : ''">
+                                            <label for="saint" th:text="#{saint}">Saint</label>
+                                            <input type="text" th:field="*{saint}" class="form-control" id="saint" th:placeholder="#{saint.placeholder}" placeholder="Enter name of saint"/>
+                                            <p class="help-block" th:if="${#fields.hasErrors('saint')}" th:errors="*{saint}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('feastDay')} ? has-error : ''">
+                                            <label for="feast-day" th:text="#{feast-day}">Feast Day</label>
+                                            <div class="input-group date" data-provide="datepicker">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" th:field="*{feastDay}" class="form-control" id="feast-day" data-inputmask="'alias': 'mm/dd'" data-mask="" th:placeholder="#{feast-day.placeholder}" placeholder="Enter feast day"/>
+                                            </div>
+                                            <p class="help-block" th:if="${#fields.hasErrors('feastDay')}" th:errors="*{feastDay}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('canonicalErectionDay')} ? has-error : ''">
+                                    <label for="canonical-erection-day" th:text="#{canonical-erection-day}">Canonical Erection Day</label>
+                                    <div class="input-group date" data-provide="datepicker">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" th:field="*{canonicalErectionDay}" class="form-control" id="canonical-erection-day" data-inputmask="'alias': 'mm/dd/yyyy'" data-mask="" data-date-end-date="0d" th:placeholder="#{canonical-erection-day.placeholder}" placeholder="Enter date of canonical erection"/>
+                                    </div>
+                                    <p class="help-block" th:if="${#fields.hasErrors('canonicalErectionDay')}" th:errors="*{canonicalErectionDay}"></p>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('dedicationDay')} ? has-error : ''">
+                                    <label for="dedication-day" th:text="#{dedication-day}">Date of Dedication, if dedicated</label>
+                                    <div class="input-group date" data-provide="datepicker">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                        <input type="text" th:field="*{dedicationDay}" class="form-control" id="dedication-day" data-inputmask="'alias': 'mm/dd/yyyy'" data-mask="" data-date-end-date="0d" th:placeholder="#{dedication-day.placeholder}" placeholder="Enter date of dedication"/>
+                                    </div>
+                                    <p class="help-block" th:if="${#fields.hasErrors('dedicationDay')}" th:errors="*{dedicationDay}"></p>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('priest')} ? has-error : ''">
+                                    <label for="priest" th:text="#{priest}">Priest</label>
+                                    <input type="text" th:field="*{priest}" class="form-control" id="priest" th:placeholder="#{priest.placeholder}" placeholder="Enter name of priest"/>
+                                    <p class="help-block" th:if="${#fields.hasErrors('priest')}" th:errors="*{priest}"></p>
+                                </div>
+                                <div th:with="length=*{#lists.size(massSchedules)}">
+                                    <label th:text="#{mass-schedule}">Mass Schedule</label>
+                                    <th:block th:each="massSchedule, iterator: *{massSchedules}">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].day')} ? has-error : ''">
+                                                    <select th:field="*{massSchedules[__${iterator.index}__].day}"
+                                                            class="form-control day"
+                                                            style="width: 100%;"
+                                                            tabindex="-1"
+                                                            aria-hidden="true">
+                                                        <option value=""></option>
+                                                        <option th:text="#{sunday}"
+                                                                th:value="${T(java.time.DayOfWeek).SUNDAY}">Sunday</option>
+                                                        <option th:text="#{monday}"
+                                                                th:value="${T(java.time.DayOfWeek).MONDAY}">Monday</option>
+                                                        <option th:text="#{tuesday}"
+                                                                th:value="${T(java.time.DayOfWeek).TUESDAY}">Tuesday</option>
+                                                        <option th:text="#{wednesday}"
+                                                                th:value="${T(java.time.DayOfWeek).WEDNESDAY}">Wednesday</option>
+                                                        <option th:text="#{thursday}"
+                                                                th:value="${T(java.time.DayOfWeek).THURSDAY}">Thursday</option>
+                                                        <option th:text="#{friday}"
+                                                                th:value="${T(java.time.DayOfWeek).FRIDAY}">Friday</option>
+                                                        <option th:text="#{saturday}"
+                                                                th:value="${T(java.time.DayOfWeek).SATURDAY}">Saturday</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="bootstrap-timepicker">
+                                                    <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].start')} ? has-error : ''">
+                                                        <div class="input-group">
+                                                            <input type="text"
+                                                                   th:field="*{massSchedules[__${iterator.index}__].start}"
+                                                                   class="form-control timepicker schedule" />
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="bootstrap-timepicker">
+                                                    <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].end')} ? has-error : ''">
+                                                        <div class="input-group">
+                                                            <input type="text"
+                                                                   th:field="*{massSchedules[__${iterator.index}__].end}"
+                                                                   class="form-control timepicker schedule" />
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].language')} ? has-error : ''">
+                                                    <select th:field="*{massSchedules[__${iterator.index}__].language}"
+                                                            class="form-control language"
+                                                            style="width: 100%;"
+                                                            tabindex="-1"
+                                                            aria-hidden="true">
+                                                        <option value=""></option>
+                                                        <option th:text="#{english}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ENGLISH}">English</option>
+                                                        <option th:text="#{tagalog}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).TAGALOG}">Tagalog</option>
+                                                        <option th:text="#{kapampangan}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).KAPAMPANGAN}">Kapampangan</option>
+                                                        <option th:text="#{ilocano}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ILOCANO}">Ilocano</option>
+                                                        <option th:text="#{latin}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).LATIN}">Latin</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__]')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${length}__].day')} ? has-error : ''">
+                                                <select th:field="*{massSchedules[__${length}__].day}"
+                                                        class="form-control day"
+                                                        style="width: 100%;"
+                                                        tabindex="-1"
+                                                        aria-hidden="true">
+                                                    <option value=""></option>
+                                                    <option th:text="#{sunday}"
+                                                            th:value="${T(java.time.DayOfWeek).SUNDAY}">Sunday</option>
+                                                    <option th:text="#{monday}"
+                                                            th:value="${T(java.time.DayOfWeek).MONDAY}">Monday</option>
+                                                    <option th:text="#{tuesday}"
+                                                            th:value="${T(java.time.DayOfWeek).TUESDAY}">Tuesday</option>
+                                                    <option th:text="#{wednesday}"
+                                                            th:value="${T(java.time.DayOfWeek).WEDNESDAY}">Wednesday</option>
+                                                    <option th:text="#{thursday}"
+                                                            th:value="${T(java.time.DayOfWeek).THURSDAY}">Thursday</option>
+                                                    <option th:text="#{friday}"
+                                                            th:value="${T(java.time.DayOfWeek).FRIDAY}">Friday</option>
+                                                    <option th:text="#{saturday}"
+                                                            th:value="${T(java.time.DayOfWeek).SATURDAY}">Saturday</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="bootstrap-timepicker">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${length}__].start')} ? has-error : ''">
+                                                    <div class="input-group">
+                                                        <input type="text"
+                                                               th:field="*{massSchedules[__${length}__].start}"
+                                                               class="form-control timepicker schedule" />
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-clock-o"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="bootstrap-timepicker">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${length}__].end')} ? has-error : ''">
+                                                    <div class="input-group">
+                                                        <input type="text"
+                                                               th:field="*{massSchedules[__${length}__].end}"
+                                                               class="form-control timepicker schedule" />
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-clock-o"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${length}__].language')} ? has-error : ''">
+                                                <select th:field="*{massSchedules[__${length}__].language}"
+                                                        class="form-control language"
+                                                        style="width: 100%;"
+                                                        tabindex="-1"
+                                                        aria-hidden="true">
+                                                    <option value=""></option>
+                                                    <option th:text="#{english}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ENGLISH}">English</option>
+                                                    <option th:text="#{tagalog}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).TAGALOG}">Tagalog</option>
+                                                    <option th:text="#{kapampangan}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).KAPAMPANGAN}">Kapampangan</option>
+                                                    <option th:text="#{ilocano}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ILOCANO}">Ilocano</option>
+                                                    <option th:text="#{latin}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).LATIN}">Latin</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${length}__]')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__]}"></p>
+                                    </div>
+                                </div>
+                                <div th:with="length=*{#lists.size(confessionSchedules)}">
+                                    <label th:text="#{confession-schedule}">Mass Schedule</label>
+                                    <th:block th:each="confessionSchedule, iterator: *{confessionSchedules}">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].day')} ? has-error : ''">
+                                                    <select th:field="*{confessionSchedules[__${iterator.index}__].day}"
+                                                            class="form-control day"
+                                                            style="width: 100%;"
+                                                            tabindex="-1"
+                                                            aria-hidden="true">
+                                                        <option value=""></option>
+                                                        <option th:text="#{sunday}"
+                                                                th:value="${T(java.time.DayOfWeek).SUNDAY}">Sunday</option>
+                                                        <option th:text="#{monday}"
+                                                                th:value="${T(java.time.DayOfWeek).MONDAY}">Monday</option>
+                                                        <option th:text="#{tuesday}"
+                                                                th:value="${T(java.time.DayOfWeek).TUESDAY}">Tuesday</option>
+                                                        <option th:text="#{wednesday}"
+                                                                th:value="${T(java.time.DayOfWeek).WEDNESDAY}">Wednesday</option>
+                                                        <option th:text="#{thursday}"
+                                                                th:value="${T(java.time.DayOfWeek).THURSDAY}">Thursday</option>
+                                                        <option th:text="#{friday}"
+                                                                th:value="${T(java.time.DayOfWeek).FRIDAY}">Friday</option>
+                                                        <option th:text="#{saturday}"
+                                                                th:value="${T(java.time.DayOfWeek).SATURDAY}">Saturday</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="bootstrap-timepicker">
+                                                    <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].start')} ? has-error : ''">
+                                                        <div class="input-group">
+                                                            <input type="text"
+                                                                   th:field="*{confessionSchedules[__${iterator.index}__].start}"
+                                                                   class="form-control timepicker schedule" />
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="bootstrap-timepicker">
+                                                    <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].end')} ? has-error : ''">
+                                                        <div class="input-group">
+                                                            <input type="text"
+                                                                   th:field="*{confessionSchedules[__${iterator.index}__].end}"
+                                                                   class="form-control timepicker schedule" />
+                                                            <div class="input-group-addon">
+                                                                <i class="fa fa-clock-o"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].language')} ? has-error : ''">
+                                                    <select th:field="*{confessionSchedules[__${iterator.index}__].language}"
+                                                            class="form-control language"
+                                                            style="width: 100%;"
+                                                            tabindex="-1"
+                                                            aria-hidden="true">
+                                                        <option value=""></option>
+                                                        <option th:text="#{english}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ENGLISH}">English</option>
+                                                        <option th:text="#{tagalog}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).TAGALOG}">Tagalog</option>
+                                                        <option th:text="#{kapampangan}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).KAPAMPANGAN}">Kapampangan</option>
+                                                        <option th:text="#{ilocano}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ILOCANO}">Ilocano</option>
+                                                        <option th:text="#{latin}"
+                                                                th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).LATIN}">Latin</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__]')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${length}__].day')} ? has-error : ''">
+                                                <select th:field="*{confessionSchedules[__${length}__].day}"
+                                                        class="form-control day"
+                                                        style="width: 100%;"
+                                                        tabindex="-1"
+                                                        aria-hidden="true">
+                                                    <option value=""></option>
+                                                    <option th:text="#{sunday}"
+                                                            th:value="${T(java.time.DayOfWeek).SUNDAY}">Sunday</option>
+                                                    <option th:text="#{monday}"
+                                                            th:value="${T(java.time.DayOfWeek).MONDAY}">Monday</option>
+                                                    <option th:text="#{tuesday}"
+                                                            th:value="${T(java.time.DayOfWeek).TUESDAY}">Tuesday</option>
+                                                    <option th:text="#{wednesday}"
+                                                            th:value="${T(java.time.DayOfWeek).WEDNESDAY}">Wednesday</option>
+                                                    <option th:text="#{thursday}"
+                                                            th:value="${T(java.time.DayOfWeek).THURSDAY}">Thursday</option>
+                                                    <option th:text="#{friday}"
+                                                            th:value="${T(java.time.DayOfWeek).FRIDAY}">Friday</option>
+                                                    <option th:text="#{saturday}"
+                                                            th:value="${T(java.time.DayOfWeek).SATURDAY}">Saturday</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="bootstrap-timepicker">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${length}__].start')} ? has-error : ''">
+                                                    <div class="input-group">
+                                                        <input type="text"
+                                                               th:field="*{confessionSchedules[__${length}__].start}"
+                                                               class="form-control timepicker schedule" />
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-clock-o"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="bootstrap-timepicker">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${length}__].end')} ? has-error : ''">
+                                                    <div class="input-group">
+                                                        <input type="text"
+                                                               th:field="*{confessionSchedules[__${length}__].end}"
+                                                               class="form-control timepicker schedule" />
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-clock-o"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${length}__].language')} ? has-error : ''">
+                                                <select th:field="*{confessionSchedules[__${length}__].language}"
+                                                        class="form-control language"
+                                                        style="width: 100%;"
+                                                        tabindex="-1"
+                                                        aria-hidden="true">
+                                                    <option value=""></option>
+                                                    <option th:text="#{english}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ENGLISH}">English</option>
+                                                    <option th:text="#{tagalog}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).TAGALOG}">Tagalog</option>
+                                                    <option th:text="#{kapampangan}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).KAPAMPANGAN}">Kapampangan</option>
+                                                    <option th:text="#{ilocano}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).ILOCANO}">Ilocano</option>
+                                                    <option th:text="#{latin}"
+                                                            th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).LATIN}">Latin</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${length}__]')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__]}"></p>
+                                    </div>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('artifacts')} ? has-error : ''">
+                                    <label for="artifacts" th:value="#{artifacts}">Artifacts</label>
+                                    <select th:field="*{artifacts}"
+                                            id="artifacts"
+                                            class="form-control"
+                                            multiple="multiple"
+                                            style="width: 100%;"
+                                            tabindex="-1"
+                                            aria-hidden="true"
+                                            th:with="muralPainting=${T(ph.edu.tsu.tour.core.location.Church.Artifact).MURAL_PAINTING},
+                                                     oilPainting=${T(ph.edu.tsu.tour.core.location.Church.Artifact).OIL_PAINTING},
+                                                     canvasPainting=${T(ph.edu.tsu.tour.core.location.Church.Artifact).CANVAS_PAINTING},
+                                                     statue=${T(ph.edu.tsu.tour.core.location.Church.Artifact).STATUE},
+                                                     liturgicalVessel=${T(ph.edu.tsu.tour.core.location.Church.Artifact).LITURGICAL_VESSEL},
+                                                     bell=${T(ph.edu.tsu.tour.core.location.Church.Artifact).BELL}">
+                                        <option th:text="#{mural-painting}"
+                                                th:value="${muralPainting}">
+                                            Mural Painting
+                                        </option>
+                                        <option th:text="#{oil-painting}"
+                                                th:value="${oilPainting}">
+                                            Oil Painting
+                                        </option>
+                                        <option th:text="#{canvas-painting}"
+                                                th:value="${canvasPainting}">
+                                            Canvas Painting
+                                        </option>
+                                        <option th:text="#{statue}"
+                                                th:value="${statue}">
+                                            Statue
+                                        </option>
+                                        <option th:text="#{liturgical-vessel}"
+                                                th:value="${liturgicalVessel}">
+                                            Liturgical Vessel
+                                        </option>
+                                        <option th:text="#{bell}"
+                                                th:value="${bell}">
+                                            Bell
+                                        </option>
+                                    </select>
+                                    <p class="help-block"
+                                       th:if="${#fields.hasErrors('artifacts')}"
+                                       th:errors="*{artifacts}"></p>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('architect')} ? has-error : ''">
+                                    <label for="architect" th:text="#{architect}">Architect</label>
+                                    <input type="text" th:field="*{architect}" class="form-control" id="architect" th:placeholder="#{architect.placeholder}" placeholder="Enter name of architect, if known"/>
+                                    <p class="help-block" th:if="${#fields.hasErrors('architect')}" th:errors="*{architect}"></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('style')} ? has-error : ''">
+                                            <label for="style" th:text="#{style}">Style</label>
+                                            <select th:field="*{style}"
+                                                    id="style"
+                                                    class="form-control"
+                                                    style="width: 100%;"
+                                                    tabindex="-1"
+                                                    aria-hidden="true">
+                                                <option value=""></option>
+                                                <option th:text="#{baroque}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).BAROQUE}">Baroque</option>
+                                                <option th:text="#{gothic}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).GOTHIC}">Gothic</option>
+                                                <option th:text="#{neoclassic}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).NEOCLASSIC}">Neoclassis</option>
+                                                <option th:text="#{modern}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).MODERN}">Modern</option>
+                                            </select>
+                                            <p class="help-block" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></p>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('yearOfConstruction')} ? has-error : ''">
+                                            <label for="year-of-construction" th:text="#{year-of-construction}">Year of Construction</label>
+                                            <input type="number" min="1500" max="${#dates.year(#dates.createNow())}" th:field="*{yearOfConstruction}" class="form-control" id="year-of-construction" th:placeholder="#{year-of-construction.placeholder}" placeholder="Enter year of construction, if known"/>
+                                            <p class="help-block" th:if="${#fields.hasErrors('yearOfConstruction')}" th:errors="*{yearOfConstruction}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label th:text="#{other-architectural-features}">Other Architectural Features</label>
+                                    <th:block th:each="otherArchitecturalFeature, iterator: *{otherArchitecturalFeatures}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherArchitecturalFeatures[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{otherArchitecturalFeatures[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-architectural-feature.placeholder}" placeholder="Enter feature" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('otherArchitecturalFeatures[__${iterator.index}__]')}" th:errors="*{otherArchitecturalFeatures[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{otherArchitecturalFeatures[__*{#lists.size(otherArchitecturalFeatures)}__]}" class="form-control" th:placeholder="#{other-architectural-feature.placeholder}" placeholder="Enter feature" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('relics')} ? has-error : ''">
+                                    <label for="type" th:text="#{relics}">Relics</label>
+                                    <select th:field="*{relics}"
+                                            id="relics"
+                                            multiple="multiple"
+                                            class="form-control"
+                                            style="width: 100%;"
+                                            tabindex="-1"
+                                            aria-hidden="true">
+                                        <option th:text="#{first-class}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Relic).FIRST_CLASS}">First Class</option>
+                                        <option th:text="#{second-class}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Relic).SECOND_CLASS}">Second Class</option>
+                                    </select>
+                                    <p class="help-block" th:if="${#fields.hasErrors('relics')}" th:errors="*{relics}"></p>
+                                </div>
+                                <div>
+                                    <label th:text="#{other-relics}">Other Relics</label>
+                                    <th:block th:each="otherRelic, iterator: *{otherRelics}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherRelics[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{otherRelics[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-relic.placeholder}" placeholder="Enter relic" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('otherRelics[__${iterator.index}__]')}" th:errors="*{otherRelics[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{otherRelics[__*{#lists.size(otherRelics)}__]}" class="form-control" th:placeholder="#{other-relic.placeholder}" placeholder="Enter relic" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label th:text="#{historical-events}">Historical Events</label>
+                                    <th:block th:each="historicalEvent, iterator: *{historicalEvents}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{historicalEvents[__${iterator.index}__]}" class="form-control" th:placeholder="#{historical-event.placeholder}" placeholder="Enter event" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')}" th:errors="*{historicalEvents[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{historicalEvents[__*{#lists.size(historicalEvents)}__]}" class="form-control" th:placeholder="#{historical-event.placeholder}" placeholder="Enter event" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label th:text="#{married-personalities}">Married Personalities</label>
+                                    <th:block th:each="marriedPerson, iterator: *{married}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('married[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{married[__${iterator.index}__]}" class="form-control" th:placeholder="#{married-personality.placeholder}" placeholder="Enter name" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('married[__${iterator.index}__]')}" th:errors="*{married[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{married[__*{#lists.size(married)}__]}" class="form-control" th:placeholder="#{married-personality.placeholder}" placeholder="Enter name" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label th:text="#{baptized-personalities}">Baptized Personalities</label>
+                                    <th:block th:each="baptizedPerson, iterator: *{baptized}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('baptized[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{baptized[__${iterator.index}__]}" class="form-control" th:placeholder="#{baptized-personality.placeholder}" placeholder="Enter name" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('baptized[__${iterator.index}__]')}" th:errors="*{baptized[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{baptized[__*{#lists.size(baptized)}__]}" class="form-control" th:placeholder="#{baptized-personality.placeholder}" placeholder="Enter name" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label th:text="#{confirmed-personalities}">Confirmed Personalities</label>
+                                    <th:block th:each="confirmedPerson, iterator: *{confirmed}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('confirmed[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{confirmed[__${iterator.index}__]}" class="form-control" th:placeholder="#{confirmed-personality.placeholder}" placeholder="Enter name" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('confirmed[__${iterator.index}__]')}" th:errors="*{confirmed[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{confirmed[__*{#lists.size(confirmed)}__]}" class="form-control" th:placeholder="#{confirmed-personality.placeholder}" placeholder="Enter name" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('facilities')} ? has-error : ''">
+                                    <label for="facilities" th:text="#{facilities}">Facilities</label>
+                                    <select th:field="*{facilities}"
+                                            id="facilities"
+                                            multiple="multiple"
+                                            class="form-control"
+                                            style="width: 100%;"
+                                            tabindex="-1"
+                                            aria-hidden="true">
+                                        <option th:text="#{comfort-room}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).COMFORT_ROOM}">Comfort Room</option>
+                                        <option th:text="#{green-park}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).GREEN_PARK}">Green Park</option>
+                                        <option th:text="#{parking-lot}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PARKING_LOT}">Parking Lot</option>
+                                        <option th:text="#{pwd-accessibility}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PWD_ACCESSIBILITY}">PWD Accessibility</option>
+                                        <option th:text="#{parish-hall}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PARISH_HALL}">Parish Hall</option>
+                                        <option th:text="#{pilgrim-center}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PILGRIM_CENTER}">Pilgrim Center</option>
+                                        <option th:text="#{parish-museum}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PARISH_MUSEUM}">Parish Museum</option>
+                                        <option th:text="#{souvenir-shop}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).SOUVENIR_SHOP}">Souvenir Shop</option>
+                                    </select>
+                                    <p class="help-block" th:if="${#fields.hasErrors('facilities')}" th:errors="*{facilities}"></p>
+                                </div>
+                                <div>
+                                    <label th:text="#{other-facilities}">Other Facilities</label>
+                                    <th:block th:each="otherFacility, iterator: *{otherFacilities}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{otherFacilities[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-facility.placeholder}" placeholder="Enter facility" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')}" th:errors="*{otherFacilities[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{otherFacilities[__*{#lists.size(otherFacilities)}__]}" class="form-control" th:placeholder="#{other-facility.placeholder}" placeholder="Enter facility" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('nearbies')} ? has-error : ''">
+                                    <label for="nearbies" th:text="#{nearby-places}">Places Nearby</label>
+                                    <select th:field="*{nearbies}"
+                                            id="nearbies"
+                                            multiple="multiple"
+                                            class="form-control"
+                                            style="width: 100%;"
+                                            tabindex="-1"
+                                            aria-hidden="true">
+                                        <option th:text="#{restaurant}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).RESTAURANT}">Restaurant</option>
+                                        <option th:text="#{pharmacy}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).PHARMACY}">Pharmacy</option>
+                                        <option th:text="#{hospital}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).HOSPITAL}">Hospital</option>
+                                        <option th:text="#{gasoline-station}"
+                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).GASOLINE_STATION}">Gasoline Station</option>
+                                    </select>
+                                    <p class="help-block" th:if="${#fields.hasErrors('nearbies')}" th:errors="*{nearbies}"></p>
+                                </div>
+                                <div>
+                                    <label th:text="#{other-nearby-places}">Other Nearby Places</label>
+                                    <th:block th:each="otherNearby, iterator: *{otherNearbies}">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                            <input type="text" th:field="*{otherNearbies[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-nearby-place.placeholder}" placeholder="Enter place" />
+                                            <p class="help-block" th:if="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')}" th:errors="*{otherNearbies[__${iterator.index}__]}"></p>
+                                        </div>
+                                    </th:block>
+                                    <div class="form-group">
+                                        <input type="text" th:field="*{otherNearbies[__*{#lists.size(otherNearbies)}__]}" class="form-control" th:placeholder="#{other-nearby-place.placeholder}" placeholder="Enter place" style="margin-top: 3px" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                            <div class="btn-group" role="group">
+                                <button type="submit" class="btn btn-primary btn-block" th:value="#{submit}">Submit</button>
+                            </div>
+                            <div class="btn-group"
+                                 role="group"
+                                 th:if="${location?.id}">
+                                <a id="delete-link" class="btn btn-danger btn-block" th:value="#{delete}">Delete</a>
+                            </div>
+                            <div class="btn-group" role="group">
+                                <button id="reset" type="reset" class="btn btn-default btn-block" th:value="#{reset}">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form action="/location/church/delete"
+          th:action="@{/location/church/delete}"
+          method="POST" th:if="${location?.id}"
+          th:hidden="true">
+        <div class="form-group col-xs-12">
+            <input name="id" type="hidden" th:value="${location.id}"/>
+        </div>
+        <div class="form-group col-xs-12">
+            <button type="submit" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
+        </div>
+    </form>
+</div>
+<th:block layout:fragment="scripts">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"
+            th:src="@{/webjars/leaflet/0.7.3/leaflet.js}">
+    </script>
+    <script type="text/javascript" th:inline="javascript">
+        var map = L.map('map').setView([15.4601, 120.6211], 13);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        /*<![CDATA[*/
+        $('document').ready(function() {
+            $('#type').select2({
+                placeholder: /*[[#{type.placeholder}]]*/
+            });
+            $('#artifacts').select2({
+                placeholder: /*[[#{artifacts.placeholder}]]*/
+            });
+            $('#style').select2({
+                placeholder: /*[[#{style.placeholder}]]*/
+            });
+            $('#relics').select2({
+                placeholder: /*[[#{relics.placeholder}]]*/
+            });
+            $('#facilities').select2({
+                placeholder: /*[[#{facilities.placeholder}]]*/
+            });
+            $('#nearbies').select2({
+                placeholder: /*[[#{nearby-places.placeholder}]]*/
+            });
+            $('#feast-day').datepicker();
+            $('.day').select2({
+                placeholder: /*[[#{day.placeholder}]]*/
+            });
+            $('.language').select2({
+                placeholder: /*[[#{language.placeholder}]]*/
+            });
+            $('.schedule').timepicker({
+                template: false,
+                showInputs: false,
+                minuteStep: 5
+            });
+            $('.form-group.location-image > .thumbnail').click(function(e) {
+                $(this).siblings('input[type=file]').click();
+            });
+            $('.form-group.location-image > input[type=file]').change(function() {
+                var url = window.URL.createObjectURL($(this)[0].files[0]);
+                $(this).siblings('.thumbnail').children('img:first').attr('src', url);
+            });
+            $('#reset').click(function(e) {
+                $('#primary-image-one-preview').attr('src', /*[[${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+                $('#primary-image-two-preview').attr('src', /*[[${location?.coverImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+            });
+
+            var lat = $.trim($('#latitude').val());
+            if (lat == '' || !$.isNumeric(lat)) {
+                lat = 15.4601;
+            }
+            var long = $.trim($('#longitude').val());
+            if (long == '' || !$.isNumeric(long)) {
+                long = 120.6211;
+            }
+            var marker = L.marker([lat, long],{draggable: true}).addTo(map);
+            var markerBounds = L.latLngBounds([marker.getLatLng()]);
+            map.fitBounds(markerBounds);
+            marker.on('dragend', function(event) {
+                var marker = event.target;  // You could also simply access the marker through the closure.
+                var result = marker.getLatLng();  // But using the passed event is cleaner.
+                var lat = result.lat;
+                var lng = result.lng;
+                console.log('Latitude: '+lat+' Longitude: '+ lng);
+                $('#latitude').val(lat);
+                $('#longitude').val(lng);
+            });
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>

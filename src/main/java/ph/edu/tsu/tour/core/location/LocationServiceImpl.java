@@ -9,22 +9,22 @@ import javax.transaction.Transactional;
 import java.util.Objects;
 
 @Transactional
-public class LocationServiceImpl implements LocationService {
+public class LocationServiceImpl<T extends Location> implements LocationService<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(LocationServiceImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
-    private LocationRepository locationRepository;
+    private BaseLocationRepository<T> locationRepository;
 
-    public LocationServiceImpl(EntityManager entityManager, LocationRepository locationRepository) {
+    public LocationServiceImpl(EntityManager entityManager, BaseLocationRepository<T> locationRepository) {
         this.entityManager = entityManager;
         this.locationRepository = Objects.requireNonNull(locationRepository, "[locationRepository] must be set");
     }
 
     @Override
-    public Location findById(Long id) {
-        Location found = locationRepository.findOne(id);
+    public T findById(Long id) {
+        T found = locationRepository.findOne(id);
         if (found != null) {
             entityManager.detach(found);
         }
@@ -32,8 +32,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Iterable<Location> findAll() {
-        Iterable<Location> all = locationRepository.findAll();
+    public Iterable<T> findAll() {
+        Iterable<T> all = locationRepository.findAll();
         for (Location location : all) {
             entityManager.detach(location);
         }
@@ -41,8 +41,8 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Iterable<Location> findAll(Iterable<Long> ids) {
-        Iterable<Location> all = locationRepository.findAll(ids);
+    public Iterable<T> findAll(Iterable<Long> ids) {
+        Iterable<T> all = locationRepository.findAll(ids);
         for (Location location : all) {
             entityManager.detach(location);
         }
@@ -50,7 +50,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location save(Location entity) {
+    public T save(T entity) {
         return locationRepository.save(entity);
     }
 

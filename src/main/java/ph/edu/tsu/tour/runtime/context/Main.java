@@ -29,12 +29,14 @@ import ph.edu.tsu.tour.core.image.ImageRepository;
 import ph.edu.tsu.tour.core.image.ImageService;
 import ph.edu.tsu.tour.core.image.ImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ToPublicImageServiceImpl;
+import ph.edu.tsu.tour.core.location.Church;
+import ph.edu.tsu.tour.core.location.ChurchRepository;
 import ph.edu.tsu.tour.core.map.DecoratedMapboxDomainMapService;
 import ph.edu.tsu.tour.core.map.DefaultDomainMapService;
 import ph.edu.tsu.tour.core.map.DomainMapService;
 import ph.edu.tsu.tour.core.map.MapboxMapService;
 import ph.edu.tsu.tour.core.map.MapService;
-import ph.edu.tsu.tour.core.location.LocationRepository;
+import ph.edu.tsu.tour.core.location.BaseLocationRepository;
 import ph.edu.tsu.tour.core.location.LocationService;
 import ph.edu.tsu.tour.core.location.LocationServiceImpl;
 import ph.edu.tsu.tour.core.location.PublishingLocationService;
@@ -73,10 +75,10 @@ public class Main {
     }
 
     @Bean
-    public PublishingLocationService locationService(EntityManager entityManager,
-                                                     LocationRepository locationRepository) {
-        LocationService locationService = new LocationServiceImpl(entityManager, locationRepository);
-        return new PublishingLocationService(locationService);
+    public PublishingLocationService churchLocationService(EntityManager entityManager,
+                                                           ChurchRepository churchRepository) {
+        LocationService<Church> locationService = new LocationServiceImpl<>(entityManager, churchRepository);
+        return new PublishingLocationService<>(locationService);
     }
 
     @Bean

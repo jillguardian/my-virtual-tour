@@ -42,14 +42,14 @@ import java.util.function.Function;
 
 @RestController
 @RequestMapping(Urls.REST_V1_MAP)
-class MapRestController {
+class MapRestController<T extends Location> {
 
     private static final String DEFAULT_APPLICATION_NAME = Project.getName() + "/" + Project.getVersion();
     private static final Splitter DEFAULT_SEMICOLON_SPLITTER = Splitter.on(';').trimResults();
     private static final Splitter DEFAULT_COMMA_SPLITTER = Splitter.on(',');
 
     private final DecoratedMapboxDomainMapService domainMapService;
-    private final LocationService locationService;
+    private final LocationService<T> locationService;
 
     private final Function<Location, Feature> locationToFeature;
     private final Function<Iterable<Location>, FeatureCollection> locationCollectionToFeatureCollection;
@@ -59,7 +59,7 @@ class MapRestController {
 
     @Autowired
     MapRestController(DecoratedMapboxDomainMapService domainMapService,
-                      LocationService locationService,
+                      LocationService<T> locationService,
                       @Value("${application.map.mapbox.access-token}") String accessToken) {
         this.domainMapService = domainMapService;
         this.locationService = locationService;

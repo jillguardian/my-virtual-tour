@@ -105,11 +105,11 @@ public class WebSecurityConfiguration {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    .requestMatchers(new AntPathRequestMatcher(Urls.LOCATION + "/new", "GET"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.CHURCH_LOCATION + "/new", "GET"))
                     .hasAuthority(Privileges.Location.WRITE)
-                    .requestMatchers(new AntPathRequestMatcher(Urls.LOCATION, "GET"))
+                    .requestMatchers(new AntPathRequestMatcher(Urls.CHURCH_LOCATION, "GET"))
                     .permitAll()
-                    .antMatchers(Urls.LOCATION + "/**")
+                    .antMatchers(Urls.CHURCH_LOCATION + "/**")
                     .hasAuthority(Privileges.Location.WRITE)
                     .antMatchers(Urls.ADMINISTRATOR + "/me")
                     .authenticated()

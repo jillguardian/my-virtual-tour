@@ -15,7 +15,7 @@ public class ToPublicLocationService implements LocationTransformingService {
     }
 
     @Override
-    public Location apply(Location location) {
+    public void accept(Location location) {
         if (location != null) {
             if (location.getCoverImage1() != null) {
                 Image transformed = toPublicImageService.apply(location.getCoverImage1());
@@ -32,7 +32,6 @@ public class ToPublicLocationService implements LocationTransformingService {
                 location.addImage(transformed);
             }
         }
-        return location;
     }
 
 }

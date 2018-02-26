@@ -21,6 +21,10 @@
           th:href="@{/webjars/AdminLTE/2.4.2/dist/css/AdminLTE.min.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/admin-lte/2.4.2/css/skins/skin-blue.min.css"
           th:href="@{/webjars/AdminLTE/2.4.2/dist/css/skins/skin-blue.min.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css"
+          th:href="@{/webjars/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jdewit/bootstrap-timepicker@0.2.3/css/bootstrap-timepicker.min.css"
+          th:href="@{/webjars/bootstrap-timepicker/0.2.3/css/bootstrap-timepicker.min.css}" />
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" />
 
@@ -125,9 +129,9 @@
                         <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
                     </a>
                     <ul class="treeview-menu">
-                        <li><a th:href="@{/location}" th:value="#{view-all}">View All</a></li>
+                        <li><a th:href="@{/location/church}" th:value="#{view-all}">View All</a></li>
                         <li>
-                            <a th:href="@{/location/new}"
+                            <a th:href="@{/location/church/new}"
                                th:value="#{add-new}"
                                sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Location).WRITE)">
                                Add New
@@ -178,6 +182,10 @@
         th:src="@{/webjars/AdminLTE/2.4.2/dist/js/adminlte.min.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.min.js"
         th:src="@{/webjars/select2/4.0.3/dist/js/select2.full.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"
+        th:src="@{/webjars/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js}"></script>
+<script src="https://cdn.jsdelivr.net/gh/jdewit/bootstrap-timepicker@0.2.3/js/bootstrap-timepicker.min.js"
+        th:src="@{/webjars/bootstrap-timepicker/0.2.3/js/bootstrap-timepicker.min.js}"></script>
 <script type="text/javascript" sec:authorize="isAuthenticated()">
     $('document').ready(function() {
         $('#logout-link').click(function() {

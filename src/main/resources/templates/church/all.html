@@ -4,11 +4,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="default">
 <head>
-    <title th:text="#{locations}">Locations</title>
+    <title th:text="#{churches}">Churches</title>
 </head>
 <body>
 <h1 layout:fragment="content-heading">
-    <span th:text="#{locations}" th:remove="tag">Locations</span>
+    <span th:text="#{churches}" th:remove="tag">Churches</span>
 </h1>
 <ol th:fragment="breadcrumb" class="breadcrumb">
     <li>
@@ -19,7 +19,7 @@
     </li>
     <li class="active">
         <i class="fa fa-map-o"></i>
-        <span th:text="#{locations}" th:remove="tag">Locations</span>
+        <span th:text="#{churches}" th:remove="tag">Churches</span>
     </li>
 </ol>
 <div layout:fragment="content-body">
@@ -41,7 +41,7 @@
                     <div class="box-footer" style="padding-top: 10px;">
                         <div class="row">
                             <div class="col-sm-12">
-                                <a th:href="@{/location/} + ${location.id}" class="btn btn-block btn-primary btn-sm">
+                                <a th:href="@{/location/church/} + ${location.id}" class="btn btn-block btn-primary btn-sm">
                                     Edit
                                 </a>
                             </div>
