@@ -23,6 +23,7 @@ import javax.validation.constraints.Size;
 import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.MonthDay;
 import java.time.OffsetTime;
 import java.time.Year;
@@ -212,11 +213,13 @@ public final class ChurchPayload extends LocationPayload {
         @NotNull
         private DayOfWeek day;
 
+        @DateTimeFormat(pattern = "hh:mm a")
         @NotNull
-        private OffsetTime start;
+        private LocalTime start;
 
+        @DateTimeFormat(pattern = "hh:mm a")
         @NotNull
-        private OffsetTime end;
+        private LocalTime end;
 
         private Language language;
 

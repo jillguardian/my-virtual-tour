@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.MonthDay;
 import java.time.OffsetTime;
 import java.time.Year;
@@ -209,6 +210,7 @@ public class Church extends Location implements Serializable {
     @ElementCollection()
     private Set<String> otherNearbies = new HashSet<>();
 
+    // TODO: Use zoned time fields.
     @JsonInclude(JsonInclude.Include.ALWAYS)
     @Data
     @Builder(builderClassName = "Builder", toBuilder = true)
@@ -216,8 +218,8 @@ public class Church extends Location implements Serializable {
     public static class Schedule {
 
         private DayOfWeek day;
-        private OffsetTime start;
-        private OffsetTime end;
+        private LocalTime start;
+        private LocalTime end;
         private String language;
 
     }
