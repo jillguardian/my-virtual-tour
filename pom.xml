@@ -9,7 +9,7 @@
     <description>No description yet.</description>
     <modules>
         <module>my-virtual-tour-core</module>
-        <module>my-virtual-tour-cms</module>
+        <module>my-virtual-tour-server</module>
         <module>my-virtual-tour-app</module>
     </modules>
 
