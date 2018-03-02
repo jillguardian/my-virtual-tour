@@ -15,4 +15,12 @@
     <artifactId>my-virtual-tour-client</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>ph.edu.tsu</groupId>
+            <artifactId>my-virtual-tour-server</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>
