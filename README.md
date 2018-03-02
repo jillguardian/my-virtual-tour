@@ -21,7 +21,7 @@ Default Credentials:
     Username: admin
     Password: admin
 
-This account will user and location administrator privileges.
+This account will have user and location administrator privileges.
 
 ## Configuration
 Feel free to modify the `application.properties` file to configure the application to your liking.
