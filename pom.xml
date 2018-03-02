@@ -8,9 +8,9 @@
     <name>My Virtual Tour</name>
     <description>No description yet.</description>
     <modules>
-        <module>my-virtual-tour-core</module>
-        <module>my-virtual-tour-server</module>
-        <module>my-virtual-tour-app</module>
+        <module>core</module>
+        <module>server</module>
+        <module>app</module>
     </modules>
 
     <groupId>ph.edu.tsu</groupId>

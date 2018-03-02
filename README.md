@@ -6,14 +6,22 @@
   * Maven
 
 ## Quick Start
-1. Build the project using `mvn install`.
-2. Run the web application via `mvn spring-boot:run`. Optionally, you can also start the application via `ph.edu.tsu.tour.Application#main(String[])`.
+1. Build the project using `mvn package`.
+2. Run the application in one of two ways:
+   1. Go the `server` directory.
+      ```
+      cd server
+      ```
+      Use the `mvn spring-boot:run` command in your CLI.
+   2. Optionally, you can also start the application via `ph.edu.tsu.tour.Application#main(String[])`.
 3. Profit!
 
 Default Credentials:
 
     Username: admin
     Password: admin
+
+This account will user and location administrator privileges.
 
 ## Configuration
 Feel free to modify the `application.properties` file to configure the application to your liking.
@@ -37,6 +45,19 @@ The following properties are also supported:
 * `application.storage.amazon.s3.region`
 * `application.storage.amazon.s3.endlocationnt`
 * `application.storage.amazon.s3.max-retries`
+
+If you would like to switch to a different storage service, simply set the `application.storage.default-directory`
+property's path with a different prefix.
+
+Using the `dropbox` prefix will allow the application to use the Dropbox storage service.
+```
+application.storage.default-directory=dropbox://<your-base-directory>
+```
+
+And using the `s3` prefix will allow the application to use Amazon S3.
+```
+application.storage.default-directory=s3://<your-base-directory>
+```
 
 ### Domain Objects
 
