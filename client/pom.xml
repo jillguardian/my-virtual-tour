@@ -9,10 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <name>My Virtual Tour CMS</name>
+    <name>My Virtual Tour Client Application</name>
     <description>The client application.</description>
 
-    <artifactId>my-virtual-tour-app</artifactId>
+    <artifactId>my-virtual-tour-client</artifactId>
     <packaging>jar</packaging>
 
 </project>

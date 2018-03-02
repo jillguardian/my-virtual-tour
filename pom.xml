@@ -10,7 +10,7 @@
     <modules>
         <module>core</module>
         <module>server</module>
-        <module>app</module>
+        <module>client</module>
     </modules>
 
     <groupId>ph.edu.tsu</groupId>
