@@ -24,7 +24,8 @@ Default Credentials:
 This account will have user and location administrator privileges.
 
 ## Configuration
-Feel free to modify the `application.properties` file to configure the application to your liking.
+Feel free to modify the `/server/src/main/resources/application.properties` file to configure the application to your
+liking.
 
 To see other Spring Boot-specific configurable properties, you may consult 
 [this page](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html).
