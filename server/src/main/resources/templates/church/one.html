@@ -8,12 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css"
           th:href="@{/webjars/leaflet/0.7.3/leaflet.css}" />
     <style>
-        @-moz-document url-prefix() {
-            fieldset { display: table-cell; }
-        }
-        .has-error .select2-selection {
-            border-color: #dd4b39 !important;
-        }
         .form-group.location-image > .thumbnail {
             margin-bottom: 0;
         }
@@ -79,7 +73,7 @@
                       role="form"
                       enctype="multipart/form-data">
                     <div class="tab-content">
-                        <div class="tab-pane fade in show active" id="general">
+                        <div class="tab-pane active" id="general">
                             <div class="box-body">
                                 <div class="row">
                                     <div class="col-md-6">
@@ -458,15 +452,225 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade in show" id="significance">
+                        <div class="tab-pane" id="significance">
                             <div class="box-body">
                                 <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('style')} ? has-error : ''">
+                                                    <label for="style" th:text="#{style}">Style</label>
+                                                    <select th:field="*{style}"
+                                                            id="style"
+                                                            class="form-control"
+                                                            style="width: 100%;"
+                                                            tabindex="-1"
+                                                            aria-hidden="true">
+                                                        <option value=""></option>
+                                                        <option th:text="#{baroque}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).BAROQUE}">Baroque</option>
+                                                        <option th:text="#{gothic}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).GOTHIC}">Gothic</option>
+                                                        <option th:text="#{neoclassic}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).NEOCLASSIC}">Neoclassis</option>
+                                                        <option th:text="#{modern}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Style).MODERN}">Modern</option>
+                                                    </select>
+                                                    <p class="help-block" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('yearOfConstruction')} ? has-error : ''">
+                                                    <label for="year-of-construction" th:text="#{year-of-construction}">Year of Construction</label>
+                                                    <input type="number" min="1500" max="${#dates.year(#dates.createNow())}" th:field="*{yearOfConstruction}" class="form-control" id="year-of-construction" th:placeholder="#{year-of-construction.placeholder}" placeholder="Enter year of construction, if known"/>
+                                                    <p class="help-block" th:if="${#fields.hasErrors('yearOfConstruction')}" th:errors="*{yearOfConstruction}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('architect')} ? has-error : ''">
+                                            <label for="architect" th:text="#{architect}">Architect</label>
+                                            <input type="text" th:field="*{architect}" class="form-control" id="architect" th:placeholder="#{architect.placeholder}" placeholder="Enter name of architect, if known"/>
+                                            <p class="help-block" th:if="${#fields.hasErrors('architect')}" th:errors="*{architect}"></p>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-architectural-features-modal" th:text="#{other-architectural-features}"></button>
+                                        </div>
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('artifacts')} ? has-error : ''">
+                                            <label for="artifacts" th:value="#{artifacts}">Artifacts</label>
+                                            <select th:field="*{artifacts}"
+                                                    id="artifacts"
+                                                    class="form-control"
+                                                    multiple="multiple"
+                                                    style="width: 100%;"
+                                                    tabindex="-1"
+                                                    aria-hidden="true"
+                                                    th:with="muralPainting=${T(ph.edu.tsu.tour.core.location.Church.Artifact).MURAL_PAINTING},
+                                                     oilPainting=${T(ph.edu.tsu.tour.core.location.Church.Artifact).OIL_PAINTING},
+                                                     canvasPainting=${T(ph.edu.tsu.tour.core.location.Church.Artifact).CANVAS_PAINTING},
+                                                     statue=${T(ph.edu.tsu.tour.core.location.Church.Artifact).STATUE},
+                                                     liturgicalVessel=${T(ph.edu.tsu.tour.core.location.Church.Artifact).LITURGICAL_VESSEL},
+                                                     bell=${T(ph.edu.tsu.tour.core.location.Church.Artifact).BELL}">
+                                                <option th:text="#{mural-painting}"
+                                                        th:value="${muralPainting}">
+                                                    Mural Painting
+                                                </option>
+                                                <option th:text="#{oil-painting}"
+                                                        th:value="${oilPainting}">
+                                                    Oil Painting
+                                                </option>
+                                                <option th:text="#{canvas-painting}"
+                                                        th:value="${canvasPainting}">
+                                                    Canvas Painting
+                                                </option>
+                                                <option th:text="#{statue}"
+                                                        th:value="${statue}">
+                                                    Statue
+                                                </option>
+                                                <option th:text="#{liturgical-vessel}"
+                                                        th:value="${liturgicalVessel}">
+                                                    Liturgical Vessel
+                                                </option>
+                                                <option th:text="#{bell}"
+                                                        th:value="${bell}">
+                                                    Bell
+                                                </option>
+                                            </select>
+                                            <p class="help-block"
+                                               th:if="${#fields.hasErrors('artifacts')}"
+                                               th:errors="*{artifacts}"></p>
+                                        </div>
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('relics')} ? has-error : ''">
+                                            <label for="type" th:text="#{relics}">Relics</label>
+                                            <select th:field="*{relics}"
+                                                    id="relics"
+                                                    multiple="multiple"
+                                                    class="form-control"
+                                                    style="width: 100%;"
+                                                    tabindex="-1"
+                                                    aria-hidden="true">
+                                                <option th:text="#{first-class}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Relic).FIRST_CLASS}">First Class</option>
+                                                <option th:text="#{second-class}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Relic).SECOND_CLASS}">Second Class</option>
+                                            </select>
+                                            <p class="help-block" th:if="${#fields.hasErrors('relics')}" th:errors="*{relics}"></p>
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-relics-modal" th:text="#{other-relics}"></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <label th:text="#{historical-events}">Historical Events</label>
+                                            <th:block th:each="historicalEvent, iterator: *{historicalEvents}">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                                    <input type="text" th:field="*{historicalEvents[__${iterator.index}__]}" class="form-control" th:placeholder="#{historical-event.placeholder}" placeholder="Enter event" />
+                                                    <p class="help-block" th:if="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')}" th:errors="*{historicalEvents[__${iterator.index}__]}"></p>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div>
+                                            <label th:text="#{married-personalities}">Married Personalities</label>
+                                            <th:block th:each="marriedPerson, iterator: *{married}">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('married[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                                    <input type="text" th:field="*{married[__${iterator.index}__]}" class="form-control" th:placeholder="#{married-personality.placeholder}" placeholder="Enter name" />
+                                                    <p class="help-block" th:if="${#fields.hasErrors('married[__${iterator.index}__]')}" th:errors="*{married[__${iterator.index}__]}"></p>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div>
+                                            <label th:text="#{baptized-personalities}">Baptized Personalities</label>
+                                            <th:block th:each="baptizedPerson, iterator: *{baptized}">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('baptized[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                                    <input type="text" th:field="*{baptized[__${iterator.index}__]}" class="form-control" th:placeholder="#{baptized-personality.placeholder}" placeholder="Enter name" />
+                                                    <p class="help-block" th:if="${#fields.hasErrors('baptized[__${iterator.index}__]')}" th:errors="*{baptized[__${iterator.index}__]}"></p>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div>
+                                            <label th:text="#{confirmed-personalities}">Confirmed Personalities</label>
+                                            <th:block th:each="confirmedPerson, iterator: *{confirmed}">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('confirmed[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                                    <input type="text" th:field="*{confirmed[__${iterator.index}__]}" class="form-control" th:placeholder="#{confirmed-personality.placeholder}" placeholder="Enter name" />
+                                                    <p class="help-block" th:if="${#fields.hasErrors('confirmed[__${iterator.index}__]')}" th:errors="*{confirmed[__${iterator.index}__]}"></p>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade in show" id="others">
+                        <div class="tab-pane" id="others">
                             <div class="box-body">
                                 <div class="row">
+                                    <div class="col-xs-12">
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('facilities')} ? has-error : ''">
+                                            <label for="facilities" th:text="#{facilities}">Facilities</label>
+                                            <select th:field="*{facilities}"
+                                                    id="facilities"
+                                                    multiple="multiple"
+                                                    class="form-control"
+                                                    style="width: 100%;"
+                                                    tabindex="-1"
+                                                    aria-hidden="true">
+                                                <option th:text="#{comfort-room}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).COMFORT_ROOM}">Comfort Room</option>
+                                                <option th:text="#{green-park}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).GREEN_PARK}">Green Park</option>
+                                                <option th:text="#{parking-lot}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PARKING_LOT}">Parking Lot</option>
+                                                <option th:text="#{pwd-accessibility}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PWD_ACCESSIBILITY}">PWD Accessibility</option>
+                                                <option th:text="#{parish-hall}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PARISH_HALL}">Parish Hall</option>
+                                                <option th:text="#{pilgrim-center}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PILGRIM_CENTER}">Pilgrim Center</option>
+                                                <option th:text="#{parish-museum}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).PARISH_MUSEUM}">Parish Museum</option>
+                                                <option th:text="#{souvenir-shop}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Facility).SOUVENIR_SHOP}">Souvenir Shop</option>
+                                            </select>
+                                            <p class="help-block" th:if="${#fields.hasErrors('facilities')}" th:errors="*{facilities}"></p>
+                                        </div>
+                                        <div>
+                                            <label th:text="#{other-facilities}">Other Facilities</label>
+                                            <th:block th:each="otherFacility, iterator: *{otherFacilities}">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                                    <input type="text" th:field="*{otherFacilities[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-facility.placeholder}" placeholder="Enter facility" />
+                                                    <p class="help-block" th:if="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')}" th:errors="*{otherFacilities[__${iterator.index}__]}"></p>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div class="form-group" th:classappend="${#fields.hasErrors('nearbies')} ? has-error : ''">
+                                            <label for="nearbies" th:text="#{nearby-places}">Places Nearby</label>
+                                            <select th:field="*{nearbies}"
+                                                    id="nearbies"
+                                                    multiple="multiple"
+                                                    class="form-control"
+                                                    style="width: 100%;"
+                                                    tabindex="-1"
+                                                    aria-hidden="true">
+                                                <option th:text="#{restaurant}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).RESTAURANT}">Restaurant</option>
+                                                <option th:text="#{pharmacy}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).PHARMACY}">Pharmacy</option>
+                                                <option th:text="#{hospital}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).HOSPITAL}">Hospital</option>
+                                                <option th:text="#{gasoline-station}"
+                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Nearby).GASOLINE_STATION}">Gasoline Station</option>
+                                            </select>
+                                            <p class="help-block" th:if="${#fields.hasErrors('nearbies')}" th:errors="*{nearbies}"></p>
+                                        </div>
+                                        <div>
+                                            <label th:text="#{other-nearby-places}">Other Nearby Places</label>
+                                            <th:block th:each="otherNearby, iterator: *{otherNearbies}">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
+                                                    <input type="text" th:field="*{otherNearbies[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-nearby-place.placeholder}" placeholder="Enter place" />
+                                                    <p class="help-block" th:if="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')}" th:errors="*{otherNearbies[__${iterator.index}__]}"></p>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -27,6 +27,7 @@
           th:href="@{/webjars/bootstrap-timepicker/0.2.3/css/bootstrap-timepicker.min.css}" />
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
 
     <style>
         .content-header > .breadcrumb > li.active > .fa {
@@ -186,6 +187,7 @@
         th:src="@{/webjars/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js}"></script>
 <script src="https://cdn.jsdelivr.net/gh/jdewit/bootstrap-timepicker@0.2.3/js/bootstrap-timepicker.min.js"
         th:src="@{/webjars/bootstrap-timepicker/0.2.3/js/bootstrap-timepicker.min.js}"></script>
+<script th:src="@{/js/script.js}" ></script>
 <script type="text/javascript" sec:authorize="isAuthenticated()">
     $('document').ready(function() {
         $('#logout-link').click(function() {

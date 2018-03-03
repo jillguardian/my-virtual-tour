@@ -10,12 +10,15 @@ public class YearFormatter implements Formatter<Year> {
 
     @Override
     public Year parse(String s, Locale locale) throws ParseException {
+        if (s == null || s.trim().isEmpty()) {
+            return null;
+        }
         return Year.parse(s);
     }
 
     @Override
     public String print(Year year, Locale locale) {
-        return year.toString();
+        return year == null ? null : year.toString();
     }
 
 }

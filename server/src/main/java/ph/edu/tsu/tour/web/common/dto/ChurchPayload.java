@@ -124,7 +124,7 @@ public final class ChurchPayload extends LocationPayload {
     private String saint;
 
     @NotNull(message = "{church.feast-day.blank.message}")
-    @DateTimeFormat(pattern = "MM/dd")
+    @DateTimeFormat(pattern = "MMMM dd")
     private MonthDay feastDay;
 
     @DateTimeFormat(pattern = "MM/dd/yyyy")
