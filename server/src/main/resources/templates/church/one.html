@@ -603,7 +603,7 @@
                         <div class="tab-pane" id="others">
                             <div class="box-body">
                                 <div class="row">
-                                    <div class="col-xs-12">
+                                    <div class="col-md-6">
                                         <div class="form-group" th:classappend="${#fields.hasErrors('facilities')} ? has-error : ''">
                                             <label for="facilities" th:text="#{facilities}">Facilities</label>
                                             <select th:field="*{facilities}"
@@ -641,6 +641,8 @@
                                                 </div>
                                             </th:block>
                                         </div>
+                                    </div>
+                                    <div class="col-md-6">
                                         <div class="form-group" th:classappend="${#fields.hasErrors('nearbies')} ? has-error : ''">
                                             <label for="nearbies" th:text="#{nearby-places}">Places Nearby</label>
                                             <select th:field="*{nearbies}"
