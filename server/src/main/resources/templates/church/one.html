@@ -835,11 +835,16 @@
             $(selector).click(function(e){
                 var formGroup = $(this).closest('.form-group:has(.modal)');
                 var key = formGroup.attr('data-field');
-                --fields[key].count;
                 $(this).closest('.row').remove();
+                --fields[key].count;
+                if (fields[key].count == 0) {
+                    showEmptyFieldsAlert(formGroup.find('.modal-body'));
+                }
             });
         }
         function appendNewTextField(key, parent) {
+            $(parent).find('.no-items-alert').remove();
+
             var id = key + fields[key].nextId;
             var name = key + '[' + fields[key].nextId + ']';
             var placeholder = fields[key].placeholder;
