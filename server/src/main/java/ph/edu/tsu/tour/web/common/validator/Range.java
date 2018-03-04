@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, PARAMETER})
 @Retention(RUNTIME)
 @Constraint(validatedBy = YearRangeValidator.class)
-public @interface YearRange {
+public @interface Range {
 
     String message() default "Year should be between {min} and {max}.";
     int min();

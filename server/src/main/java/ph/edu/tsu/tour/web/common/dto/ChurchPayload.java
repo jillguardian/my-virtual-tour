@@ -15,7 +15,7 @@ import ph.edu.tsu.tour.core.location.Church.Relic;
 import ph.edu.tsu.tour.core.location.Church.Style;
 import ph.edu.tsu.tour.core.location.Church.Type;
 import ph.edu.tsu.tour.web.common.validator.Within;
-import ph.edu.tsu.tour.web.common.validator.YearRange;
+import ph.edu.tsu.tour.web.common.validator.Range;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -25,7 +25,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.MonthDay;
-import java.time.OffsetTime;
 import java.time.Year;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -152,7 +151,7 @@ public final class ChurchPayload extends LocationPayload {
     @NotNull(message = "{church.artifacts.empty.message}")
     private Style style;
 
-    @YearRange(min = 1500, max = 2018, message = "{church.year-of-construction.invalid.message}")
+    @Range(min = 1500, max = 2018, message = "{church.year-of-construction.invalid.message}")
     Year yearOfConstruction;
 
     @NotNull(message = "{church.other-architectural-features.empty.message}")

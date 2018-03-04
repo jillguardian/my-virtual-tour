@@ -4,13 +4,13 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.time.Year;
 
-public class YearRangeValidator implements ConstraintValidator<YearRange, Year> {
+public class YearRangeValidator implements ConstraintValidator<Range, Year> {
 
     private int min;
     private int max;
 
     @Override
-    public void initialize(YearRange constraintAnnotation) {
+    public void initialize(Range constraintAnnotation) {
         this.min = constraintAnnotation.min();
         this.max = constraintAnnotation.max();
     }
