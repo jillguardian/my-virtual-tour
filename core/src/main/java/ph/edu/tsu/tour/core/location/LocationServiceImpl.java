@@ -25,27 +25,18 @@ public class LocationServiceImpl<T extends Location> implements LocationService<
     @Override
     public T findById(Long id) {
         T found = locationRepository.findOne(id);
-        if (found != null) {
-            entityManager.detach(found);
-        }
         return found;
     }
 
     @Override
     public Iterable<T> findAll() {
         Iterable<T> all = locationRepository.findAll();
-        for (Location location : all) {
-            entityManager.detach(location);
-        }
         return all;
     }
 
     @Override
     public Iterable<T> findAll(Iterable<Long> ids) {
         Iterable<T> all = locationRepository.findAll(ids);
-        for (Location location : all) {
-            entityManager.detach(location);
-        }
         return all;
     }
 

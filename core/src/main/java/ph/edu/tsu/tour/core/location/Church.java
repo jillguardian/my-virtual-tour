@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Tolerate;
 import org.geojson.GeoJsonObject;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -36,6 +37,7 @@ import ph.edu.tsu.tour.core.image.Image;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Entity
 @Table(name = Church.TABLE_NAME)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Church extends Location implements Serializable {
@@ -66,48 +68,48 @@ public class Church extends Location implements Serializable {
 
     // An ugly hack to make fields from the parent class available to this class's builder.
     @Builder(toBuilder = true)
-    public Church( Long id,
-                   String name,
-                   URI website,
-                   String contactNumber,
-                   Image coverImage1,
-                   Image coverImage2,
-                   Set<Image> images,
-                   String addressLine1,
-                   String addressLine2,
-                   String city,
-                   String zipCode,
-                   GeoJsonObject geometry,
-                   Type type,
-                   String saint,
-                   MonthDay feastDay,
-                   LocalDate canonicalErectionDay,
-                   LocalDate dedicationDay,
-                   String priest,
-                   Set<Schedule> massSchedules,
-                   Set<Schedule> confessionSchedules,
-                   Set<Artifact> artifacts,
-                   String architect,
-                   Style style,
-                   Year yearOfConstruction,
-                   Set<String> otherArchitecturalFeatures,
-                   Set<Relic> relics,
-                   Set<String> otherRelics,
-                   Set<String> historicalEvents,
-                   Set<String> baptized,
-                   Set<String> married,
-                   Set<String> confirmed,
-                   Set<Facility> facilities,
-                   Set<String> otherFacilities,
-                   Set<Nearby> nearbies,
-                   Set<String> otherNearbies ) {
+    public Church(Long id,
+                  String name,
+                  URI website,
+                  String contactNumber,
+                  Image coverImage1,
+                  Image coverImage2,
+                  Set<Image> images,
+                  String addressLine1,
+                  String addressLine2,
+                  String city,
+                  String zipCode,
+                  GeoJsonObject geometry,
+                  Type type,
+                  String saint,
+                  MonthDay feastDay,
+                  LocalDate canonicalErectionDay,
+                  LocalDate dedicationDay,
+                  String priest,
+                  Set<Schedule> massSchedules,
+                  Set<Schedule> confessionSchedules,
+                  Set<Artifact> artifacts,
+                  String architect,
+                  Style style,
+                  Year yearOfConstruction,
+                  Set<String> otherArchitecturalFeatures,
+                  Set<Relic> relics,
+                  Set<String> otherRelics,
+                  Set<String> historicalEvents,
+                  Set<String> baptized,
+                  Set<String> married,
+                  Set<String> confirmed,
+                  Set<Facility> facilities,
+                  Set<String> otherFacilities,
+                  Set<Nearby> nearbies,
+                  Set<String> otherNearbies) {
         super( id,
                name,
                website,
                contactNumber,
                coverImage1,
                coverImage2,
-               images,
+               Church.initialize(images), // Manually initialize because Lombok doesn't.
                addressLine1,
                addressLine2,
                city,
@@ -173,14 +175,12 @@ public class Church extends Location implements Serializable {
     @Column(name = "year_of_construction")
     private Year yearOfConstruction;
 
-    @Column(name = "other-architectural-features")
     @ElementCollection()
     private Set<String> otherArchitecturalFeatures = new HashSet<>();
 
     @ElementCollection()
     private Set<Relic> relics = EnumSet.noneOf( Relic.class );
 
-    @Column(name = "other-relics")
     @ElementCollection()
     private Set<String> otherRelics = new HashSet<>();
 
@@ -217,11 +217,23 @@ public class Church extends Location implements Serializable {
     @Embeddable
     public static class Schedule {
 
+        @Tolerate
+        protected Schedule() {
+            // JPA.
+        }
+
         private DayOfWeek day;
         private LocalTime start;
         private LocalTime end;
         private String language;
 
+    }
+
+    private static <E> Set<E> initialize(Set<E> set) {
+        if (set == null) {
+            set = new HashSet<>();
+        }
+        return set;
     }
 
 }

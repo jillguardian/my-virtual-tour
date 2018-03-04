@@ -560,28 +560,45 @@ class ChurchController {
                                                      String propertyName) {
         schedules.removeIf(Objects::isNull);
         for (int i = 0; i < schedules.size(); i++) {
+            boolean error = false;
             ChurchPayload.SchedulePayload schedule = schedules.get(i);
             if (schedule.getDay() == null) {
                 bindingResult.rejectValue(propertyName + "[" + i + "].day",
                                           "church.schedule.day.empty.message",
                                           "Day should be specified.");
+                error = true;
             }
             if (schedule.getStart() == null) {
                 bindingResult.rejectValue(propertyName + "[" + i + "].start",
                                           "church.schedule.start.empty.message",
                                           "Day should be specified.");
+                error = true;
             }
             if (schedule.getEnd() == null) {
                 bindingResult.rejectValue(propertyName + "[" + i + "].end",
                                           "church.schedule.end.empty.message",
                                           "Day should be specified.");
+                error = true;
             }
             if (schedule.getStart() != null
                     && schedule.getEnd() != null
-                    && schedule.getStart().isAfter(schedule.getEnd())) {
+                    && schedule.getStart().isAfter(schedule.getEnd())
+                    || schedule.getEnd().equals(schedule.getStart())) {
                 bindingResult.rejectValue(propertyName + "[" + i + "].start",
                                           "church.schedule.start.invalid.message",
-                                          "Starting time should come before ending time.");
+                                          "Ending time should come after starting time.");
+                error = true;
+            }
+            if (schedule.getLanguage() == null) {
+                bindingResult.rejectValue(propertyName + "[" + i + "].language",
+                                          "church.schedule.language.empty.message",
+                                          "Language should be specified.");
+                error = true;
+            }
+            if (error) {
+                bindingResult.rejectValue(propertyName,
+                                          "errors-found",
+                                          "There are one or two errors present!");
             }
         }
     }

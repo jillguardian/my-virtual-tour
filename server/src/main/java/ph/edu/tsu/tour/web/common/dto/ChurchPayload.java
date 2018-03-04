@@ -90,7 +90,7 @@ public final class ChurchPayload extends LocationPayload {
               longitude,
               coverImage1,
               coverImage2,
-              images);
+              ChurchPayload.initialize(images));
         this.type = type;
         this.saint = saint;
         this.feastDay = feastDay;

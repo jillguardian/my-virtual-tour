@@ -191,6 +191,7 @@
                                                                                         <option th:text="#{saturday}"
                                                                                                 th:value="${T(java.time.DayOfWeek).SATURDAY}">Saturday</option>
                                                                                     </select>
+                                                                                    <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].day')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].day}"></p>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-2">
@@ -204,6 +205,7 @@
                                                                                                 <i class="fa fa-clock-o"></i>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].start')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].start}"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -218,6 +220,7 @@
                                                                                                 <i class="fa fa-clock-o"></i>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].end')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].end}"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -240,6 +243,7 @@
                                                                                         <option th:text="#{latin}"
                                                                                                 th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).LATIN}">Latin</option>
                                                                                     </select>
+                                                                                    <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].language')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].language}"></p>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-1">
