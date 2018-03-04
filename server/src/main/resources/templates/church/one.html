@@ -820,14 +820,42 @@
                                             </select>
                                             <p class="help-block" th:if="${#fields.hasErrors('facilities')}" th:errors="*{facilities}"></p>
                                         </div>
-                                        <div>
-                                            <label th:text="#{other-facilities}">Other Facilities</label>
-                                            <th:block th:each="otherFacility, iterator: *{otherFacilities}">
-                                                <div class="form-group" th:classappend="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
-                                                    <input type="text" th:field="*{otherFacilities[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-facility.placeholder}" placeholder="Enter facility" />
-                                                    <p class="help-block" th:if="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')}" th:errors="*{otherFacilities[__${iterator.index}__]}"></p>
+                                        <div class="form-group" data-field="otherFacilities">
+                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-facilities-modal" th:text="#{other-facilities}"></button>
+                                            <div id="other-facilities-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title" th:text="#{other-facilities}">Confirmed Personalities</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <th:block th:each="otherFacility, iterator: *{otherFacilities}">
+                                                                <div class="row">
+                                                                    <div class="col-sm-10">
+                                                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')} ? has-error : ''">
+                                                                            <input type="text" th:field="*{otherFacilities[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-facility.placeholder}" placeholder="Enter otherFacilities person" />
+                                                                            <p class="help-block" th:if="${#fields.hasErrors('otherFacilities[__${iterator.index}__]')}" th:errors="*{otherFacilities[__${iterator.index}__]}"></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-2">
+                                                                        <div class="form-group">
+                                                                            <div class="form-group">
+                                                                                <button type="button" class="btn btn-danger btn-block delete-string" aria-label="Delete">
+                                                                                    <i class="fa fas fa-minus-circle"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </th:block>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </th:block>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -996,7 +1024,12 @@
                 count: /*[[${#lists.size(location.confirmed)}]]*/,
                 nextId: /*[[${#lists.size(location.confirmed)}]]*/,
                 placeholder: /*[[#{confirmed-personality.placeholder}]]*/
-            }
+            },
+            'otherFacilities': {
+                count: /*[[${#lists.size(location.otherFacilities)}]]*/,
+                nextId: /*[[${#lists.size(location.otherFacilities)}]]*/,
+                placeholder: /*[[#{other-facility.placeholder}]]*/
+            },
         };
         var noItemsAlert = '';
         noItemsAlert += '<div class="callout callout-danger no-items-alert">';
@@ -1246,7 +1279,10 @@
             });
 
             $('.string-collection-modal').on('shown.bs.modal', function() {
-                showEmptyFieldsAlert($(this).find('.modal-body'));
+                var key = $(this).closest('.form-group').attr('data-field');
+                if (fields[key].count == 0) {
+                    showEmptyFieldsAlert($(this).find('.modal-body'));
+                }
             });
             $('.string-collection-modal').on('hidden.bs.modal', function() {
                 $(this).find('.no-items-alert').remove();
