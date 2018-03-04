@@ -827,7 +827,7 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                            <h4 class="modal-title" th:text="#{other-facilities}">Confirmed Personalities</h4>
+                                                            <h4 class="modal-title" th:text="#{other-facilities}">Other Facilities</h4>
                                                         </div>
                                                         <div class="modal-body">
                                                             <th:block th:each="otherFacility, iterator: *{otherFacilities}">
@@ -879,14 +879,42 @@
                                             </select>
                                             <p class="help-block" th:if="${#fields.hasErrors('nearbies')}" th:errors="*{nearbies}"></p>
                                         </div>
-                                        <div>
-                                            <label th:text="#{other-nearby-places}">Other Nearby Places</label>
-                                            <th:block th:each="otherNearby, iterator: *{otherNearbies}">
-                                                <div class="form-group" th:classappend="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
-                                                    <input type="text" th:field="*{otherNearbies[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-nearby-place.placeholder}" placeholder="Enter place" />
-                                                    <p class="help-block" th:if="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')}" th:errors="*{otherNearbies[__${iterator.index}__]}"></p>
+                                        <div class="form-group" data-field="otherNearbies">
+                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-nearby-places-modal" th:text="#{other-nearby-places}"></button>
+                                            <div id="other-nearby-places-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title" th:text="#{other-nearby-places}">Other Nearby Places</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <th:block th:each="otherFacility, iterator: *{otherNearbies}">
+                                                                <div class="row">
+                                                                    <div class="col-sm-10">
+                                                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')} ? has-error : ''">
+                                                                            <input type="text" th:field="*{otherNearbies[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-facility.placeholder}" placeholder="Enter otherNearbies person" />
+                                                                            <p class="help-block" th:if="${#fields.hasErrors('otherNearbies[__${iterator.index}__]')}" th:errors="*{otherNearbies[__${iterator.index}__]}"></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-2">
+                                                                        <div class="form-group">
+                                                                            <div class="form-group">
+                                                                                <button type="button" class="btn btn-danger btn-block delete-string" aria-label="Delete">
+                                                                                    <i class="fa fas fa-minus-circle"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </th:block>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </th:block>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1030,6 +1058,11 @@
                 nextId: /*[[${#lists.size(location.otherFacilities)}]]*/,
                 placeholder: /*[[#{other-facility.placeholder}]]*/
             },
+            'otherNearbies': {
+                count: /*[[${#lists.size(location.otherNearbies)}]]*/,
+                nextId: /*[[${#lists.size(location.otherNearbies)}]]*/,
+                placeholder: /*[[#{other-nearby-place.placeholder}]]*/
+            }
         };
         var noItemsAlert = '';
         noItemsAlert += '<div class="callout callout-danger no-items-alert">';
