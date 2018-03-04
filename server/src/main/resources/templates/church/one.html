@@ -295,6 +295,7 @@
                                                                                         <option th:text="#{saturday}"
                                                                                                 th:value="${T(java.time.DayOfWeek).SATURDAY}">Saturday</option>
                                                                                     </select>
+                                                                                    <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].day')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].day}"></p>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-2">
@@ -308,6 +309,7 @@
                                                                                                 <i class="fa fa-clock-o"></i>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].start')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].start}"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -322,6 +324,7 @@
                                                                                                 <i class="fa fa-clock-o"></i>
                                                                                             </div>
                                                                                         </div>
+                                                                                        <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].end')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].end}"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -344,6 +347,7 @@
                                                                                         <option th:text="#{latin}"
                                                                                                 th:value="${T(ph.edu.tsu.tour.web.common.dto.ChurchPayload$SchedulePayload.Language).LATIN}">Latin</option>
                                                                                     </select>
+                                                                                    <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].language')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].language}"></p>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="col-md-1">
@@ -353,7 +357,6 @@
                                                                                     </button>
                                                                                 </div>
                                                                             </div>
-                                                                            <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__]')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__]}"></p>
                                                                         </div>
                                                                     </th:block>
                                                                 </div>
