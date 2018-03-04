@@ -717,7 +717,9 @@
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
         var massSchedulesCount = /*[[${#lists.size(location.massSchedules)}]]*/;
+        var massSchedulesNextId = /*[[${#lists.size(location.massSchedules)}]]*/;
         var confessionSchedulesCount = /*[[${#lists.size(location.confessionSchedules)}]]*/;
+        var confessionSchedulesNextId = /*[[${#lists.size(location.confessionSchedules)}]]*/;
         var daysOfWeekAsOptions = '';
         daysOfWeekAsOptions += '<option></option>';
         daysOfWeekAsOptions += '<option value="' + (/*[[${T(java.time.DayOfWeek).SUNDAY.name()}]]*/) + '">'
@@ -796,8 +798,8 @@
                 if (alert.length) {
                     $(alert).remove();
                 }
-                var id = 'massSchedules' + massSchedulesCount;
-                var name = 'massSchedules[' + massSchedulesCount + ']';
+                var id = 'massSchedules' + massSchedulesNextId;
+                var name = 'massSchedules[' + massSchedulesNextId + ']';
                 var element = '';
                 element += '<div class="row" id="' + id +'">';
                 element += '<div class="col-md-3">';
@@ -848,6 +850,7 @@
                 element += '</div>';
                 $('#mass-schedules-modal > .modal-dialog > .modal-content > .modal-body').append(element);
                 ++massSchedulesCount;
+                ++massSchedulesNextId;
                 $('#' + id + ' .day').select2({
                     placeholder: /*[[#{day.placeholder}]]*/
                 });
@@ -864,8 +867,8 @@
                 if (alert.length) {
                     $(alert).remove();
                 }
-                var id = 'confessionSchedules' + confessionSchedulesCount;
-                var name = 'confessionSchedules[' + confessionSchedulesCount + ']';
+                var id = 'confessionSchedules' + confessionSchedulesNextId;
+                var name = 'confessionSchedules[' + confessionSchedulesNextId + ']';
                 var element = '';
                 element += '<div class="row" id="' + id +'">';
                 element += '<div class="col-md-3">';
@@ -916,6 +919,7 @@
                 element += '</div>';
                 $('#confession-schedules-modal > .modal-dialog > .modal-content > .modal-body').append(element);
                 ++confessionSchedulesCount;
+                ++confessionSchedulesNextId;
                 $('#' + id + ' .day').select2({
                     placeholder: /*[[#{day.placeholder}]]*/
                 });
