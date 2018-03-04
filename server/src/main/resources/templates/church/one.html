@@ -499,7 +499,7 @@
                                         </div>
                                         <div class="form-group">
                                             <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-architectural-features-modal" th:text="#{other-architectural-features}"></button>
-                                            <div id="other-architectural-features-modal" class="modal fade" tabindex="-1" role="dialog">
+                                            <div id="other-architectural-features-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
@@ -509,7 +509,7 @@
                                                         <div class="modal-body">
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-primary" th:text="#{add}">Add</button>
+                                                            <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -738,6 +738,7 @@
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
         var massSchedulesCount = /*[[${#lists.size(location.massSchedules)}]]*/;
         var massSchedulesNextId = /*[[${#lists.size(location.massSchedules)}]]*/;
         var confessionSchedulesCount = /*[[${#lists.size(location.confessionSchedules)}]]*/;
@@ -796,6 +797,24 @@
             --confessionSchedulesCount;
             showNoConfessionSchedulesAlert();
         }
+
+        var fields = {
+            'otherArchitecturalFeatures': {
+                count: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/,
+                nextId: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/
+            }
+        };
+        var noItemsAlert = '';
+        noItemsAlert += '<div class="callout callout-danger no-items-alert">';
+        noItemsAlert += '<p>' + /*[[#{nothing-found}]]*/ + '</p>'
+        noItemsAlert += '</div>';
+        function showEmptyFieldsAlert(parent) {
+            $(parent).prepend(noItemsAlert);
+        }
+        function appendNewTextField(stats) {
+
+        }
+
         $('document').ready(function() {
             $('#canonical-erection-day, #dedication-day').datepicker({
                 autoclose: true,
@@ -996,6 +1015,13 @@
                 console.log('Latitude: '+lat+' Longitude: '+ lng);
                 $('#latitude').val(lat);
                 $('#longitude').val(lng);
+            });
+
+            $('.string-collection-modal').on('shown.bs.modal', function() {
+                showEmptyFieldsAlert($(this).find('.modal-body'));
+            });
+            $('.string-collection-modal').on('hidden.bs.modal', function() {
+                $(this).find('.no-items-alert').remove();
             });
 
             $('#type').select2({
