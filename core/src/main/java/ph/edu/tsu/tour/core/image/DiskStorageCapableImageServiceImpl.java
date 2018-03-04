@@ -275,7 +275,7 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
 
                 builder.toFile(file);
                 return file;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Unable to re-configure image", e);
                 }
