@@ -244,7 +244,7 @@
                                                                             </div>
                                                                             <div class="col-md-1">
                                                                                 <div class="form-group">
-                                                                                    <button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" th:attr="data-target=${'#' + id}" onclick="deleteMassSchedule(event)">
+                                                                                    <button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="Delete" th:attr="data-target=${'#' + id}" onclick="deleteMassSchedule(event)">
                                                                                         <i class="fa fas fa-minus-circle"></i>
                                                                                     </button>
                                                                                 </div>
@@ -507,6 +507,25 @@
                                                             <h4 class="modal-title" th:text="#{other-architectural-features}">Other Architectural Features</h4>
                                                         </div>
                                                         <div class="modal-body">
+                                                            <th:block th:each="otherArchitecturalFeature, iterator: *{otherArchitecturalFeatures}">
+                                                                <div class="row">
+                                                                    <div class="col-sm-10">
+                                                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherArchitecturalFeatures[__${iterator.index}__]')} ? has-error : ''">
+                                                                            <input type="text" th:field="*{otherArchitecturalFeatures[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-architectural-feature.placeholder}" placeholder="Enter feature" />
+                                                                            <p class="help-block" th:if="${#fields.hasErrors('otherArchitecturalFeatures[__${iterator.index}__]')}" th:errors="*{otherArchitecturalFeatures[__${iterator.index}__]}"></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-2">
+                                                                        <div class="form-group">
+                                                                            <div class="form-group">
+                                                                                <button type="button" class="btn btn-danger btn-block delete-string" aria-label="Delete">
+                                                                                    <i class="fa fas fa-minus-circle"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </th:block>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
@@ -833,7 +852,7 @@
             element += '</div>';
             element += '<div class="col-sm-2">';
             element += '<div class="form-group">';
-            element += '<button type="button" id="' + id + 'Remove" class="btn btn-danger btn-block delete-string" aria-label="Delete" data-target="#' + id + '">';
+            element += '<button type="button" id="' + id + 'Remove" class="btn btn-danger btn-block delete-string" aria-label="Delete">';
             element += '<i class="fa fas fa-minus-circle"></i>';
             element += '</button>';
             element += '</div>';
