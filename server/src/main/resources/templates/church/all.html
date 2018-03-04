@@ -35,7 +35,7 @@
             <div th:each="location : ${group}" th:object="${location}" class="col-md-4">
                 <div class="box box-widget widget-user">
                     <div class="widget-user-header bg-black"
-                         th:style="'background: url(' + @{${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
+                         th:style="'background: url(' + @{${location?.coverImage?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
                         <h3 class="widget-user-username" th:text="${location.name}">Location Name</h3>
                     </div>
                     <div class="box-footer" style="padding-top: 10px;">
