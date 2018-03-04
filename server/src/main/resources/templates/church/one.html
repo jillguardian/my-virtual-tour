@@ -497,7 +497,7 @@
                                             <input type="text" th:field="*{architect}" class="form-control" id="architect" th:placeholder="#{architect.placeholder}" placeholder="Enter name of architect, if known"/>
                                             <p class="help-block" th:if="${#fields.hasErrors('architect')}" th:errors="*{architect}"></p>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" data-field="otherArchitecturalFeatures">
                                             <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-architectural-features-modal" th:text="#{other-architectural-features}"></button>
                                             <div id="other-architectural-features-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
@@ -801,7 +801,8 @@
         var fields = {
             'otherArchitecturalFeatures': {
                 count: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/,
-                nextId: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/
+                nextId: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/,
+                placeholder: /*[[#{other-architectural-feature.placeholder}]]*/
             }
         };
         var noItemsAlert = '';
@@ -811,10 +812,39 @@
         function showEmptyFieldsAlert(parent) {
             $(parent).prepend(noItemsAlert);
         }
-        function appendNewTextField(stats) {
-
+        function bindButtonForDeleteString(selector) {
+            $(selector).click(function(e){
+                var formGroup = $(this).closest('.form-group:has(.modal)');
+                var key = formGroup.attr('data-field');
+                --fields[key].count;
+                $(this).closest('.row').remove();
+            });
         }
+        function appendNewTextField(key, parent) {
+            var id = key + fields[key].nextId;
+            var name = key + '[' + fields[key].nextId + ']';
+            var placeholder = fields[key].placeholder;
+            var element = '';
+            element += '<div class="row">';
+            element += '<div class="col-sm-10">';
+            element += '<div class="form-group">';
+            element += '<input type="text" class="form-control" id="' + id + '" name="' + name + '" placeholder="' + placeholder + '" />';
+            element += '</div>';
+            element += '</div>';
+            element += '<div class="col-sm-2">';
+            element += '<div class="form-group">';
+            element += '<button type="button" id="' + id + 'Remove" class="btn btn-danger btn-block delete-string" aria-label="Delete" data-target="#' + id + '">';
+            element += '<i class="fa fas fa-minus-circle"></i>';
+            element += '</button>';
+            element += '</div>';
+            element += '</div>';
+            element += '</div>';
+            $(parent).append(element);
+            ++fields[key].nextId;
+            ++fields[key].count;
 
+            bindButtonForDeleteString('#' + id + 'Remove');
+        }
         $('document').ready(function() {
             $('#canonical-erection-day, #dedication-day').datepicker({
                 autoclose: true,
@@ -883,7 +913,7 @@
                 element += '</div>';
                 element += '<div class="col-md-1">';
                 element += '<div class="form-group">';
-                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" data-target="#' + id + '" onclick="deleteMassSchedule(event)">';
+                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="Delete" data-target="#' + id + '" onclick="deleteMassSchedule(event)">';
                 element += '<i class="fa fas fa-minus-circle"></i>';
                 element += '</button>';
                 element += '</div>';
@@ -952,7 +982,7 @@
                 element += '</div>';
                 element += '<div class="col-md-1">';
                 element += '<div class="form-group">';
-                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" data-target="#' + id + '" onclick="deleteConfessionSchedule(event)">';
+                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="Delete" data-target="#' + id + '" onclick="deleteConfessionSchedule(event)">';
                 element += '<i class="fa fas fa-minus-circle"></i>';
                 element += '</button>';
                 element += '</div>';
@@ -1023,6 +1053,12 @@
             $('.string-collection-modal').on('hidden.bs.modal', function() {
                 $(this).find('.no-items-alert').remove();
             });
+            $('.string-collection-modal .new-string').click(function(e) {
+                var formGroup = $(this).closest('.form-group');
+                var key = formGroup.attr('data-field');
+                appendNewTextField(key, formGroup.find('.modal-body'));
+            });
+            bindButtonForDeleteString('.string-collection-modal .delete-string');
 
             $('#type').select2({
                 placeholder: /*[[#{type.placeholder}]]*/
