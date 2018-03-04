@@ -548,6 +548,9 @@ class ChurchController {
             String string = strings.get(i);
             if (string.trim().isEmpty()) {
                 bindingResult.rejectValue(propertyName + "[" + i + "]", errorCode, defaultErrorMessage);
+                if (!bindingResult.hasFieldErrors(propertyName)) {
+                    bindingResult.rejectValue(propertyName, "errors-found", "There are errors.");
+                }
             }
         }
     }

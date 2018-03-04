@@ -136,8 +136,8 @@ public final class ChurchPayload extends LocationPayload {
     @NotNull(message = "{church.priest.blank.message}")
     private String priest;
 
-    @NotNull(message = "{church.mass-schedule.empty.message}")
-    @Size(min = 1, message = "{church.mass-schedule.empty.message}")
+    @NotNull(message = "{church.mass-schedules.empty.message}")
+    @Size(min = 1, message = "{church.mass-schedules.empty.message}")
     private List<SchedulePayload> massSchedules = new AutoPopulatingList<>(SchedulePayload.class);
 
     @NotNull(message = "{church.confession-schedule.empty.message}")
