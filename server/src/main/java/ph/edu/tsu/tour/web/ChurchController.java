@@ -414,27 +414,20 @@ class ChurchController {
 
         Image image;
 
-        if (!dto.getFile().isEmpty()) {
+        if (!dto.getFile().isEmpty()) { // Updating the actual image file?
             image = imageService.save(RawImage.builder()
                     .id(dto.getId())
                     .title(dto.getTitle())
                     .description(dto.getDescription())
                     .inputStream(dto.getFile().getInputStream())
                     .build());
-        } else {
+        } else { // Updating fields only?
             image = imageService.findById(dto.getId());
             image.setTitle(dto.getTitle());
             image.setDescription(dto.getDescription());
             image = imageService.save(image);
         }
 
-        Image temp = image; // Because Java wants an effectively final variable.
-
-        Set<Image> images = church.getImages();
-        Optional<Image> existing = images.stream().filter(x -> x.getId().equals(temp.getId())).findFirst();
-        existing.ifPresent(church::removeImage);
-
-        church.addImage(image);
         locationService.save(church);
 
         return "redirect:" + Urls.CHURCH_LOCATION + "/" + church.getId() + "/image/" + image.getId();
