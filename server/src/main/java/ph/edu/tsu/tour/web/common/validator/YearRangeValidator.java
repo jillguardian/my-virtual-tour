@@ -17,7 +17,7 @@ public class YearRangeValidator implements ConstraintValidator<YearRange, Year> 
 
     @Override
     public boolean isValid(Year value, ConstraintValidatorContext context) {
-        return value != null && (value.isBefore(Year.of(min)) || value.isAfter(Year.of(max)));
+        return value == null || value.isBefore(Year.of(min)) || value.isAfter(Year.of(max));
     }
 
 }
