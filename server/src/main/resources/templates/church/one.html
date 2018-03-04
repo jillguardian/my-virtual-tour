@@ -611,7 +611,7 @@
                                                                 <div class="row">
                                                                     <div class="col-sm-10">
                                                                         <div class="form-group" th:classappend="${#fields.hasErrors('otherRelics[__${iterator.index}__]')} ? has-error : ''">
-                                                                            <input type="text" th:field="*{otherRelics[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-relics.placeholder}" placeholder="Enter relic" />
+                                                                            <input type="text" th:field="*{otherRelics[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-relic.placeholder}" placeholder="Enter relic" />
                                                                             <p class="help-block" th:if="${#fields.hasErrors('otherRelics[__${iterator.index}__]')}" th:errors="*{otherRelics[__${iterator.index}__]}"></p>
                                                                         </div>
                                                                     </div>
@@ -636,23 +636,83 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div>
-                                            <label th:text="#{historical-events}">Historical Events</label>
-                                            <th:block th:each="historicalEvent, iterator: *{historicalEvents}">
-                                                <div class="form-group" th:classappend="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
-                                                    <input type="text" th:field="*{historicalEvents[__${iterator.index}__]}" class="form-control" th:placeholder="#{historical-event.placeholder}" placeholder="Enter event" />
-                                                    <p class="help-block" th:if="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')}" th:errors="*{historicalEvents[__${iterator.index}__]}"></p>
+                                        <div class="form-group" data-field="historicalEvents">
+                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#historical-events-modal" th:text="#{historical-events}"></button>
+                                            <div id="historical-events-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title" th:text="#{historical-events}">Historical Events</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <th:block th:each="historicalEvent, iterator: *{historicalEvents}">
+                                                                <div class="row">
+                                                                    <div class="col-sm-10">
+                                                                        <div class="form-group" th:classappend="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')} ? has-error : ''">
+                                                                            <input type="text" th:field="*{historicalEvents[__${iterator.index}__]}" class="form-control" th:placeholder="#{historical-event.placeholder}" placeholder="Enter event" />
+                                                                            <p class="help-block" th:if="${#fields.hasErrors('historicalEvents[__${iterator.index}__]')}" th:errors="*{historicalEvents[__${iterator.index}__]}"></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-2">
+                                                                        <div class="form-group">
+                                                                            <div class="form-group">
+                                                                                <button type="button" class="btn btn-danger btn-block delete-string" aria-label="Delete">
+                                                                                    <i class="fa fas fa-minus-circle"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </th:block>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </th:block>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label th:text="#{married-personalities}">Married Personalities</label>
-                                            <th:block th:each="marriedPerson, iterator: *{married}">
-                                                <div class="form-group" th:classappend="${#fields.hasErrors('married[__${iterator.index}__]')} ? has-error : ''" style="margin-bottom: 5px;">
-                                                    <input type="text" th:field="*{married[__${iterator.index}__]}" class="form-control" th:placeholder="#{married-personality.placeholder}" placeholder="Enter name" />
-                                                    <p class="help-block" th:if="${#fields.hasErrors('married[__${iterator.index}__]')}" th:errors="*{married[__${iterator.index}__]}"></p>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group" data-field="married">
+                                                    <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#married-personalities-modal" th:text="#{married-personalities}"></button>
+                                                    <div id="married-personalities-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
+                                                        <div class="modal-dialog" role="document">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                    <h4 class="modal-title" th:text="#{married-personalities}">Married Personalities</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <th:block th:each="marriedPerson, iterator: *{married}">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-10">
+                                                                                <div class="form-group" th:classappend="${#fields.hasErrors('married[__${iterator.index}__]')} ? has-error : ''">
+                                                                                    <input type="text" th:field="*{married[__${iterator.index}__]}" class="form-control" th:placeholder="#{married-personality.placeholder}" placeholder="Enter married person" />
+                                                                                    <p class="help-block" th:if="${#fields.hasErrors('married[__${iterator.index}__]')}" th:errors="*{married[__${iterator.index}__]}"></p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-2">
+                                                                                <div class="form-group">
+                                                                                    <div class="form-group">
+                                                                                        <button type="button" class="btn btn-danger btn-block delete-string" aria-label="Delete">
+                                                                                            <i class="fa fas fa-minus-circle"></i>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </th:block>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </th:block>
+                                            </div>
                                         </div>
                                         <div>
                                             <label th:text="#{baptized-personalities}">Baptized Personalities</label>
@@ -864,6 +924,16 @@
                 count: /*[[${#lists.size(location.otherRelics)}]]*/,
                 nextId: /*[[${#lists.size(location.otherRelics)}]]*/,
                 placeholder: /*[[#{other-relic.placeholder}]]*/
+            },
+            'historicalEvents': {
+                count: /*[[${#lists.size(location.historicalEvents)}]]*/,
+                nextId: /*[[${#lists.size(location.historicalEvents)}]]*/,
+                placeholder: /*[[#{historical-event.placeholder}]]*/
+            },
+            'married': {
+                count: /*[[${#lists.size(location.married)}]]*/,
+                nextId: /*[[${#lists.size(location.married)}]]*/,
+                placeholder: /*[[#{married-personality.placeholder}]]*/
             }
         };
         var noItemsAlert = '';
