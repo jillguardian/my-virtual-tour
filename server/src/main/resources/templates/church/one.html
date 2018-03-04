@@ -997,7 +997,7 @@
                             + (/*[[#{latin}]]*/) + '</option>';
         var noSchedulesAlert = '';
         noSchedulesAlert += '<div class="callout callout-danger no-schedules-alert">';
-        noSchedulesAlert += '<p>' + /*[[#{no-schedules-found}]]*/ + '</p>'
+        noSchedulesAlert += '<p>' + /*[[#{no-schedules-found}]]*/ + '</p>';
         noSchedulesAlert += '</div>';
         function showNoMassSchedulesAlert() {
             if (massSchedulesCount == 0) {
@@ -1186,6 +1186,7 @@
                 $('#mass-schedules-modal > .modal-dialog > .modal-content > .modal-body').append(element);
                 ++massSchedulesCount;
                 ++massSchedulesNextId;
+                $('#mass-schedules-modal .no-schedules-alert').remove();
                 $('#' + id + ' .day').select2({
                     placeholder: /*[[#{day.placeholder}]]*/
                 });
@@ -1255,6 +1256,7 @@
                 $('#confession-schedules-modal > .modal-dialog > .modal-content > .modal-body').append(element);
                 ++confessionSchedulesCount;
                 ++confessionSchedulesNextId;
+                $('#confession-schedules-modal .no-schedules-alert').remove();
                 $('#' + id + ' .day').select2({
                     placeholder: /*[[#{day.placeholder}]]*/
                 });
