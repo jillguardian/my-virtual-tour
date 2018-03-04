@@ -597,8 +597,42 @@
                                             </select>
                                             <p class="help-block" th:if="${#fields.hasErrors('relics')}" th:errors="*{relics}"></p>
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group" data-field="otherRelics">
                                             <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-relics-modal" th:text="#{other-relics}"></button>
+                                            <div id="other-relics-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title" th:text="#{other-relics}">Other Relics</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <th:block th:each="otherRelic, iterator: *{otherRelics}">
+                                                                <div class="row">
+                                                                    <div class="col-sm-10">
+                                                                        <div class="form-group" th:classappend="${#fields.hasErrors('otherRelics[__${iterator.index}__]')} ? has-error : ''">
+                                                                            <input type="text" th:field="*{otherRelics[__${iterator.index}__]}" class="form-control" th:placeholder="#{other-relics.placeholder}" placeholder="Enter relic" />
+                                                                            <p class="help-block" th:if="${#fields.hasErrors('otherRelics[__${iterator.index}__]')}" th:errors="*{otherRelics[__${iterator.index}__]}"></p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-2">
+                                                                        <div class="form-group">
+                                                                            <div class="form-group">
+                                                                                <button type="button" class="btn btn-danger btn-block delete-string" aria-label="Delete">
+                                                                                    <i class="fa fas fa-minus-circle"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </th:block>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-primary new-string" th:text="#{add}">Add</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -825,6 +859,11 @@
                 count: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/,
                 nextId: /*[[${#lists.size(location.otherArchitecturalFeatures)}]]*/,
                 placeholder: /*[[#{other-architectural-feature.placeholder}]]*/
+            },
+            'otherRelics': {
+                count: /*[[${#lists.size(location.otherRelics)}]]*/,
+                nextId: /*[[${#lists.size(location.otherRelics)}]]*/,
+                placeholder: /*[[#{other-relic.placeholder}]]*/
             }
         };
         var noItemsAlert = '';
