@@ -21,6 +21,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -144,22 +146,30 @@ public class Church extends Location implements Serializable {
     @Column(nullable = false)
     private String saint;
 
+    @JsonProperty("feast-day")
+    @JsonFormat(pattern = "MM/dd")
     @Column(name = "feast_day", nullable = false)
     private MonthDay feastDay;
 
+    @JsonProperty("canonical-erection-day")
+    @JsonFormat(pattern = "MM/dd/yyyy")
     @Column(name = "canonical_erection_day", nullable = false)
     private LocalDate canonicalErectionDay;
 
+    @JsonProperty("dedication-day")
+    @JsonFormat(pattern = "MM/dd/yyyy")
     @Column(name = "dedication_day")
     private LocalDate dedicationDay;
 
     @Column(nullable = false)
     private String priest;
 
+    @JsonProperty("mass-schedules")
     @ElementCollection()
     @CollectionTable(name = "mass_schedules", joinColumns = @JoinColumn(name = "church_id"))
     private Set<Schedule> massSchedules = new HashSet<>();
 
+    @JsonProperty("confession-schedules")
     @ElementCollection()
     @CollectionTable(name = "confession_schedules", joinColumns = @JoinColumn(name = "church_id"))
     private Set<Schedule> confessionSchedules = new HashSet<>();
@@ -170,18 +180,22 @@ public class Church extends Location implements Serializable {
     private String architect;
     private Style style;
 
+    @JsonProperty("year-of-construction")
     @Column(name = "year_of_construction")
     private Year yearOfConstruction;
 
+    @JsonProperty("other-architectural-features")
     @ElementCollection()
     private Set<String> otherArchitecturalFeatures = new HashSet<>();
 
     @ElementCollection()
     private Set<Relic> relics = EnumSet.noneOf( Relic.class );
 
+    @JsonProperty("other-relics")
     @ElementCollection()
     private Set<String> otherRelics = new HashSet<>();
 
+    @JsonProperty("historical-events")
     @ElementCollection()
     private Set<String> historicalEvents = new HashSet<>();
 
@@ -197,13 +211,16 @@ public class Church extends Location implements Serializable {
     @ElementCollection()
     private Set<Facility> facilities = EnumSet.noneOf( Facility.class );
 
+    @JsonProperty("other-facilities")
     @Column(name = "other_facilities")
     @ElementCollection()
     private Set<String> otherFacilities = new HashSet<>();
 
+    @JsonProperty("nearby-places")
     @ElementCollection()
     private Set<Nearby> nearbies = EnumSet.noneOf( Nearby.class );
 
+    @JsonProperty("other-nearby-places")
     @Column(name = "other_nearbies")
     @ElementCollection()
     private Set<String> otherNearbies = new HashSet<>();
@@ -221,8 +238,13 @@ public class Church extends Location implements Serializable {
         }
 
         private DayOfWeek day;
+
+        @JsonFormat(pattern = "hh:mm a")
         private LocalTime start;
+
+        @JsonFormat(pattern = "hh:mm a")
         private LocalTime end;
+
         private String language;
 
     }
