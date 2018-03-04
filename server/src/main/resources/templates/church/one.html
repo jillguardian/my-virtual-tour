@@ -244,7 +244,7 @@
                                                                             </div>
                                                                             <div class="col-md-1">
                                                                                 <div class="form-group">
-                                                                                    <button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" th:attr="data-target=${id}" onclick="deleteMassSchedule(event)">
+                                                                                    <button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" th:attr="data-target=${'#' + id}" onclick="deleteMassSchedule(event)">
                                                                                         <i class="fa fas fa-minus-circle"></i>
                                                                                     </button>
                                                                                 </div>
@@ -348,7 +348,7 @@
                                                                             </div>
                                                                             <div class="col-md-1">
                                                                                 <div class="form-group">
-                                                                                    <button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" th:attr="data-target=${id}" onclick="deleteConfessionSchedule(event)">
+                                                                                    <button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" th:attr="data-target=${'#' + id}" onclick="deleteConfessionSchedule(event)">
                                                                                         <i class="fa fas fa-minus-circle"></i>
                                                                                     </button>
                                                                                 </div>
@@ -499,6 +499,7 @@
                                         </div>
                                         <div class="form-group">
                                             <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-architectural-features-modal" th:text="#{other-architectural-features}"></button>
+
                                         </div>
                                         <div class="form-group" th:classappend="${#fields.hasErrors('artifacts')} ? has-error : ''">
                                             <label for="artifacts" th:value="#{artifacts}">Artifacts</label>
@@ -771,13 +772,13 @@
         }
         function deleteMassSchedule(e) {
             var id = $(e.target).attr('data-target');
-            $('#' + id).remove();
+            $(id).remove();
             --massSchedulesCount;
             showNoMassSchedulesAlert();
         }
         function deleteConfessionSchedule(e) {
             var id = $(e.target).attr('data-target');
-            $('#' + id).remove();
+            $(id).remove();
             --confessionSchedulesCount;
             showNoConfessionSchedulesAlert();
         }
@@ -849,7 +850,7 @@
                 element += '</div>';
                 element += '<div class="col-md-1">';
                 element += '<div class="form-group">';
-                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" data-target="' + id + '" onclick="deleteMassSchedule(event)">';
+                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" data-target="#' + id + '" onclick="deleteMassSchedule(event)">';
                 element += '<i class="fa fas fa-minus-circle"></i>';
                 element += '</button>';
                 element += '</div>';
@@ -918,7 +919,7 @@
                 element += '</div>';
                 element += '<div class="col-md-1">';
                 element += '<div class="form-group">';
-                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" data-target="' + id + '" onclick="deleteConfessionSchedule(event)">';
+                element += '<button type="button" class="btn btn-danger btn-block delete-schedule" aria-label="delete" data-target="#' + id + '" onclick="deleteConfessionSchedule(event)">';
                 element += '<i class="fa fas fa-minus-circle"></i>';
                 element += '</button>';
                 element += '</div>';
