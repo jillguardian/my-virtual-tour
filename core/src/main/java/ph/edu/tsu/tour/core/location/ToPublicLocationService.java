@@ -17,13 +17,9 @@ public class ToPublicLocationService implements LocationTransformingService {
     @Override
     public void accept(Location location) {
         if (location != null) {
-            if (location.getCoverImage1() != null) {
-                Image transformed = toPublicImageService.apply(location.getCoverImage1());
-                location.setCoverImage1(transformed);
-            }
-            if (location.getCoverImage2() != null) {
-                Image transformed = toPublicImageService.apply(location.getCoverImage2());
-                location.setCoverImage2(transformed);
+            if (location.getCoverImage() != null) {
+                Image transformed = toPublicImageService.apply(location.getCoverImage());
+                location.setCoverImage(transformed);
             }
             Collection<Image> rawImages = location.getImages();
             for (Image image : rawImages) {

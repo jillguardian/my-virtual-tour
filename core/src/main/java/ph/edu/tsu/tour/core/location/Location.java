@@ -63,12 +63,7 @@ public abstract class Location implements Serializable {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cover_image_one_id", referencedColumnName = "id")
     @JsonProperty("IMAGE")
-    protected Image coverImage1;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cover_image_two_id", referencedColumnName = "id")
-    @JsonProperty("IMAGEBACK")
-    protected Image coverImage2;
+    protected Image coverImage;
 
     @Setter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.EAGER)

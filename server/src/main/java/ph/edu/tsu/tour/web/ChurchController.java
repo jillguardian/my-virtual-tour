@@ -149,8 +149,7 @@ class ChurchController {
                 .latitude(((Point) church.getGeometry()).getCoordinates().getLatitude())
                 .longitude(((Point) church.getGeometry()).getCoordinates().getLongitude())
                 .zipCode(church.getZipCode())
-                .coverImage1(toDto(church, church.getCoverImage1()))
-                .coverImage2(toDto(church, church.getCoverImage2()))
+                .coverImage(toDto(church, church.getCoverImage()))
                 .images(church.getImages().stream().map(raw -> toDto(church, raw)).collect(Collectors.toSet()))
                 .type(church.getType())
                 .saint(church.getSaint())
@@ -224,7 +223,7 @@ class ChurchController {
                     .addressLine2(location.getAddressLine2())
                     .city(location.getCity())
                     .zipCode(location.getZipCode())
-                    .coverImage1(toDto(location, location.getCoverImage1())) // Only image displayed in view.
+                    .coverImage(toDto(location, location.getCoverImage())) // Only image displayed in view.
                     .build();
             dtos.add(dto);
         }
@@ -278,53 +277,29 @@ class ChurchController {
 
         if (dto.getId() != null) { // Set the images; we'll replace them later if necessary.
             Church existing = locationService.findById(dto.getId());
-            church.setCoverImage1(existing.getCoverImage1());
-            church.setCoverImage2(existing.getCoverImage2());
+            church.setCoverImage(existing.getCoverImage());
         }
 
         church = locationService.save(church);
         dto.setId(church.getId());
 
-        CompletableFuture<Image> coverImage1 = null;
-        CompletableFuture<Image> coverImage2 = null;
-        if (!dto.getCoverImage1().getFile().isEmpty()) {
-            coverImage1 = imageService.saveAsync(RawImage.builder()
-                    .id(dto.getCoverImage1().getId())
-                    .title(dto.getCoverImage1().getTitle())
-                    .description(dto.getCoverImage1().getDescription())
-                    .inputStream(dto.getCoverImage1().getFile().getInputStream())
-                    .build());
-        }
-        if (!dto.getCoverImage2().getFile().isEmpty()) {
-            coverImage2 = imageService.saveAsync(RawImage.builder()
-                    .id(dto.getCoverImage2().getId())
-                    .title(dto.getCoverImage2().getTitle())
-                    .description(dto.getCoverImage2().getDescription())
-                    .inputStream(dto.getCoverImage2().getFile().getInputStream())
+        CompletableFuture<Image> coverImage = null;
+        if (!dto.getCoverImage().getFile().isEmpty()) {
+            coverImage = imageService.saveAsync(RawImage.builder()
+                    .id(dto.getCoverImage().getId())
+                    .title(dto.getCoverImage().getTitle())
+                    .description(dto.getCoverImage().getDescription())
+                    .inputStream(dto.getCoverImage().getFile().getInputStream())
                     .build());
         }
 
-        if (coverImage1 != null) {
+        if (coverImage != null) {
             try {
-                church.setCoverImage1(coverImage1.get());
+                church.setCoverImage(coverImage.get());
                 logger.trace("Finished saving cover image one");
             } catch (Exception e) {
                 if (logger.isErrorEnabled()) {
                     logger.error("Couldn't save cover image one", e);
-                }
-                if (e instanceof ExecutionException) {
-                    e = (Exception) e.getCause();
-                }
-                errors.add(e);
-            }
-        }
-        if (coverImage2 != null) {
-            try {
-                church.setCoverImage2(coverImage2.get());
-                logger.trace("Finished saving cover image two");
-            } catch (Exception e) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("Couldn't save cover image two", e);
                 }
                 if (e instanceof ExecutionException) {
                     e = (Exception) e.getCause();
@@ -350,11 +325,8 @@ class ChurchController {
             locationService.deleteById(id);
 
             // TODO: Hide?
-            if (location.getCoverImage1() != null) {
-                imageService.deleteById(location.getCoverImage1().getId());
-            }
-            if (location.getCoverImage2() != null) {
-                imageService.deleteById(location.getCoverImage2().getId());
+            if (location.getCoverImage() != null) {
+                imageService.deleteById(location.getCoverImage().getId());
             }
             for (Image image : location.getImages()) {
                 imageService.deleteById(image.getId());

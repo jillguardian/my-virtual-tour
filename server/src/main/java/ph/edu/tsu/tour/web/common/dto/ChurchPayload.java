@@ -52,8 +52,7 @@ public final class ChurchPayload extends LocationPayload {
                          String zipCode,
                          Double latitude,
                          Double longitude,
-                         ImagePayload coverImage1,
-                         ImagePayload coverImage2,
+                         ImagePayload coverImage,
                          Set<ImagePayload> images,
                          Type type,
                          String saint,
@@ -88,8 +87,7 @@ public final class ChurchPayload extends LocationPayload {
               zipCode,
               latitude,
               longitude,
-              coverImage1,
-              coverImage2,
+              coverImage,
               ChurchPayload.initialize(images));
         this.type = type;
         this.saint = saint;

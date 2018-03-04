@@ -43,8 +43,7 @@ public abstract class LocationPayload implements Serializable {
     @NotNull(message = "{location.geometry.point.longitude.blank.message}")
     protected Double longitude;
 
-    protected ImagePayload coverImage1;
-    protected ImagePayload coverImage2;
+    protected ImagePayload coverImage;
     protected Set<ImagePayload> images;
 
 }

@@ -376,34 +376,31 @@
                                             <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules')}" th:errors="*{confessionSchedules}"></p>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group col-xs-6 location-image" th:classappend="${#fields.hasErrors('coverImage1')} ? has-error : ''">
-                                                <label for="primary-image-one" th:text="#{location.image.primary(1)}">Primary Image 1</label>
-                                                <div class="thumbnail">
-                                                    <img id="primary-image-one-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                                            <div class="col-xs-6">
+                                                <div class="form-group location-image" th:classappend="${#fields.hasErrors('coverImage')} ? has-error : ''">
+                                                    <label for="primary-image" th:text="#{location.image.primary}">Primary Image</label>
+                                                    <div class="thumbnail">
+                                                        <img id="primary-image-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${location?.coverImage?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                                                    </div>
+                                                    <input type="file" th:field="*{coverImage.file}" id="primary-image" accept="image/*" />
+                                                    <input type="hidden" th:field="*{coverImage.id}" />
                                                 </div>
-                                                <input type="file" th:field="*{coverImage1.file}" id="primary-image-one" accept="image/*" />
-                                                <input type="hidden" th:field="*{coverImage1.id}" />
                                             </div>
-                                            <div class="form-group col-xs-6 location-image" th:classappend="${#fields.hasErrors('coverImage2')} ? has-error : ''">
-                                                <label for="primary-image-two" th:text="#{location.image.primary(2)}">Primary Image 2</label>
-                                                <div class="thumbnail">
-                                                    <img id="primary-image-two-preview" src="http://via.placeholder.com/350x250?text=X" th:src="${location?.coverImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}" />
+                                            <div class="col-xs-6">
+                                                <div class="form-group" th:if="${location?.id}">
+                                                    <label th:text="#{images}">Images</label>
+                                                    <a th:href="@{/location/church/} + ${location.id} + @{/image/new}"
+                                                       class="btn btn-default btn-block">
+                                                        <i class="fa fa-image"></i>
+                                                        <span th:text="#{image.add}" th:remove="tag">Add New Image</span>
+                                                    </a>
+                                                    <a th:href="@{/location/church/} + ${location.id} + @{/image}"
+                                                       class="btn btn-default btn-block">
+                                                        <i class="fa fa-image"></i>
+                                                        <span th:text="#{images.view}" th:remove="tag">View Images</span>
+                                                    </a>
                                                 </div>
-                                                <input type="file" th:field="*{coverImage2.file}" id="primary-image-two" accept="image/*" />
-                                                <input type="hidden" th:field="*{coverImage2.id}" />
                                             </div>
-                                        </div>
-                                        <div class="form-group" th:if="${location?.id}">
-                                            <a th:href="@{/location/church/} + ${location.id} + @{/image/new}"
-                                               class="btn btn-default btn-block">
-                                                <i class="fa fa-image"></i>
-                                                <span th:text="#{image.add}" th:remove="tag">Add New Image</span>
-                                            </a>
-                                            <a th:href="@{/location/church/} + ${location.id} + @{/image}"
-                                               class="btn btn-default btn-block">
-                                                <i class="fa fa-image"></i>
-                                                <span th:text="#{images.view}" th:remove="tag">View Images</span>
-                                            </a>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -1307,8 +1304,7 @@
                 $(this).siblings('.thumbnail').children('img:first').attr('src', url);
             });
             $('#reset').click(function(e) {
-                $('#primary-image-one-preview').attr('src', /*[[${location?.coverImage1?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
-                $('#primary-image-two-preview').attr('src', /*[[${location?.coverImage2?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
+                $('#primary-image-preview').attr('src', /*[[${location?.coverImage?.uri ?: 'http://via.placeholder.com/350x250?text=X'}]]*/ '');
             });
 
             var lat = $.trim($('#latitude').val());
