@@ -31,10 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Within(query = "Tarlac",
-        types = "region",
-        countries = "PH",
-        message = "{location.geometry.point.beyond-limit.message}")
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EqualsAndHashCode(callSuper = true)
 @Data
