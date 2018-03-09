@@ -38,21 +38,19 @@
                  th:text="#{images.empty.message}">Found no images.</div>
         </div>
     </div>
-    <div class="row">
-        <div th:each="group : ${T(com.google.common.collect.Lists).partition(images, 3)}" class="row">
-            <div th:each="image : ${group}" th:object="${image}" class="col-md-4">
-                <div class="box box-widget widget-user">
-                    <div class="widget-user-header bg-black"
-                         th:style="'background: url(' + @{${image?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
-                        <h3 class="widget-user-username" th:text="${image.title}">Title</h3>
-                    </div>
-                    <div class="box-footer" style="padding-top: 10px;">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <a th:href="@{/location/church/} + ${image.reference} + @{/image/} + ${image.id}" class="btn btn-block btn-primary btn-sm">
-                                    Edit
-                                </a>
-                            </div>
+    <div th:each="group : ${T(com.google.common.collect.Lists).partition(images, 3)}" class="row">
+        <div th:each="image : ${group}" th:object="${image}" class="col-md-4">
+            <div class="box box-widget widget-user">
+                <div class="widget-user-header bg-black"
+                     th:style="'background: url(' + @{${image?.uri ?: 'http://via.placeholder.com/350x250?text=X'}} + ') center center; background-size: cover;'">
+                    <h3 class="widget-user-username" th:text="${image.title}">Title</h3>
+                </div>
+                <div class="box-footer" style="padding-top: 10px;">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <a th:href="@{/location/church/} + ${image.reference} + @{/image/} + ${image.id}" class="btn btn-block btn-primary btn-sm">
+                                Edit
+                            </a>
                         </div>
                     </div>
                 </div>
