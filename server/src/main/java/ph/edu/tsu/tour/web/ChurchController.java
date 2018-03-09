@@ -386,6 +386,7 @@ class ChurchController {
 
         Image image;
 
+        boolean exists = dto.getId() != null;
         if (!dto.getFile().isEmpty()) { // Updating the actual image file?
             image = imageService.save(RawImage.builder()
                     .id(dto.getId())
@@ -398,6 +399,10 @@ class ChurchController {
             image.setTitle(dto.getTitle());
             image.setDescription(dto.getDescription());
             image = imageService.save(image);
+        }
+
+        if (!exists) {
+            church.addImage(image);
         }
 
         locationService.save(church);

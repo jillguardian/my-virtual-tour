@@ -114,7 +114,7 @@
                             <div class="btn-group"
                                  role="group"
                                  th:if="${image?.id}">
-                                <a id="delete-link" class="btn btn-danger btn-block" th:value="#{delete}">Delete</a>
+                                <button type="button" id="delete-link" class="btn btn-danger btn-block" th:value="#{delete}">Delete</button>
                             </div>
                             <div class="btn-group" role="group">
                                 <button id="reset" type="reset" class="btn btn-default btn-block" th:value="#{reset}">Reset</button>
@@ -125,7 +125,8 @@
             </div>
         </div>
     </form>
-    <form action="/location/church/image/delete"
+    <form id="delete-image"
+          action="/location/church/image/delete"
           th:action="@{/location/church/image/delete}"
           method="POST"
           th:if="${image?.id}"
@@ -149,6 +150,9 @@
             $('.form-group.location-image > input[type=file]').change(function() {
                 var url = window.URL.createObjectURL($(this)[0].files[0]);
                 $(this).siblings('.thumbnail').children('img:first').attr('src', url);
+            });
+            $('#delete-link').click(function(e) {
+                $('#delete-image').submit();
             });
         });
         $('#reset').click(function(e) {
