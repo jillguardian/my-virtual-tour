@@ -214,6 +214,7 @@ public final class ChurchPayload extends LocationPayload {
         // @NotNull
         private LocalTime end;
 
+        @NotNull
         private Language language;
 
     }

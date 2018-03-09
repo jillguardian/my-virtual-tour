@@ -322,15 +322,17 @@ class ChurchController {
     public String delete(@RequestParam long id) {
         Location location = locationService.findById(id);
         if (location != null) {
-            locationService.deleteById(id);
-
             // TODO: Hide?
             if (location.getCoverImage() != null) {
+                location.setCoverImage(null);
                 imageService.deleteById(location.getCoverImage().getId());
             }
             for (Image image : location.getImages()) {
+                location.removeImage(image);
                 imageService.deleteById(image.getId());
             }
+
+            locationService.deleteById(id);
         }
 
         return "redirect:" + Urls.CHURCH_LOCATION;
