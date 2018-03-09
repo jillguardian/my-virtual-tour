@@ -140,20 +140,20 @@ public class Church extends Location implements Serializable {
         this.otherNearbies = otherNearbies;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private Type type;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String saint;
 
     @JsonProperty("feast-day")
     @JsonFormat(pattern = "MM/dd")
-    @Column(name = "feast_day", nullable = false)
+    @Column(name = "feast_day", nullable = true)
     private MonthDay feastDay;
 
     @JsonProperty("canonical-erection-day")
     @JsonFormat(pattern = "MM/dd/yyyy")
-    @Column(name = "canonical_erection_day", nullable = false)
+    @Column(name = "canonical_erection_day", nullable = true)
     private LocalDate canonicalErectionDay;
 
     @JsonProperty("dedication-day")
@@ -161,7 +161,7 @@ public class Church extends Location implements Serializable {
     @Column(name = "dedication_day")
     private LocalDate dedicationDay;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String priest;
 
     @JsonProperty("mass-schedules")

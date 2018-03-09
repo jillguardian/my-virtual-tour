@@ -110,24 +110,24 @@ public final class ChurchPayload extends LocationPayload {
         this.otherNearbies = ChurchPayload.initialize(otherNearbies, String.class);
     }
 
-    @NotNull(message = "{church.type.blank.message}")
+    // @NotNull(message = "{church.type.blank.message}")
     private Type type;
 
-    @NotNull(message = "{church.saint.blank.message}")
+    // @NotNull(message = "{church.saint.blank.message}")
     private String saint;
 
-    @NotNull(message = "{church.feast-day.blank.message}")
+    // @NotNull(message = "{church.feast-day.blank.message}")
     @DateTimeFormat(pattern = "MMMM dd")
     private MonthDay feastDay;
 
+    // @NotNull(message = "{church.canonical-erection-day.blank.message}")
     @DateTimeFormat(pattern = "MM/dd/yyyy")
-    @NotNull(message = "{church.canonical-erection-day.blank.message}")
     private LocalDate canonicalErectionDay;
 
     @DateTimeFormat(pattern = "MM/dd/yyyy")
     private LocalDate dedicationDay;
 
-    @NotNull(message = "{church.priest.blank.message}")
+    // @NotNull(message = "{church.priest.blank.message}")
     private String priest;
 
     @NotNull(message = "{church.mass-schedules.empty.message}")
@@ -142,7 +142,7 @@ public final class ChurchPayload extends LocationPayload {
 
     private String architect;
 
-    @NotNull(message = "{church.artifacts.empty.message}")
+    // @NotNull(message = "{church.artifacts.empty.message}")
     private Style style;
 
     @Range(min = 1500, max = 2018, message = "{church.year-of-construction.invalid.message}")
@@ -211,7 +211,7 @@ public final class ChurchPayload extends LocationPayload {
         private LocalTime start;
 
         @DateTimeFormat(pattern = "hh:mm a")
-        @NotNull
+        // @NotNull
         private LocalTime end;
 
         private Language language;

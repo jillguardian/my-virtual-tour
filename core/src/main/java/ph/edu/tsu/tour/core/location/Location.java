@@ -82,11 +82,11 @@ public abstract class Location implements Serializable {
     @JsonProperty("ADDRESS2")
     protected String addressLine2;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @JsonProperty("CITY")
     protected String city;
 
-    @Column(name = "zip_code", nullable = false)
+    @Column(name = "zip_code", nullable = true)
     @JsonProperty("ZIP")
     protected String zipCode;
 
