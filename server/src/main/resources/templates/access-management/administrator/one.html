@@ -6,6 +6,11 @@
       layout:decorator="default">
 <head>
     <title th:text="${administrator?.id}? #{administrator.edit} : #{administrator.add}">Administrator</title>
+    <style>
+        .navbar-nav > .user-menu > .dropdown-menu > li.user-header > p {
+            overflow: hidden;
+        }
+    </style>
 </head>
 <body>
 <h1 layout:fragment="content-heading" th:text="${administrator?.id}? #{administrator.edit} : #{administrator.add}">
