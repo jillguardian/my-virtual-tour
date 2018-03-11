@@ -106,7 +106,6 @@ class ChurchController {
                                 .map(payload -> Schedule.builder()
                                         .day(payload.getDay())
                                         .start(payload.getStart())
-                                        .end(payload.getEnd())
                                         .language(payload.getLanguage().name())
                                         .build())
                                 .collect(Collectors.toSet()))
@@ -115,7 +114,6 @@ class ChurchController {
                                 .map(payload -> Schedule.builder()
                                         .day(payload.getDay())
                                         .start(payload.getStart())
-                                        .end(payload.getEnd())
                                         .language(payload.getLanguage().name())
                                         .build())
                                 .collect(Collectors.toSet()))
@@ -189,7 +187,6 @@ class ChurchController {
         return ChurchPayload.SchedulePayload.builder()
                 .day(schedule.getDay())
                 .start(schedule.getStart())
-                .end(schedule.getEnd())
                 .language(ChurchPayload.SchedulePayload.Language.valueOf(schedule.getLanguage()))
                 .build();
     }
@@ -543,19 +540,6 @@ class ChurchController {
                 bindingResult.rejectValue(propertyName + "[" + i + "].start",
                                           "church.schedule.start.empty.message",
                                           "Day should be specified.");
-            }
-            if (schedule.getEnd() == null) {
-                bindingResult.rejectValue(propertyName + "[" + i + "].end",
-                                          "church.schedule.end.empty.message",
-                                          "Day should be specified.");
-            }
-            if (schedule.getStart() != null && schedule.getEnd() != null 
-                    && (schedule.getStart().isAfter(schedule.getEnd())
-                    || schedule.getEnd().equals(schedule.getStart()))) {
-                bindingResult.rejectValue(propertyName + "[" + i + "].start",
-                                          "church.schedule.start.invalid.message",
-                                          "Ending time should come after starting time.");
-                error = true;
             }
             if (schedule.getLanguage() == null) {
                 bindingResult.rejectValue(propertyName + "[" + i + "].language",

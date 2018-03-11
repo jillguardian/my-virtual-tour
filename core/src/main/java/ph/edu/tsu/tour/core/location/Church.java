@@ -242,9 +242,6 @@ public class Church extends Location implements Serializable {
         @JsonFormat(pattern = "hh:mm a")
         private LocalTime start;
 
-        @JsonFormat(pattern = "hh:mm a")
-        private LocalTime end;
-
         private String language;
 
     }

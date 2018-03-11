@@ -214,10 +214,6 @@ public final class ChurchPayload extends LocationPayload {
         @NotNull
         private LocalTime start;
 
-        @DateTimeFormat(pattern = "hh:mm a")
-        // @NotNull
-        private LocalTime end;
-
         @NotNull
         private Language language;
 

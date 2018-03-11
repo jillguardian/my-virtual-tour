@@ -170,7 +170,7 @@
                                                                 <div class="modal-body">
                                                                     <th:block th:each="massSchedule, iterator: *{massSchedules}">
                                                                         <div class="row" th:id="${'massSchedule' + iterator.index}" th:with="id=${'massSchedule' + iterator.index}">
-                                                                            <div class="col-md-3">
+                                                                            <div class="col-md-4">
                                                                                 <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].day')} ? has-error : ''">
                                                                                     <select th:field="*{massSchedules[__${iterator.index}__].day}"
                                                                                             class="form-control day"
@@ -196,7 +196,7 @@
                                                                                     <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].day')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].day}"></p>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-md-2">
+                                                                            <div class="col-md-3">
                                                                                 <div class="bootstrap-timepicker">
                                                                                     <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].start')} ? has-error : ''">
                                                                                         <div class="input-group">
@@ -208,21 +208,6 @@
                                                                                             </div>
                                                                                         </div>
                                                                                         <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].start')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].start}"></p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-2">
-                                                                                <div class="bootstrap-timepicker">
-                                                                                    <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules[__${iterator.index}__].end')} ? has-error : ''">
-                                                                                        <div class="input-group">
-                                                                                            <input type="text"
-                                                                                                   th:field="*{massSchedules[__${iterator.index}__].end}"
-                                                                                                   class="form-control timepicker schedule" />
-                                                                                            <div class="input-group-addon">
-                                                                                                <i class="fa fa-clock-o"></i>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <p class="help-block" th:if="${#fields.hasErrors('massSchedules[__${iterator.index}__].end')}" th:errors="*{massSchedules[__*{#lists.size(massSchedules)}__].end}"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -278,7 +263,7 @@
                                                                 <div class="modal-body">
                                                                     <th:block th:each="confessionSchedule, iterator: *{confessionSchedules}">
                                                                         <div class="row" th:id="${'confessionSchedule' + iterator.index}" th:with="id=${'confessionSchedule' + iterator.index}">
-                                                                            <div class="col-md-3">
+                                                                            <div class="col-md-4">
                                                                                 <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].day')} ? has-error : ''">
                                                                                     <select th:field="*{confessionSchedules[__${iterator.index}__].day}"
                                                                                             class="form-control day"
@@ -304,7 +289,7 @@
                                                                                     <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].day')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].day}"></p>
                                                                                 </div>
                                                                             </div>
-                                                                            <div class="col-md-2">
+                                                                            <div class="col-md-3">
                                                                                 <div class="bootstrap-timepicker">
                                                                                     <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].start')} ? has-error : ''">
                                                                                         <div class="input-group">
@@ -316,21 +301,6 @@
                                                                                             </div>
                                                                                         </div>
                                                                                         <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].start')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].start}"></p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="col-md-2">
-                                                                                <div class="bootstrap-timepicker">
-                                                                                    <div class="form-group" th:classappend="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].end')} ? has-error : ''">
-                                                                                        <div class="input-group">
-                                                                                            <input type="text"
-                                                                                                   th:field="*{confessionSchedules[__${iterator.index}__].end}"
-                                                                                                   class="form-control timepicker schedule" />
-                                                                                            <div class="input-group-addon">
-                                                                                                <i class="fa fa-clock-o"></i>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules[__${iterator.index}__].end')}" th:errors="*{confessionSchedules[__*{#lists.size(confessionSchedules)}__].end}"></p>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -1155,30 +1125,18 @@
                 var name = 'massSchedules[' + massSchedulesNextId + ']';
                 var element = '';
                 element += '<div class="row" id="' + id +'">';
-                element += '<div class="col-md-3">';
+                element += '<div class="col-md-4">';
                 element += '<div class="form-group">';
                 element += '<select id="' + id + '.day' + '" name="' + name + '.day' + '" class="form-control day" style="width: 100%;">';
                 element += daysOfWeekAsOptions;
                 element += '</select>';
                 element += '</div>';
                 element += '</div>';
-                element += '<div class="col-md-2">';
+                element += '<div class="col-md-3">';
                 element += '<div class="bootstrap-timepicker">';
                 element += '<div class="form-group">';
                 element += '<div class="input-group">';
                 element += '<input type="text" id="' + id + '.start' + '" name="' + name + '.start' + '" class="form-control timepicker schedule" />';
-                element += '<div class="input-group-addon">';
-                element += '<i class="fa fa-clock-o"></i>';
-                element += '</div>';
-                element += '</div>';
-                element += '</div>';
-                element += '</div>';
-                element += '</div>';
-                element += '<div class="col-md-2">';
-                element += '<div class="bootstrap-timepicker">';
-                element += '<div class="form-group">';
-                element += '<div class="input-group">';
-                element += '<input type="text" id="' + id + '.end' + '" name="' + name + '.end' + '" class="form-control timepicker schedule" />';
                 element += '<div class="input-group-addon">';
                 element += '<i class="fa fa-clock-o"></i>';
                 element += '</div>';
@@ -1225,30 +1183,18 @@
                 var name = 'confessionSchedules[' + confessionSchedulesNextId + ']';
                 var element = '';
                 element += '<div class="row" id="' + id +'">';
-                element += '<div class="col-md-3">';
+                element += '<div class="col-md-4">';
                 element += '<div class="form-group">';
                 element += '<select id="' + id + '.day' + '" name="' + name + '.day' + '" class="form-control day" style="width: 100%;">';
                 element += daysOfWeekAsOptions;
                 element += '</select>';
                 element += '</div>';
                 element += '</div>';
-                element += '<div class="col-md-2">';
+                element += '<div class="col-md-3">';
                 element += '<div class="bootstrap-timepicker">';
                 element += '<div class="form-group">';
                 element += '<div class="input-group">';
                 element += '<input type="text" id="' + id + '.start' + '" name="' + name + '.start' + '" class="form-control timepicker schedule" />';
-                element += '<div class="input-group-addon">';
-                element += '<i class="fa fa-clock-o"></i>';
-                element += '</div>';
-                element += '</div>';
-                element += '</div>';
-                element += '</div>';
-                element += '</div>';
-                element += '<div class="col-md-2">';
-                element += '<div class="bootstrap-timepicker">';
-                element += '<div class="form-group">';
-                element += '<div class="input-group">';
-                element += '<input type="text" id="' + id + '.end' + '" name="' + name + '.end' + '" class="form-control timepicker schedule" />';
                 element += '<div class="input-group-addon">';
                 element += '<i class="fa fa-clock-o"></i>';
                 element += '</div>';
