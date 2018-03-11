@@ -67,7 +67,10 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
                 throw new FailedDependencyException("Unsuccessful response [" + response.code() + "]");
             }
         } catch (Exception e) {
-            throw new FailedDependencyException("Couldn't get data on [" + place + "]", e);
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("{location.unable-to-verify.message}")
+                   .addConstraintViolation();
+            return false;
         }
 
         // Now that we have the ID of the enclosing area, we'll check if the location in the payload belongs to the
@@ -89,7 +92,10 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
                 throw new FailedDependencyException("Unsuccessful response [" + response.code() + "]");
             }
         } catch (Exception e) {
-            throw new FailedDependencyException("Couldn't get data on [" + longitude + ", " + latitude + "]", e);
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate("{location.unable-to-verify.message}")
+                   .addConstraintViolation();
+            return false;
         }
 
     }

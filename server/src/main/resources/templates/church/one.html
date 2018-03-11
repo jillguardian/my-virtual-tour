@@ -48,35 +48,34 @@
     </th:block>
 </ol>
 <div layout:fragment="content-body">
-    <div class="row">
-        <div class="col-xs-12">
-            <!-- TODO: Insert notification via Javascript.
-            <div class="row" th:if="${#fields.hasGlobalErrors()}">
-                <div class="col-md-12">
-                    <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}">
-                        <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='', style='')">Errors</div>
+    <form th:if="${location}"
+          th:action="@{/location/church/save}"
+          th:object="${location}"
+          method="POST"
+          role="form"
+          enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="row" th:if="${#fields.hasGlobalErrors()}">
+                    <div class="col-md-12">
+                        <div th:with="text=#{error.message}, errors=${#fields.globalErrors()}">
+                            <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='', style='')">Errors</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            -->
-            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs nav-justified">
-                    <li role="presentation" class="active">
-                        <a href="#general" th:value="#{general}" data-toggle="tab" role="tab">General</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#significance" th:value="#{significance}" data-toggle="tab" role="tab">Significance</a>
-                    </li>
-                    <li role="presentation">
-                        <a href="#others" th:value="#{others}" data-toggle="tab" role="tab">Others</a>
-                    </li>
-                </ul>
-                <form th:if="${location}"
-                      th:action="@{/location/church/save}"
-                      th:object="${location}"
-                      method="POST"
-                      role="form"
-                      enctype="multipart/form-data">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs nav-justified">
+                        <li role="presentation" class="active">
+                            <a href="#general" th:value="#{general}" data-toggle="tab" role="tab">General</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#significance" th:value="#{significance}" data-toggle="tab" role="tab">Significance</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#others" th:value="#{others}" data-toggle="tab" role="tab">Others</a>
+                        </li>
+                    </ul>
+
                     <div class="tab-content">
                         <div class="tab-pane active" id="general">
                             <div class="box-body">
@@ -947,10 +946,10 @@
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
     <form id="delete-form"
           action="/location/church/delete"
           th:action="@{/location/church/delete}"
