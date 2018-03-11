@@ -200,7 +200,7 @@ class ChurchController {
                 .id(image.getId())
                 .title(image.getTitle())
                 .description(image.getDescription())
-                .uri(image.getPreview())
+                .uri(image.getLocation())
                 .build();
     }
 
