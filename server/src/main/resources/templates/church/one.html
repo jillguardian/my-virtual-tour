@@ -26,6 +26,10 @@
         .has-error.help-block {
             color: #dd4b39;
         }
+        textarea {
+            resize: none;
+            overflow: scroll;
+        }
     </style>
 </head>
 <body>
@@ -346,6 +350,18 @@
                                             </div>
                                             <p class="help-block has-error" th:if="${#fields.hasErrors('massSchedules')}" th:errors="*{massSchedules}"></p>
                                             <p class="help-block has-error" th:if="${#fields.hasErrors('confessionSchedules')}" th:errors="*{confessionSchedules}"></p>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label for="mass-schedule-remarks" th:text="#{mass-schedule-remarks}">Mass Schedule Remarks</label>
+                                                <textarea id="mass-schedule-remarks" class="form-control" rows="3" th:field="*{massScheduleRemarks}" th:placeholder="#{mass-schedule-remarks.placeholder}"></textarea>
+                                                <p class="help-block has-error" th:if="${#fields.hasErrors('massScheduleRemarks')}" th:errors="*{massScheduleRemarks}"></p>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label for="confession-schedule-remarks" th:text="#{confession-schedule-remarks}">Confession Schedule Remarks</label>
+                                                <textarea id="confession-schedule-remarks" class="form-control" rows="3" th:field="*{confessionScheduleRemarks}" th:placeholder="#{confession-schedule-remarks.placeholder}"></textarea>
+                                                <p class="help-block has-error" th:if="${#fields.hasErrors('confessionScheduleRemarks')}" th:errors="*{confessionScheduleRemarks}"></p>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-6">

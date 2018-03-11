@@ -62,6 +62,8 @@ public final class ChurchPayload extends LocationPayload {
                          String priest,
                          List<SchedulePayload> massSchedules,
                          List<SchedulePayload> confessionSchedules,
+                         String massScheduleRemarks,
+                         String confessionScheduleRemarks,
                          Set<Artifact> artifacts,
                          String architect,
                          Style style,
@@ -97,6 +99,8 @@ public final class ChurchPayload extends LocationPayload {
         this.priest = priest;
         this.massSchedules = ChurchPayload.initialize(massSchedules, SchedulePayload.class);
         this.confessionSchedules = ChurchPayload.initialize(confessionSchedules, SchedulePayload.class);
+        this.massScheduleRemarks = massScheduleRemarks;
+        this.confessionScheduleRemarks = confessionScheduleRemarks;
         this.artifacts = ChurchPayload.initialize(artifacts);
         this.architect = architect;
         this.style = style;
@@ -141,6 +145,10 @@ public final class ChurchPayload extends LocationPayload {
     @NotNull(message = "{church.confession-schedule.empty.message}")
     @Valid
     private List<SchedulePayload> confessionSchedules = new AutoPopulatingList<>(SchedulePayload.class);
+
+    private String massScheduleRemarks;
+
+    private String confessionScheduleRemarks;
 
     private Set<Artifact> artifacts = EnumSet.noneOf(Artifact.class);
 

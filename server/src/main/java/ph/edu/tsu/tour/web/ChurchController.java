@@ -117,6 +117,8 @@ class ChurchController {
                                         .language(payload.getLanguage().name())
                                         .build())
                                 .collect(Collectors.toSet()))
+                .massScheduleRemarks(dto.getMassScheduleRemarks())
+                .confessionScheduleRemarks(dto.getConfessionScheduleRemarks())
                 .artifacts(dto.getArtifacts())
                 .architect(dto.getArchitect())
                 .style(dto.getStyle())
@@ -165,6 +167,8 @@ class ChurchController {
                                 .map(ChurchController::toDto)
                                 .collect(Collectors.toList()),
                         ChurchPayload.SchedulePayload.class))
+                .massScheduleRemarks(church.getMassScheduleRemarks())
+                .confessionScheduleRemarks(church.getConfessionScheduleRemarks())
                 .artifacts(church.getArtifacts())
                 .architect(church.getArchitect())
                 .style(church.getStyle())
