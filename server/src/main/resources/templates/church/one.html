@@ -23,6 +23,9 @@
         .form-group.location-image > input[type=file] {
             display: none;
         }
+        .has-error.help-block {
+            color: #dd4b39;
+        }
     </style>
 </head>
 <body>
@@ -153,10 +156,10 @@
                                             <input type="text" th:field="*{priest}" class="form-control" id="priest" th:placeholder="#{priest.placeholder}" placeholder="Enter name of priest"/>
                                             <p class="help-block" th:if="${#fields.hasErrors('priest')}" th:errors="*{priest}"></p>
                                         </div>
-                                        <div class="form-group" th:classappend="${#fields.hasErrors('massSchedules') or #fields.hasErrors('confessionSchedules')} ? has-error : ''">
+                                        <div class="form-group">
                                             <div class="row">
                                                 <div class="col-xs-6">
-                                                    <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#mass-schedules-modal" th:text="#{mass-schedules}">Mass Schedules</button>
+                                                    <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#mass-schedules-modal" th:text="#{mass-schedules}" th:classappend="${#fields.hasErrors('massSchedules')} ? btn-danger : btn-success">Mass Schedules</button>
                                                     <div id="mass-schedules-modal" class="modal fade schedules-modal" tabindex="-1" role="dialog">
                                                         <div class="modal-dialog modal-lg" role="document">
                                                             <div class="modal-content">
@@ -264,7 +267,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-xs-6">
-                                                    <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#confession-schedules-modal" th:text="#{confession-schedules}">Confession Schedules</button>
+                                                    <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#confession-schedules-modal" th:text="#{confession-schedules}" th:classappend="${#fields.hasErrors('confessionSchedules')} ? btn-danger : btn-success">Confession Schedules</button>
                                                     <div id="confession-schedules-modal" class="modal fade schedules-modal" tabindex="-1" role="dialog">
                                                         <div class="modal-dialog modal-lg" role="document">
                                                             <div class="modal-content">
@@ -371,8 +374,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('massSchedules')}" th:errors="*{massSchedules}"></p>
-                                            <p class="help-block" th:if="${#fields.hasErrors('confessionSchedules')}" th:errors="*{confessionSchedules}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('massSchedules')}" th:errors="*{massSchedules}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('confessionSchedules')}" th:errors="*{confessionSchedules}"></p>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-6">
@@ -502,8 +505,8 @@
                                             <input type="text" th:field="*{architect}" class="form-control" id="architect" th:placeholder="#{architect.placeholder}" placeholder="Enter name of architect, if known"/>
                                             <p class="help-block" th:if="${#fields.hasErrors('architect')}" th:errors="*{architect}"></p>
                                         </div>
-                                        <div class="form-group" data-field="otherArchitecturalFeatures" th:classappend="${#fields.hasErrors('otherArchitecturalFeatures')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-architectural-features-modal" th:text="#{other-architectural-features}"></button>
+                                        <div class="form-group" data-field="otherArchitecturalFeatures">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#other-architectural-features-modal" th:text="#{other-architectural-features}" th:classappend="${#fields.hasErrors('otherArchitecturalFeatures')} ? btn-danger : btn-success"></button>
                                             <div id="other-architectural-features-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -538,7 +541,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('otherArchitecturalFeatures')}" th:errors="*{otherArchitecturalFeatures}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('otherArchitecturalFeatures')}" th:errors="*{otherArchitecturalFeatures}"></p>
                                         </div>
                                         <div class="form-group" th:classappend="${#fields.hasErrors('artifacts')} ? has-error : ''">
                                             <label for="artifacts" th:value="#{artifacts}">Artifacts</label>
@@ -600,8 +603,8 @@
                                             </select>
                                             <p class="help-block" th:if="${#fields.hasErrors('relics')}" th:errors="*{relics}"></p>
                                         </div>
-                                        <div class="form-group" data-field="otherRelics" th:classappend="${#fields.hasErrors('otherRelics')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-relics-modal" th:text="#{other-relics}"></button>
+                                        <div class="form-group" data-field="otherRelics">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#other-relics-modal" th:text="#{other-relics}" th:classappend="${#fields.hasErrors('otherRelics')} ? btn-danger : btn-success"></button>
                                             <div id="other-relics-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -636,12 +639,12 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('otherRelics')}" th:errors="*{otherRelics}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('otherRelics')}" th:errors="*{otherRelics}"></p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-group" data-field="historicalEvents" th:classappend="${#fields.hasErrors('historicalEvents')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#historical-events-modal" th:text="#{historical-events}"></button>
+                                        <div class="form-group" data-field="historicalEvents">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#historical-events-modal" th:text="#{historical-events}" th:classappend="${#fields.hasErrors('historicalEvents')} ? btn-danger : btn-success"></button>
                                             <div id="historical-events-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -676,10 +679,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('historicalEvents')}" th:errors="*{historicalEvents}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('historicalEvents')}" th:errors="*{historicalEvents}"></p>
                                         </div>
-                                        <div class="form-group" data-field="married" th:classappend="${#fields.hasErrors('married')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#married-personalities-modal" th:text="#{married-personalities}"></button>
+                                        <div class="form-group" data-field="married">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#married-personalities-modal" th:text="#{married-personalities}" th:classappend="${#fields.hasErrors('married')} ? btn-danger : btn-success"></button>
                                             <div id="married-personalities-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -714,10 +717,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('married')}" th:errors="*{married}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('married')}" th:errors="*{married}"></p>
                                         </div>
-                                        <div class="form-group" data-field="baptized" th:classappend="${#fields.hasErrors('baptized')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#baptized-personalities-modal" th:text="#{baptized-personalities}"></button>
+                                        <div class="form-group" data-field="baptized">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#baptized-personalities-modal" th:text="#{baptized-personalities}"  th:classappend="${#fields.hasErrors('baptized')} ? btn-danger : btn-success"></button>
                                             <div id="baptized-personalities-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -752,10 +755,10 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('baptized')}" th:errors="*{baptized}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('baptized')}" th:errors="*{baptized}"></p>
                                         </div>
-                                        <div class="form-group" data-field="confirmed" th:classappend="${#fields.hasErrors('confirmed')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#confirmed-personalities-modal" th:text="#{confirmed-personalities}"></button>
+                                        <div class="form-group" data-field="confirmed">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#confirmed-personalities-modal" th:text="#{confirmed-personalities}" th:classappend="${#fields.hasErrors('confirmed')} ? btn-danger : btn-success"></button>
                                             <div id="confirmed-personalities-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -790,7 +793,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('confirmed')}" th:errors="*{confirmed}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('confirmed')}" th:errors="*{confirmed}"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -828,8 +831,8 @@
                                             </select>
                                             <p class="help-block" th:if="${#fields.hasErrors('facilities')}" th:errors="*{facilities}"></p>
                                         </div>
-                                        <div class="form-group" data-field="otherFacilities" th:classappend="${#fields.hasErrors('otherFacilities')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-facilities-modal" th:text="#{other-facilities}"></button>
+                                        <div class="form-group" data-field="otherFacilities">
+                                            <button type="button" class="btn btn-block" role="button" data-toggle="modal" data-target="#other-facilities-modal" th:text="#{other-facilities}" th:classappend="${#fields.hasErrors('otherFacilities')} ? btn-danger : btn-success"></button>
                                             <div id="other-facilities-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -864,7 +867,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('otherFacilities')}" th:errors="*{confirmed}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('otherFacilities')}" th:errors="*{confirmed}"></p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -888,8 +891,8 @@
                                             </select>
                                             <p class="help-block" th:if="${#fields.hasErrors('nearbies')}" th:errors="*{nearbies}"></p>
                                         </div>
-                                        <div class="form-group" data-field="otherNearbies" th:classappend="${#fields.hasErrors('otherNearbies')} ? has-error : ''">
-                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-nearby-places-modal" th:text="#{other-nearby-places}"></button>
+                                        <div class="form-group" data-field="otherNearbies">
+                                            <button type="button" class="btn btn-success btn-block" role="button" data-toggle="modal" data-target="#other-nearby-places-modal" th:text="#{other-nearby-places}" th:classappend="${#fields.hasErrors('otherNearbies')} ? btn-danger : btn-success"></button>
                                             <div id="other-nearby-places-modal" class="modal fade string-collection-modal" tabindex="-1" role="dialog">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
@@ -924,7 +927,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <p class="help-block" th:if="${#fields.hasErrors('otherNearbies')}" th:errors="*{otherNearbies}"></p>
+                                            <p class="help-block has-error" th:if="${#fields.hasErrors('otherNearbies')}" th:errors="*{otherNearbies}"></p>
                                         </div>
                                     </div>
                                 </div>
