@@ -70,7 +70,7 @@ class AdministratorController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteById(@RequestParam long id) {
         accessManagementService.deleteAdministratorById(id);
-        return "redirect:" + Urls.ADMINISTRATOR + "/administrator/";
+        return "redirect:" + Urls.ADMINISTRATOR;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
