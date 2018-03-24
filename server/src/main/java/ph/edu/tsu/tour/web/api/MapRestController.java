@@ -151,33 +151,39 @@ class MapRestController<T extends Location> {
             }
         }
 
-        String[] temporaryRadiuses = Iterables.toArray(MapRestController.DEFAULT_SEMICOLON_SPLITTER.split(radiuses),
-                                                       String.class);
-        double[] convertedRadiuses = new double[temporaryRadiuses.length];
-        for (int i = 0; i < temporaryRadiuses.length; i++) {
-            String radius = temporaryRadiuses[i];
-            try {
-                convertedRadiuses[i] = Double.valueOf(radius);
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid radius [" + radius + "]");
+        double[] convertedRadiuses = null;
+        if (radiuses != null) {
+            String[] temporaryRadiuses = Iterables.toArray(MapRestController.DEFAULT_SEMICOLON_SPLITTER.split(radiuses),
+                                                           String.class);
+            convertedRadiuses = new double[temporaryRadiuses.length];
+            for (int i = 0; i < temporaryRadiuses.length; i++) {
+                String radius = temporaryRadiuses[i];
+                try {
+                    convertedRadiuses[i] = Double.valueOf(radius);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Invalid radius [" + radius + "]");
+                }
             }
         }
 
-        String[] temporaryBearings = Iterables.toArray(MapRestController.DEFAULT_SEMICOLON_SPLITTER.split(bearings),
-                                                       String.class);
-        double[][] convertedBearings = new double[temporaryBearings.length][2];
-        for (int i = 0; i < temporaryBearings.length; i++) {
-            String bearing = temporaryBearings[i];
-            if (bearing.isEmpty()) {
-                convertedBearings[i] = new double[0];
-                continue;
-            }
+        double[][] convertedBearings = null;
+        if (bearings != null) {
+            String[] temporaryBearings = Iterables.toArray(MapRestController.DEFAULT_SEMICOLON_SPLITTER.split(bearings),
+                                                           String.class);
+            convertedBearings = new double[temporaryBearings.length][2];
+            for (int i = 0; i < temporaryBearings.length; i++) {
+                String bearing = temporaryBearings[i];
+                if (bearing.isEmpty()) {
+                    convertedBearings[i] = new double[0];
+                    continue;
+                }
 
-            try {
-                double[] value = Arrays.stream(bearing.split(",")).mapToDouble(Double::valueOf).toArray();
-                convertedBearings[i] = value;
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Found invalid value in bearing [" + bearing + "]");
+                try {
+                    double[] value = Arrays.stream(bearing.split(",")).mapToDouble(Double::valueOf).toArray();
+                    convertedBearings[i] = value;
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Found invalid value in bearing [" + bearing + "]");
+                }
             }
         }
 
