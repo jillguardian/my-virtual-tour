@@ -124,6 +124,21 @@
                         </li>
                     </ul>
                 </li>
+                <li class="treeview" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.core.access.Privileges.User).WRITE)">
+                    <a href="#">
+                        <i class="fa fa-user"></i> <span th:text="#{users}">Users</span>
+                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li>
+                            <a th:href="@{/user}"
+                               th:value="#{view-all}"
+                               sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.User).WRITE)">
+                                View All
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="treeview">
                     <a href="#">
                         <i class="fa fa-map-marker"></i> <span th:text="#{locations}">Locations</span>
@@ -156,6 +171,11 @@
                 <div class="col-md-12">
                     <th:block th:with="text=#{error.message}" th:if="${errors}">
                         <div th:replace="fragment/list-item-alert :: alert (type='danger', message=${text}, items=${errors}, classes='', style='margin-bottom: 15px;')">Errors</div>
+                    </th:block>
+                </div>
+                <div class="col-md-12">
+                    <th:block th:with="text=#{success.message}" th:if="${successes}">
+                        <div th:replace="fragment/list-item-alert :: alert (type='success', message=${text}, items=${successes}, classes='', style='margin-bottom: 15px;')">Successes</div>
                     </th:block>
                 </div>
             </div>

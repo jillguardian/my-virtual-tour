@@ -17,4 +17,11 @@ public interface Privileges {
 
     }
 
+    interface User {
+
+        String PREFIX = "USER";
+        String WRITE = PREFIX + "_" + "WRITE";
+
+    }
+
 }

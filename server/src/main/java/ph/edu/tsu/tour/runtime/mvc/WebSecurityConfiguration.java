@@ -121,6 +121,8 @@ public class WebSecurityConfiguration {
                     .hasAuthority(Privileges.Access.WRITE)
                     .requestMatchers(new AntPathRequestMatcher(Urls.ADMINISTRATOR + "/**", "GET"))
                     .hasAuthority(Privileges.Access.READ)
+                    .requestMatchers(new AntPathRequestMatcher(Urls.USER, "GET"))
+                    .hasAuthority(Privileges.User.WRITE)
                     .antMatchers("/login").anonymous()
                     .antMatchers("/logout").authenticated()
                     .and().formLogin()

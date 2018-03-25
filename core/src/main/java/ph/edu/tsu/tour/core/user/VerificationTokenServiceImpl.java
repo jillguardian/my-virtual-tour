@@ -113,8 +113,9 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
             OffsetDateTime expiration = verificationToken.getCreated().plusDays(verificationTokenLifeSpanInDays);
             if (verificationToken.getCreated().isBefore(expiration)) {
                 // We have to use the repository instance instead of the service to avoid double-password encryption.
-                // Currently implementation of the service encrypts the password before saving it.
+                // Currentl implementation of the service encrypts the password before saving it.
                 user.setActivated(true);
+                user.setEnabled(true);
                 userRepository.save(user);
                 deleteById(verificationToken.getId());
             } else {

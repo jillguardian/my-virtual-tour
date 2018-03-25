@@ -44,4 +44,7 @@ public class User implements Serializable {
     @Column
     private boolean activated;
 
+    @Column
+    private boolean enabled;
+
 }

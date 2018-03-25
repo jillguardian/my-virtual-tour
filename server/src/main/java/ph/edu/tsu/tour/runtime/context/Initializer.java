@@ -27,8 +27,6 @@ import ph.edu.tsu.tour.core.user.VerificationTokenDeletingListener;
 import ph.edu.tsu.tour.core.user.VerificationTokenSendingListener;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 @Configuration
@@ -94,7 +92,8 @@ public class Initializer {
             List<Privilege> privileges = Arrays.asList(
                     Privilege.builder().name(Privileges.Location.WRITE).build(),
                     Privilege.builder().name(Privileges.Access.WRITE).build(),
-                    Privilege.builder().name(Privileges.Access.READ).build() );
+                    Privilege.builder().name(Privileges.Access.READ).build(),
+                    Privilege.builder().name(Privileges.User.WRITE).build());
             for (int i = 0; i < privileges.size(); i++) {
                 Privilege privilege = privileges.get(i);
                 if (accessManagementService.findPrivilegeByName(privilege.getName()) == null) {
@@ -110,10 +109,14 @@ public class Initializer {
                     .privileges(Sets.newHashSet(privileges.get(1), privileges.get(2)))
                     .build();
             Role locationsAdministratorRole = Role.builder()
-                    .name("Locations Administrator")
+                    .name("Location Administrator")
                     .privileges(Sets.newHashSet(privileges.get(0)))
                     .build();
-            List<Role> roles = Arrays.asList(superAdministratorRole, locationsAdministratorRole);
+            Role userAdministratorRole = Role.builder()
+                    .name("User Administrator")
+                    .privileges(Sets.newHashSet(privileges.get(3)))
+                    .build();
+            List<Role> roles = Arrays.asList(superAdministratorRole, locationsAdministratorRole, userAdministratorRole);
             for (int i = 0; i < roles.size(); i++) {
                 Role role = roles.get(i);
                 if (accessManagementService.findRoleByName(role.getName()) == null) {

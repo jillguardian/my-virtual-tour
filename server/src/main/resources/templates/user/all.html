@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="default">
+<head>
+    <title th:text="#{users}">Users</title>
+</head>
+<body>
+<h1 layout:fragment="content-heading">
+    <span th:text="#{users}" th:remove="tag">Users</span>
+</h1>
+<ol th:fragment="breadcrumb" class="breadcrumb">
+    <li>
+        <a th:href="@{/}">
+            <i class="fa fa-dashboard"></i> <span th:text="#{dashboard}" th:remove="tag">Dashboard</span>
+        </a>
+    </li>
+    <li class="active">
+        <i class="fa fa-users"></i> <span th:text="#{users}" th:remove="tag">Users</span>
+    </li>
+</ol>
+<div layout:fragment="content-body">
+    <div class="row" th:if="${users.empty}">
+        <div class="col-md-12">
+            <div class="alert alert-danger text-center"
+                 role="alert"
+                 th:text="#{users.empty.message}">
+                Found no users.
+            </div>
+        </div>
+    </div>
+    <div class="row" th:unless="${users.empty}">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-body no-padding">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th th:text="#{username}">Username</th>
+                                <th th:text="#{email-address}">Email Address</th>
+                                <th th:text="#{activated}">Activated</th>
+                                <th th:text="#{enabled}">Enabled</th>
+                                <th th:text="#{action}">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${users}" th:classappend="${modifiedUsers != null and #lists.contains(modifiedUsers, user.id) ? 'success' : ''}">
+                                <td th:text="${user.username}">Username</td>
+                                <td th:text="${user.email}">Email</td>
+                                <td>
+                                    <input type="checkbox"
+                                           th:checked="${user.activated}"
+                                           disabled="disabled" />
+                                </td>
+                                <td>
+                                    <form th:action="@{/user/enable}" method="POST">
+                                        <input type="hidden" name="id" th:value="${user.id}" />
+                                        <input type="hidden" name="enable" th:value="${user.enabled}" />
+                                        <input type="checkbox" th:checked="${user.enabled}" class="enable-trigger" />
+                                    </form>
+                                </td>
+                                <td>
+                                    <button type="button"
+                                            class="btn btn-block btn-xs btn-default change-password-trigger"
+                                            role="button"
+                                            data-toggle="modal"
+                                            data-target="#change-password-modal"
+                                            th:text="#{change-password}"
+                                            th:attr="data-user-id=${user.id},data-user-username=${user.username}">
+                                        Change Password
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="change-password-modal" class="modal fade" tabindex="-1" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" th:text="#{change-password}">Change Password</h4>
+                                </div>
+                                <form id="change-password" th:action="@{/user/change-password}" method="POST">
+                                    <div class="modal-body">
+                                        <input id="change-password-id" type="hidden" name="id" />
+                                        <input type="password"
+                                               name="password"
+                                               class="form-control"
+                                               id="password"
+                                               th:placeholder="#{password.placeholder}"
+                                               placeholder="Password" />
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary btn-block" th:value="#{submit}">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block layout:fragment="scripts">
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var currentUser = null;
+        var changePasswordInstructions = /*[[#{user.instructions.change-password.message}]]*/;
+        $('document').ready(function() {
+            $('.enable-trigger').on('change', function() {
+                var input = $(this).prev();
+                if ($(this).is(':checked')) {
+                    input.attr('value', 'true');
+                } else {
+                    input.attr('value', 'false');
+                }
+                $(this).closest("form").submit();
+            });
+            $('.change-password-trigger').click(function(e){
+                currentUser = $(this).attr('data-user-username');
+
+                var id = $(this).attr('data-user-id');
+                $('#change-password-id').val(id);
+            });
+            $('#change-password-modal').on('shown.bs.modal', function() {
+                var newChangePasswordInstructions = changePasswordInstructions.replace('{0}', currentUser);
+                var alert = '';
+                alert += '<div class="callout callout-danger instruction">';
+                alert += '<p>' + newChangePasswordInstructions + '</p>';
+                alert += '</div>';
+                $('#change-password-modal > .modal-dialog > .modal-content > #change-password > .modal-body').prepend(alert);
+            });
+            $('#change-password-modal').on('hidden.bs.modal', function () {
+                $('#change-password-id').val(null);
+                $('.callout.instruction').remove();
+            });
+        });
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>
