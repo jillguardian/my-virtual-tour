@@ -81,11 +81,30 @@
                                     <input type="text" th:field="*{title}" class="form-control" id="title" th:placeholder="#{image.title.placeholder}" placeholder="Title" />
                                     <p class="help-block" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
                                 </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('priority')} ? has-error : ''">
+                                    <label for="priority" th:text="#{priority}">Priority</label>
+                                    <input type="number" th:field="*{priority}" class="form-control" id="priority" th:placeholder="#{priority.placeholder}" placeholder="Enter priority of image."/>
+                                    <p class="help-block" th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}"></p>
+                                </div>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('tags')} ? has-error : ''">
+                                    <label for="tags" th:text="#{tags}">Tags</label>
+                                    <select th:field="*{tags}"
+                                            multiple="multiple"
+                                            id="tags"
+                                            class="form-control"
+                                            style="width: 100%;"
+                                            tabindex="-1"
+                                            aria-hidden="true">
+                                        <option value=""></option>
+                                        <option th:each="tag : *{tags}" th:value="${tag}" th:text="${tag}"></option>
+                                    </select>
+                                    <p class="help-block" th:if="${#fields.hasErrors('tags')}" th:errors="*{tags}"></p>
+                                </div>
                                 <div class="form-group" th:classappend="${#fields.hasErrors('description')} ? has-error : ''">
                                     <label for="description" th:text="#{description}">Description</label>
                                     <textarea id="description"
                                               class="form-control"
-                                              rows="15"
+                                              rows="5"
                                               placeholder="Description of this image."
                                               style="resize: none;"
                                               th:field="*{description}"
@@ -153,6 +172,10 @@
             });
             $('#delete-link').click(function(e) {
                 $('#delete-image').submit();
+            });
+            $('#tags').select2({
+                placeholder: /*[[#{tags.placeholder}]]*/,
+                tags: true
             });
         });
         $('#reset').click(function(e) {

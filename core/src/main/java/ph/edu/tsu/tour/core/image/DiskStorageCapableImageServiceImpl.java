@@ -167,6 +167,8 @@ public class DiskStorageCapableImageServiceImpl implements DiskStorageCapableIma
                 .id(rawImage.getId())
                 .title(rawImage.getTitle())
                 .description(rawImage.getDescription())
+                .priority(rawImage.getPriority())
+                .tags(rawImage.getTags())
                 .build();
         if (rawImage.getId() != null && exists(rawImage.getId())) {
             Image found = findById(rawImage.getId());

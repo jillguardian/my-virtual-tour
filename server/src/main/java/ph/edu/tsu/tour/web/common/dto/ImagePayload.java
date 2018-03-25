@@ -9,6 +9,8 @@ import ph.edu.tsu.tour.core.location.Location;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
@@ -26,6 +28,8 @@ public final class ImagePayload implements Serializable {
     private Long id;
     private String title;
     private String description;
+    private Integer priority;
+    private Set<String> tags = new HashSet<>();
     private MultipartFile file;
     private URI uri;
 

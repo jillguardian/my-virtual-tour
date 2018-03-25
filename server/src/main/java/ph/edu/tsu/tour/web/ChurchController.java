@@ -205,6 +205,8 @@ class ChurchController {
                 .title(image.getTitle())
                 .description(image.getDescription())
                 .uri(image.getLocation())
+                .priority(image.getPriority())
+                .tags(image.getTags())
                 .build();
     }
 
@@ -396,11 +398,15 @@ class ChurchController {
                     .title(dto.getTitle())
                     .description(dto.getDescription())
                     .inputStream(dto.getFile().getInputStream())
+                    .priority(dto.getPriority())
+                    .tags(dto.getTags())
                     .build());
         } else { // Updating fields only?
             image = imageService.findById(dto.getId());
             image.setTitle(dto.getTitle());
             image.setDescription(dto.getDescription());
+            image.setPriority(dto.getPriority());
+            image.setTags(dto.getTags());
             image = imageService.save(image);
         }
 

@@ -9,12 +9,15 @@ import ph.edu.tsu.tour.core.common.converter.UriPersistenceConverter;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @Entity
@@ -53,6 +56,26 @@ public class Image implements Serializable {
     @Convert(converter = UriPersistenceConverter.class)
     private URI preview;
 
+    private Integer priority;
+
+    @ElementCollection
+    private Set<String> tags = new HashSet<>();
+
+    public Set<String> getTags() {
+        return new HashSet<>(tags);
+    }
+
+    public void addTag(String tag) {
+        if (tags.contains(tag)) {
+            return;
+        }
+        tags.add(tag);
+    }
+
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -63,7 +86,9 @@ public class Image implements Serializable {
                 .title(image.getTitle())
                 .description(image.getDescription())
                 .location(image.getPreview())
-                .preview(image.getPreview());
+                .preview(image.getPreview())
+                .priority(image.getPriority())
+                .tags(image.getTags());
     }
 
 }
