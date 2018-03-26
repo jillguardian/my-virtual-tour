@@ -119,6 +119,7 @@ class ChurchController {
                                 .collect(Collectors.toSet()))
                 .massScheduleRemarks(dto.getMassScheduleRemarks())
                 .confessionScheduleRemarks(dto.getConfessionScheduleRemarks())
+                .visitDuration(dto.getVisitDuration())
                 .artifacts(dto.getArtifacts())
                 .architect(dto.getArchitect())
                 .style(dto.getStyle())
@@ -169,6 +170,7 @@ class ChurchController {
                         ChurchPayload.SchedulePayload.class))
                 .massScheduleRemarks(church.getMassScheduleRemarks())
                 .confessionScheduleRemarks(church.getConfessionScheduleRemarks())
+                .visitDuration(church.getVisitDuration())
                 .artifacts(church.getArtifacts())
                 .architect(church.getArchitect())
                 .style(church.getStyle())
@@ -226,6 +228,7 @@ class ChurchController {
                     .addressLine2(location.getAddressLine2())
                     .city(location.getCity())
                     .zipCode(location.getZipCode())
+                    .visitDuration(location.getVisitDuration())
                     .coverImage(toDto(location, location.getCoverImage())) // Only image displayed in view.
                     .build();
             dtos.add(dto);
@@ -539,7 +542,6 @@ class ChurchController {
                                                      String propertyName) {
         schedules.removeIf(Objects::isNull);
         for (int i = 0; i < schedules.size(); i++) {
-            boolean error = false;
             ChurchPayload.SchedulePayload schedule = schedules.get(i);
             if (schedule.getDay() == null) {
                 bindingResult.rejectValue(propertyName + "[" + i + "].day",
@@ -555,7 +557,6 @@ class ChurchController {
                 bindingResult.rejectValue(propertyName + "[" + i + "].language",
                                           "church.schedule.language.empty.message",
                                           "Language should be specified.");
-                error = true;
             }
         }
     }

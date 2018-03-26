@@ -96,23 +96,34 @@
                                             <input type="text" th:field="*{name}" class="form-control" id="name" th:placeholder="#{location.name.placeholder}" placeholder="Enter the name of site"/>
                                             <p class="help-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
                                         </div>
-                                        <div class="form-group" th:classappend="${#fields.hasErrors('type')} ? has-error : ''">
-                                            <label for="type" th:text="#{type}">Type</label>
-                                            <select th:field="*{type}"
-                                                    id="type"
-                                                    class="form-control"
-                                                    style="width: 100%;"
-                                                    tabindex="-1"
-                                                    aria-hidden="true">
-                                                <option value=""></option>
-                                                <option th:text="#{parish}"
-                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).PARISH}">Parish</option>
-                                                <option th:text="#{shrine}"
-                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).SHRINE}">Shrine</option>
-                                                <option th:text="#{chapel}"
-                                                        th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).CHAPEL}">Chapel</option>
-                                            </select>
-                                            <p class="help-block" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></p>
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-6">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('type')} ? has-error : ''">
+                                                    <label for="type" th:text="#{type}">Type</label>
+                                                    <select th:field="*{type}"
+                                                            id="type"
+                                                            class="form-control"
+                                                            style="width: 100%;"
+                                                            tabindex="-1"
+                                                            aria-hidden="true">
+                                                        <option value=""></option>
+                                                        <option th:text="#{parish}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).PARISH}">Parish</option>
+                                                        <option th:text="#{shrine}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).SHRINE}">Shrine</option>
+                                                        <option th:text="#{chapel}"
+                                                                th:value="${T(ph.edu.tsu.tour.core.location.Church.Type).CHAPEL}">Chapel</option>
+                                                    </select>
+                                                    <p class="help-block" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-12 col-md-6">
+                                                <div class="form-group" th:classappend="${#fields.hasErrors('visitDuration')} ? has-error : ''">
+                                                    <label for="visit-duration" th:text="#{recommended-visit-duration}">Recommended Duration of Visit</label>
+                                                    <input type="number" th:field="*{visitDuration}" class="form-control" id="visit-duration" th:placeholder="#{recommended-visit-duration.placeholder}" placeholder="Enter recommended duration of visit"/>
+                                                    <p class="help-block" th:if="${#fields.hasErrors('visitDuration')}" th:errors="*{visitDuration}"></p>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-xs-12 col-md-6">

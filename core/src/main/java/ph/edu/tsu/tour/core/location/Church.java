@@ -91,6 +91,7 @@ public class Church extends Location implements Serializable {
                   Set<Schedule> confessionSchedules,
                   String massScheduleRemarks,
                   String confessionScheduleRemarks,
+                  Integer visitDuration,
                   Set<Artifact> artifacts,
                   String architect,
                   Style style,
@@ -127,6 +128,7 @@ public class Church extends Location implements Serializable {
         this.confessionSchedules = confessionSchedules;
         this.massScheduleRemarks = massScheduleRemarks;
         this.confessionScheduleRemarks = confessionScheduleRemarks;
+        this.visitDuration = visitDuration;
         this.artifacts = artifacts;
         this.architect = architect;
         this.style = style;
@@ -185,6 +187,10 @@ public class Church extends Location implements Serializable {
     @JsonProperty("confession-schedule-remarks")
     @Column(length = 1000)
     private String confessionScheduleRemarks;
+
+    @JsonProperty("duration-of-visit")
+    @Column(name = "duration_of_visit")
+    private Integer visitDuration;
 
     @ElementCollection()
     private Set<Artifact> artifacts = EnumSet.noneOf( Artifact.class );
