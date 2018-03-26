@@ -102,28 +102,6 @@
         <section class="sidebar">
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header text-uppercase" th:value="#{navigation}">Navigation</li>
-                <li class="treeview" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).READ, T(ph.edu.tsu.tour.core.access.Privileges.Access).WRITE)">
-                    <a href="#">
-                        <i class="fa fa-user"></i> <span th:text="#{administrators}">Administrators</span>
-                        <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
-                    </a>
-                    <ul class="treeview-menu">
-                        <li>
-                            <a th:href="@{/access-management/administrator}"
-                               th:value="#{view-all}"
-                               sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).READ)">
-                            View All
-                            </a>
-                        </li>
-                        <li>
-                            <a th:href="@{/access-management/administrator/new}"
-                               th:value="#{add-new}"
-                               sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.Access).WRITE)">
-                            Add New
-                            </a>
-                        </li>
-                    </ul>
-                </li>
                 <li class="treeview" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.User).WRITE)">
                     <a href="#">
                         <i class="fa fa-user"></i> <span th:text="#{users}">Users</span>
