@@ -5,6 +5,7 @@ import org.geojson.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.AutoPopulatingList;
@@ -25,7 +26,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -56,16 +56,20 @@ class ChurchController {
 
     private static final Logger logger = LoggerFactory.getLogger(ChurchController.class);
 
+    private MessageSource messageSource;
+
     private LocationService<Church> locationService;
     private DiskStorageCapableImageService imageService;
     private ToPublicLocationService toPublicLocationService;
     private ToPublicImageService toPublicImageService;
 
     @Autowired
-    ChurchController(LocationService<Church> locationService,
+    ChurchController(MessageSource messageSource,
+                     LocationService<Church> locationService,
                      DiskStorageCapableImageService diskStorageCapableImageService,
                      ToPublicLocationService toPublicLocationService,
-                     ToPublicImageService toPublicImageService) throws IOException {
+                     ToPublicImageService toPublicImageService) {
+        this.messageSource = messageSource;
         this.locationService = locationService;
         this.imageService = diskStorageCapableImageService;
         this.toPublicLocationService = toPublicLocationService;
@@ -345,10 +349,23 @@ class ChurchController {
     }
 
     @RequestMapping(value = "/{location-id}/image/new", method = RequestMethod.GET)
-    public String saveImage(Model model, @PathVariable("location-id") long locationId) {
-        if (!locationService.exists(locationId)) {
+    public String saveImage(Locale locale,
+                            Model model,
+                            RedirectAttributes redirectAttributes,
+                            @PathVariable("location-id") long locationId) {
+        Church church = locationService.findById(locationId);
+        if (church == null) {
             throw new ResourceNotFoundException("Location with ID [" + locationId + "] does not exist");
+        } else if (church.getImages().size() >= ChurchPayload.MAX_IMAGES) {
+            // FIXME: Prefer pagination. Kids, don't do this counter-productive hack:
+            String message = messageSource.getMessage("images.exceeded-max.message",
+                                                      new Object[] { ChurchPayload.MAX_IMAGES },
+                                                      "Cannot exceed allowable number of images",
+                                                      locale);
+            redirectAttributes.addFlashAttribute("errors", new String[] { message });
+            return "redirect:" + Urls.CHURCH_LOCATION + "/" + locationId;
         }
+
         model.addAttribute("image", ImagePayload.builder().reference(locationId).build());
         return "church/image/one";
     }

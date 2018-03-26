@@ -40,6 +40,8 @@ import java.util.Set;
 @Data
 public final class ChurchPayload extends LocationPayload {
 
+    public static final int MAX_IMAGES = 25;
+
     // An ugly hack to make fields from the parent class available to this class's builder.
     @Builder(toBuilder = true)
     public ChurchPayload(Long id,
