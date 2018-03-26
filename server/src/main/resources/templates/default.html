@@ -124,7 +124,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="treeview" sec:authorize="hasAnyAuthority(T(ph.edu.tsu.tour.core.access.Privileges.User).WRITE)">
+                <li class="treeview" sec:authorize="hasAuthority(T(ph.edu.tsu.tour.core.access.Privileges.User).WRITE)">
                     <a href="#">
                         <i class="fa fa-user"></i> <span th:text="#{users}">Users</span>
                         <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
