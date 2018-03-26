@@ -35,6 +35,7 @@
     </th:block>
 </ol>
 <div layout:fragment="content-body">
+    <p class="help-block"><i th:text="#{required-fields-are-with-asterisks}">All required fields are marked with an asterisk.</i></p>
     <form action="/access-management/administrator/save"
           th:if="${administrator}"
           th:action="@{/access-management/administrator/save}"
@@ -65,7 +66,7 @@
                                            placeholder="#" />
                                 </div>
                                 <div class="form-group" th:classappend="${#fields.hasErrors('username')} ? has-error : ''">
-                                    <label for="username" th:value="#{username}">Username</label>
+                                    <label for="username" th:text="#{username} + ' *'">Username</label>
                                     <input type="text"
                                            th:field="*{username}"
                                            class="form-control"
@@ -79,7 +80,7 @@
                                     </p>
                                 </div>
                                 <div class="form-group" th:classappend="${#fields.hasErrors('password')} ? has-error : ''">
-                                    <label for="password" th:value="#{password}">Password</label>
+                                    <label for="password" th:text="#{password} + ' *'">Password</label>
                                     <input type="password"
                                            th:field="*{password}"
                                            class="form-control"
@@ -93,7 +94,7 @@
                                     </p>
                                 </div>
                                 <div class="form-group" th:classappend="${#fields.hasErrors('roles')} ? has-error : ''">
-                                    <label for="roles" th:value="#{roles}">Roles</label>
+                                    <label for="roles" th:text="#{roles} + ' *'">Roles</label>
                                     <select th:field="*{roles}"
                                             id="roles"
                                             class="form-control"
@@ -114,22 +115,29 @@
                                        th:text="#{administrator.roles.empty.message}"></p>
                                 </div>
                                 <div class="form-group" th:classappend="${#fields.hasErrors('firstName')} ? has-error : ''">
-                                    <label for="first-name" th:value="#{first-name}">First Name</label>
+                                    <label for="first-name" th:text="#{first-name} + ' *'">First Name</label>
                                     <input type="text"
                                            th:field="*{firstName}"
                                            class="form-control"
                                            id="first-name"
                                            th:placeholder="#{first-name.placeholder}"
                                            placeholder="#" />
+                                    <p class="help-block"
+                                       th:if="${#fields.hasErrors('firstName')}"
+                                       th:errors="*{firstName}"
+                                       th:text="#{first-name.blank.message}"></p>
                                 </div>
                                 <div class="form-group" th:classappend="${#fields.hasErrors('lastName')} ? has-error : ''">
-                                    <label for="last-name" th:value="#{first-name}">Last Name</label>
+                                    <label for="last-name" th:text="#{last-name} + ' *'">Last Name</label>
                                     <input type="text"
                                            th:field="*{lastName}"
                                            class="form-control"
                                            id="last-name"
                                            th:placeholder="#{last-name.placeholder}"
                                            placeholder="#" />
+                                    <p class="help-block"
+                                       th:if="${#fields.hasErrors('lastName')}"
+                                       th:errors="*{lastName}"></p>
                                 </div>
                             </div>
                         </div>
