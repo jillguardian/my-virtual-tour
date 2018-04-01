@@ -1,5 +1,7 @@
 package ph.edu.tsu.tour.web;
 
+import org.apache.commons.collections4.list.TreeList;
+import org.apache.commons.lang.time.DurationFormatUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.geojson.Point;
 import org.slf4j.Logger;
@@ -9,6 +11,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.AutoPopulatingList;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,16 +23,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
@@ -49,6 +60,8 @@ import ph.edu.tsu.tour.exception.FunctionalityNotImplementedException;
 import ph.edu.tsu.tour.exception.ResourceNotFoundException;
 import ph.edu.tsu.tour.web.common.dto.ChurchPayload;
 import ph.edu.tsu.tour.web.common.dto.ImagePayload;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Controller
 @RequestMapping(Urls.CHURCH_LOCATION)
@@ -558,6 +571,8 @@ class ChurchController {
                                                      BindingResult bindingResult,
                                                      String propertyName) {
         schedules.removeIf(Objects::isNull);
+
+        MultiValueMap<DayOfWeek, Integer> schedulesByDayOfWeek = new LinkedMultiValueMap<>();
         for (int i = 0; i < schedules.size(); i++) {
             ChurchPayload.SchedulePayload schedule = schedules.get(i);
             if (schedule.getDay() == null) {
@@ -574,6 +589,30 @@ class ChurchController {
                 bindingResult.rejectValue(propertyName + "[" + i + "].language",
                                           "church.schedule.language.empty.message",
                                           "Language should be specified.");
+            }
+
+            if (schedule.getDay() != null && schedule.getStart() != null) {
+                schedulesByDayOfWeek.add(schedule.getDay(), i);
+            }
+        }
+
+        for (Map.Entry<DayOfWeek, List<Integer>> entry : schedulesByDayOfWeek.entrySet()) {
+            List<Integer> sortedIndices = entry.getValue().stream()
+                    .sorted(Comparator.comparing(index -> schedules.get(index).getStart()))
+                    .collect(Collectors.toList());
+
+            LocalTime previous = null;
+            for (int index : sortedIndices) {
+                ChurchPayload.SchedulePayload schedule = schedules.get(index);
+                if (previous != null && schedule.getStart().isBefore(previous.plus(ChurchPayload.SCHEDULE_INTERVAL))) {
+                    String duration = DurationFormatUtils.formatDuration(ChurchPayload.SCHEDULE_INTERVAL.toMillis(),
+                                                                         "mm' minutes'");
+                    bindingResult.rejectValue(propertyName + "[" + index + "].start",
+                                              "church.schedule.start.invalid-interval.message",
+                                              new Object[]{ duration },
+                                              "Start times must have an interval of [" + duration + "].");
+                }
+                previous = schedule.getStart();
             }
         }
     }

@@ -22,6 +22,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.net.URI;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.MonthDay;
@@ -41,6 +42,7 @@ import java.util.Set;
 public final class ChurchPayload extends LocationPayload {
 
     public static final int MAX_IMAGES = 25;
+    public static final Duration SCHEDULE_INTERVAL = Duration.ofHours(1);
 
     // An ugly hack to make fields from the parent class available to this class's builder.
     @Builder(toBuilder = true)
