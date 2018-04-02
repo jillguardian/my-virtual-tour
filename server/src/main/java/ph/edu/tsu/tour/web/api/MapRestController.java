@@ -11,6 +11,7 @@ import org.geojson.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+@CrossOrigin
 @RestController
 @RequestMapping(Urls.REST_V1_MAP)
 class MapRestController<T extends Location> {
