@@ -10,6 +10,7 @@ import org.apache.commons.vfs2.provider.dropbox.DropboxFileProvider;
 import org.apache.commons.vfs2.provider.dropbox.DropboxFileSystemConfigBuilder;
 import org.apache.commons.vfs2.provider.s3.AmazonS3FileProvider;
 import org.apache.commons.vfs2.provider.s3.AmazonS3FileSystemConfigBuilder;
+import org.geojson.GeoJsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,15 +32,12 @@ import ph.edu.tsu.tour.core.image.ImageServiceImpl;
 import ph.edu.tsu.tour.core.image.ToPublicImageServiceImpl;
 import ph.edu.tsu.tour.core.location.Church;
 import ph.edu.tsu.tour.core.location.ChurchRepository;
-import ph.edu.tsu.tour.core.map.DecoratedMapboxDomainMapService;
-import ph.edu.tsu.tour.core.map.DefaultDomainMapService;
-import ph.edu.tsu.tour.core.map.DomainMapService;
-import ph.edu.tsu.tour.core.map.MapboxMapService;
-import ph.edu.tsu.tour.core.map.MapService;
 import ph.edu.tsu.tour.core.location.LocationService;
 import ph.edu.tsu.tour.core.location.LocationServiceImpl;
 import ph.edu.tsu.tour.core.location.PublishingLocationService;
 import ph.edu.tsu.tour.core.location.ToPublicLocationService;
+import ph.edu.tsu.tour.core.route.ChurchRouteService;
+import ph.edu.tsu.tour.core.route.RouteService;
 import ph.edu.tsu.tour.core.storage.StorageService;
 import ph.edu.tsu.tour.core.storage.StreamingStorageService;
 import ph.edu.tsu.tour.core.storage.VfsStorageService;
@@ -199,20 +197,9 @@ public class Main {
     }
 
     @Bean
-    public MapService mapService(@Value("${application.map.mapbox.access-token}") String accessToken) {
-        return new MapboxMapService(accessToken);
-    }
-
-    @Primary
-    @Bean
-    public DomainMapService domainMapService(MapService mapService) {
-        return new DefaultDomainMapService(mapService);
-    }
-
-    @Bean
-    public DecoratedMapboxDomainMapService decoratedMapboxDomainMapService(
+    public RouteService<GeoJsonObject, Church> churchRouteService(
             @Value("${application.map.mapbox.access-token}") String accessToken) {
-        return new DecoratedMapboxDomainMapService(accessToken);
+        return new ChurchRouteService(accessToken);
     }
 
 }

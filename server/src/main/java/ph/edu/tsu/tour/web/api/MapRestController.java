@@ -7,6 +7,7 @@ import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.services.commons.models.Position;
 import org.geojson.Feature;
 import org.geojson.FeatureCollection;
+import org.geojson.GeoJsonObject;
 import org.geojson.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ph.edu.tsu.tour.Project;
+import ph.edu.tsu.tour.core.location.ToPublicLocationService;
+import ph.edu.tsu.tour.core.route.Profile;
+import ph.edu.tsu.tour.core.route.RouteService;
 import ph.edu.tsu.tour.web.common.function.LocationCollectionToFeatureCollection;
 import ph.edu.tsu.tour.web.common.function.LocationToFeature;
-import ph.edu.tsu.tour.core.map.DecoratedMapboxDomainMapService;
-import ph.edu.tsu.tour.core.map.Profile;
 import ph.edu.tsu.tour.core.location.Location;
 import ph.edu.tsu.tour.core.location.LocationService;
 import ph.edu.tsu.tour.exception.FailedDependencyException;
@@ -47,23 +49,27 @@ class MapRestController<T extends Location> {
     private static final Splitter DEFAULT_SEMICOLON_SPLITTER = Splitter.on(';').trimResults();
     private static final Splitter DEFAULT_COMMA_SPLITTER = Splitter.on(',');
 
-    private final DecoratedMapboxDomainMapService domainMapService;
+    private final RouteService<GeoJsonObject, T> routeService;
     private final LocationService<T> locationService;
 
+    private final ToPublicLocationService toPublicLocationService;
+
     private final Function<Location, Feature> locationToFeature;
-    private final Function<Iterable<Location>, FeatureCollection> locationCollectionToFeatureCollection;
+    private final Function<Iterable<T>, FeatureCollection> locationCollectionToFeatureCollection;
 
     private final String applicationName;
     private final String accessToken;
 
     @Autowired
-    MapRestController(DecoratedMapboxDomainMapService domainMapService,
+    MapRestController(RouteService<GeoJsonObject, T> routeService,
                       LocationService<T> locationService,
+                      ToPublicLocationService toPublicLocationService,
                       @Value("${application.map.mapbox.access-token}") String accessToken) {
-        this.domainMapService = domainMapService;
+        this.routeService = routeService;
         this.locationService = locationService;
+        this.toPublicLocationService = toPublicLocationService;
         this.locationToFeature = new LocationToFeature();
-        this.locationCollectionToFeatureCollection = new LocationCollectionToFeatureCollection();
+        this.locationCollectionToFeatureCollection = new LocationCollectionToFeatureCollection<>();
         this.applicationName = MapRestController.DEFAULT_APPLICATION_NAME;
         this.accessToken = accessToken;
     }
@@ -73,9 +79,9 @@ class MapRestController<T extends Location> {
                                                          @RequestParam("source-longitude") double sourceLongitude,
                                                          @RequestParam("source-latitude") double sourceLatitude,
                                                          @RequestParam("destination") long[] ids) {
-        Set<Location> destinations = new HashSet<>();
+        Set<T> destinations = new HashSet<>();
         for (long id : ids) {
-            Location location = locationService.findById(id);
+            T location = locationService.findById(id);
             if (location == null) {
                 throw new ResourceNotFoundException("Location with id [" + id + "] does not exist");
             }
@@ -83,7 +89,9 @@ class MapRestController<T extends Location> {
         }
 
         Point source = new Point(sourceLongitude, sourceLatitude);
-        Location nearest = domainMapService.getNearestDestination(profile, source, destinations);
+        T nearest = routeService.getNearestDestination(profile, source, destinations);
+
+        toPublicLocationService.accept(nearest);
         Feature feature = locationToFeature.apply(nearest);
         return ResponseEntity.ok(feature);
     }
@@ -93,9 +101,9 @@ class MapRestController<T extends Location> {
                                                               @RequestParam("source-longitude") double sourceLongitude,
                                                               @RequestParam("source-latitude") double sourceLatitude,
                                                               @RequestParam("destination") long[] ids) {
-        Set<Location> destinations = new HashSet<>();
+        Set<T> destinations = new HashSet<>();
         for (long id : ids) {
-            Location location = locationService.findById(id);
+            T location = locationService.findById(id);
             if (location == null) {
                 throw new ResourceNotFoundException("Location with id [" + id + "] does not exist");
             }
@@ -103,28 +111,12 @@ class MapRestController<T extends Location> {
         }
 
         Point source = new Point(sourceLongitude, sourceLatitude);
-        List<Location> sorted = domainMapService.sortDestinations(profile, source, destinations);
+        List<T> sorted = routeService.sortDestinations(profile, source, destinations);
+
+        sorted.forEach(toPublicLocationService::accept);
+
         FeatureCollection converted = locationCollectionToFeatureCollection.apply(sorted);
         return ResponseEntity.ok(converted);
-    }
-
-    @RequestMapping(value = "/directions", method = RequestMethod.GET)
-    public ResponseEntity<DirectionsResponse> getDirections(@RequestParam("profile") Profile profile,
-                                                            @RequestParam("source-longitude") double sourceLongitude,
-                                                            @RequestParam("source-latitude") double sourceLatitude,
-                                                            @RequestParam("destination") long[] ids) {
-        Set<Location> destinations = new HashSet<>();
-        for (long id : ids) {
-            Location location = locationService.findById(id);
-            if (location == null) {
-                throw new ResourceNotFoundException("Location with id [" + id + "] does not exist");
-            }
-            destinations.add(location);
-        }
-
-        Point source = new Point(sourceLongitude, sourceLatitude);
-        DirectionsResponse directions = domainMapService.getDirections(profile, source, destinations);
-        return ResponseEntity.ok(directions);
     }
 
     @RequestMapping(value = "/directions/{profile}/{coordinates:.*}", method = RequestMethod.GET)

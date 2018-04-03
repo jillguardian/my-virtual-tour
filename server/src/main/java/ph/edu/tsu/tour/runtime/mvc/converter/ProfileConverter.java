@@ -1,7 +1,7 @@
 package ph.edu.tsu.tour.runtime.mvc.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import ph.edu.tsu.tour.core.map.Profile;
+import ph.edu.tsu.tour.core.route.Profile;
 
 public class ProfileConverter implements Converter<String, Profile> {
 

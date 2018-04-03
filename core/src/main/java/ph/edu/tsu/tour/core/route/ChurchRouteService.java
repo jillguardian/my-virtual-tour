@@ -1,55 +1,52 @@
-package ph.edu.tsu.tour.core.map;
+package ph.edu.tsu.tour.core.route;
 
 import com.mapbox.services.api.directions.v5.MapboxDirections;
 import com.mapbox.services.api.directions.v5.models.DirectionsResponse;
-import com.mapbox.services.api.directions.v5.models.DirectionsWaypoint;
 import com.mapbox.services.commons.models.Position;
+
 import org.geojson.GeoJsonObject;
 import org.geojson.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ph.edu.tsu.tour.Project;
-import ph.edu.tsu.tour.exception.FailedDependencyException;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-public class MapboxMapService implements MapService {
+import ph.edu.tsu.tour.Project;
+import ph.edu.tsu.tour.core.location.Church;
+import ph.edu.tsu.tour.core.location.Location;
+import ph.edu.tsu.tour.exception.FailedDependencyException;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class ChurchRouteService implements RouteService<GeoJsonObject, Church> {
 
     private static final String DEFAULT_APPLICATION_NAME = Project.getName() + "/" + Project.getVersion();
-    private static final Logger logger = LoggerFactory.getLogger(MapboxMapService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChurchRouteService.class);
 
     private final String applicationName;
     private final String accessToken;
     private final Function<Point, Position> pointToPosition;
     private final Function<Profile, String> profileToProfile;
 
-    public MapboxMapService(String accessToken) {
-        this.applicationName = MapboxMapService.DEFAULT_APPLICATION_NAME;
+    public ChurchRouteService(String accessToken) {
+        this.applicationName = ChurchRouteService.DEFAULT_APPLICATION_NAME;
         this.accessToken = accessToken;
         this.pointToPosition = new PointToPosition();
         this.profileToProfile = new ProfileToProfile();
     }
 
     @Override
-    public GeoJsonObject getNearestDestination(Profile profile, GeoJsonObject source, Set<GeoJsonObject> destinations) {
+    public Church getNearestDestination(Profile profile, GeoJsonObject source, Set<Church> destinations) {
         Objects.requireNonNull(profile, "Profile must be specified");
         Objects.requireNonNull(source, "Source must be specified");
         Objects.requireNonNull(destinations, "Destinations must be specified");
@@ -57,19 +54,16 @@ public class MapboxMapService implements MapService {
         if (destinations.isEmpty()) {
             throw new IllegalArgumentException("Destinations collection is empty");
         }
-        if (!(source instanceof Point) || !destinations.stream().allMatch(geometry -> geometry instanceof Point)) {
+        if (!(source instanceof Point) ||
+            !destinations.stream().map(Church::getGeometry).allMatch(Point.class::isInstance)) {
             throw new UnsupportedOperationException("Implementation supports only point-based locations");
         }
 
         Position convertedSource = pointToPosition.apply(Point.class.cast(source));
-        List<Position> convertedDestinations = destinations.stream()
-                .map(Point.class::cast)
-                .map(pointToPosition)
-                .collect(Collectors.toList());
 
-        Map<GeoJsonObject, MapboxDirections> destinationToRequestMap = new HashMap<>();
-        for (GeoJsonObject destination : destinations) {
-            Position converted = pointToPosition.apply(Point.class.cast(destination));
+        Map<Church, MapboxDirections> destinationToRequestMap = new HashMap<>();
+        for (Church destination : destinations) {
+            Position converted = pointToPosition.apply(Point.class.cast(destination.getGeometry()));
             MapboxDirections request = new MapboxDirections.Builder()
                     .setAccessToken(accessToken)
                     .setClientAppName(applicationName)
@@ -80,13 +74,14 @@ public class MapboxMapService implements MapService {
             destinationToRequestMap.put(destination, request);
         }
 
-        Map<GeoJsonObject, DirectionsResponse> destinationToResponseMap = new HashMap<>();
-        BiConsumer<GeoJsonObject, DirectionsResponse> responseBiConsumer = destinationToResponseMap::put;
+        Map<Church, DirectionsResponse> destinationToResponseMap = new HashMap<>();
+        BiConsumer<Church, DirectionsResponse> responseBiConsumer = destinationToResponseMap::put;
 
         CountDownLatch latch = new CountDownLatch(destinationToRequestMap.size());
-        for (GeoJsonObject destination : destinationToRequestMap.keySet()) {
+        for (Church destination : destinationToRequestMap.keySet()) {
             MapboxDirections request = destinationToRequestMap.get(destination);
-            request.enqueueCall(new MapboxDirectionsCallback(destination, responseBiConsumer, latch));
+            request.enqueueCall(
+                    new ChurchRouteService.MapboxDirectionsCallback(destination, responseBiConsumer, latch));
         }
 
         try {
@@ -95,24 +90,22 @@ public class MapboxMapService implements MapService {
             throw new IllegalArgumentException("Unable to properly execute requests", e);
         }
 
-        GeoJsonObject nearest = destinationToResponseMap.keySet().stream()
+        Church nearest = destinationToResponseMap.keySet().stream()
                 .min((o1, o2) -> {
                     DirectionsResponse o1Response = destinationToResponseMap.get(o1);
                     DirectionsResponse o2Response = destinationToResponseMap.get(o2);
                     if (o1Response.getRoutes().size() != 1 || o2Response.getRoutes().size() != 1) {
                         throw new AssertionError("Found more than one route");
                     }
-                    return Double.compare(o1Response.getRoutes().get(0).getDistance(),
-                                          o2Response.getRoutes().get(0).getDistance());
+                    return Double.compare(o1Response.getRoutes().get(0).getDuration() + o1.getVisitDuration(),
+                                          o2Response.getRoutes().get(0).getDuration()) + o2.getVisitDuration();
                 }).orElseThrow(() -> new FailedDependencyException("Couldn't find shortest route via supporting API"));
 
-       return nearest;
+        return nearest;
     }
 
     @Override
-    public List<GeoJsonObject> sortDestinations(Profile profile,
-                                                GeoJsonObject source,
-                                                Set<GeoJsonObject> destinations) {
+    public List<Church> sortDestinations(Profile profile, GeoJsonObject source, Set<Church> destinations) {
         Objects.requireNonNull(profile, "Profile must be specified");
         Objects.requireNonNull(source, "Source must be specified");
         Objects.requireNonNull(destinations, "Destinations must be specified");
@@ -121,13 +114,13 @@ public class MapboxMapService implements MapService {
             throw new IllegalArgumentException("Destinations collection is empty");
         }
 
-        Set<GeoJsonObject> original = new HashSet<>(destinations);
-        List<GeoJsonObject> sorted = new ArrayList<>();
+        Set<Church> original = new HashSet<>(destinations);
+        List<Church> sorted = new ArrayList<>();
         while (!original.isEmpty()) {
-            GeoJsonObject nearest = getNearestDestination(profile, source, original);
+            Church nearest = getNearestDestination(profile, source, original);
             original.remove(nearest);
             sorted.add(nearest);
-            source = nearest;
+            source = nearest.getGeometry();
         }
 
         return sorted;
@@ -135,12 +128,12 @@ public class MapboxMapService implements MapService {
 
     private static class MapboxDirectionsCallback implements Callback<DirectionsResponse> {
 
-        private final GeoJsonObject destination;
-        private final BiConsumer<GeoJsonObject, DirectionsResponse> consumer;
+        private final Church destination;
+        private final BiConsumer<Church, DirectionsResponse> consumer;
         private final CountDownLatch latch;
 
-        private MapboxDirectionsCallback(GeoJsonObject destination,
-                                         BiConsumer<GeoJsonObject, DirectionsResponse> consumer,
+        private MapboxDirectionsCallback(Church destination,
+                                         BiConsumer<Church, DirectionsResponse> consumer,
                                          CountDownLatch latch) {
             this.destination = destination;
             this.latch = latch;

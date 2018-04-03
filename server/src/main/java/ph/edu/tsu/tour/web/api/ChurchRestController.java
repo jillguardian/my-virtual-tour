@@ -41,7 +41,7 @@ class ChurchRestController implements Observer {
     private ToPublicLocationService toPublicLocationService;
 
     private Function<Location, Feature> locationToFeature;
-    private Function<Iterable<Location>, FeatureCollection> locationCollectionToFeatureCollection;
+    private Function<Iterable<Church>, FeatureCollection> locationCollectionToFeatureCollection;
     private Function<LocationModifiedEvent, FeatureModifiedEvent> locationModifiedEventToFeatureModifiedEvent;
 
     @Autowired
@@ -56,7 +56,7 @@ class ChurchRestController implements Observer {
 
         // TODO: Use more appropriate converters.
         this.locationToFeature = new LocationToFeature();
-        this.locationCollectionToFeatureCollection = new LocationCollectionToFeatureCollection();
+        this.locationCollectionToFeatureCollection = new LocationCollectionToFeatureCollection<>();
         this.locationModifiedEventToFeatureModifiedEvent =
                 new LocationModifiedEventToFeatureModifiedEvent();
     }
@@ -64,7 +64,7 @@ class ChurchRestController implements Observer {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<FeatureCollection> findAll() {
         Iterable<Church> found = locationService.findAll();
-        Collection<Location> modified = new HashSet<>();
+        Collection<Church> modified = new HashSet<>();
         for (Church church : found) {
             toPublicLocationService.accept(church);
             modified.add(church);

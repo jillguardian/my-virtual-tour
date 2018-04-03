@@ -1,4 +1,4 @@
-package ph.edu.tsu.tour.core.map;
+package ph.edu.tsu.tour.core.route;
 
 import com.mapbox.services.api.directions.v5.DirectionsCriteria;
 

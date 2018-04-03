@@ -1,6 +1,7 @@
-package ph.edu.tsu.tour.core.map;
+package ph.edu.tsu.tour.core.route;
 
 import com.mapbox.services.commons.models.Position;
+
 import org.geojson.Point;
 
 import java.util.function.Function;

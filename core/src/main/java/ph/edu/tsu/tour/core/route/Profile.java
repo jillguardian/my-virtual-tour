@@ -1,4 +1,4 @@
-package ph.edu.tsu.tour.core.map;
+package ph.edu.tsu.tour.core.route;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
