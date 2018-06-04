@@ -68,6 +68,7 @@ public final class ChurchPayload extends LocationPayload {
                          List<SchedulePayload> confessionSchedules,
                          String massScheduleRemarks,
                          String confessionScheduleRemarks,
+                         String history,
                          Integer visitDuration,
                          Set<Artifact> artifacts,
                          String architect,
@@ -106,6 +107,7 @@ public final class ChurchPayload extends LocationPayload {
         this.confessionSchedules = ChurchPayload.initialize(confessionSchedules, SchedulePayload.class);
         this.massScheduleRemarks = massScheduleRemarks;
         this.confessionScheduleRemarks = confessionScheduleRemarks;
+        this.history = history;
         this.visitDuration = visitDuration;
         this.artifacts = ChurchPayload.initialize(artifacts);
         this.architect = architect;
@@ -155,6 +157,8 @@ public final class ChurchPayload extends LocationPayload {
     private String massScheduleRemarks;
 
     private String confessionScheduleRemarks;
+
+    private String history;
 
     // @NotNull(message = "{church.visit-duration.blank.message}")
     private Integer visitDuration;

@@ -91,6 +91,7 @@ public class Church extends Location implements Serializable {
                   Set<Schedule> confessionSchedules,
                   String massScheduleRemarks,
                   String confessionScheduleRemarks,
+                  String history,
                   Integer visitDuration,
                   Set<Artifact> artifacts,
                   String architect,
@@ -128,6 +129,7 @@ public class Church extends Location implements Serializable {
         this.confessionSchedules = confessionSchedules;
         this.massScheduleRemarks = massScheduleRemarks;
         this.confessionScheduleRemarks = confessionScheduleRemarks;
+        this.history = history;
         this.visitDuration = visitDuration;
         this.artifacts = artifacts;
         this.architect = architect;
@@ -187,6 +189,10 @@ public class Church extends Location implements Serializable {
     @JsonProperty("confession-schedule-remarks")
     @Column(length = 1000)
     private String confessionScheduleRemarks;
+
+    @JsonProperty("history")
+    @Column(length = 5000)
+    private String history;
 
     @JsonProperty("duration-of-visit")
     @Column(name = "duration_of_visit")
