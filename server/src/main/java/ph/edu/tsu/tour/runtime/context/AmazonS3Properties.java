@@ -10,19 +10,19 @@ import org.springframework.stereotype.Service;
 @EqualsAndHashCode
 class AmazonS3Properties {
 
-    @Value("${application.storage.amazon.s3.secret-key}")
+    @Value("${storage.amazon.s3.secret-key}")
     private String secretKey;
 
-    @Value("${application.storage.amazon.s3.access-key}")
+    @Value("${storage.amazon.s3.access-key}")
     private String accessKey;
 
-    @Value("${application.storage.amazon.s3.region}")
+    @Value("${storage.amazon.s3.region}")
     private String region;
 
-    @Value("${application.storage.amazon.s3.endpoint}")
+    @Value("${storage.amazon.s3.endpoint}")
     private String endpoint;
 
-    @Value("${application.storage.amazon.s3.max-retries}")
+    @Value("${storage.amazon.s3.max-retries}")
     private Integer maxRetries;
 
 }

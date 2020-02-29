@@ -28,7 +28,7 @@ public class WithinLocationValidator implements ConstraintValidator<Within, Loca
     private String[] countries;
 
     // TODO: Remove ugly Spring-related qualifier. Keep classes like this Spring-free!
-    public WithinLocationValidator(@Value("${application.map.mapbox.access-token}") String accessToken) {
+    public WithinLocationValidator(@Value("${mapbox.access-token}") String accessToken) {
         this.applicationName = WithinLocationValidator.DEFAULT_APPLICATION_NAME;
         this.accessToken = accessToken;
     }

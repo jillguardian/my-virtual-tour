@@ -198,7 +198,7 @@ public class Main {
 
     @Bean
     public RouteService<GeoJsonObject, Church> churchRouteService(
-            @Value("${application.map.mapbox.access-token}") String accessToken) {
+            @Value("${mapbox.access-token}") String accessToken) {
         return new ChurchRouteService(accessToken);
     }
 

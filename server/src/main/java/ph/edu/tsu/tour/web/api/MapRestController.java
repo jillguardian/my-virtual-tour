@@ -64,7 +64,7 @@ class MapRestController<T extends Location> {
     MapRestController(RouteService<GeoJsonObject, T> routeService,
                       LocationService<T> locationService,
                       ToPublicLocationService toPublicLocationService,
-                      @Value("${application.map.mapbox.access-token}") String accessToken) {
+                      @Value("${mapbox.access-token}") String accessToken) {
         this.routeService = routeService;
         this.locationService = locationService;
         this.toPublicLocationService = toPublicLocationService;

@@ -13,7 +13,7 @@ import java.net.URI;
 @EqualsAndHashCode
 final class StorageProperties {
 
-    @Value("${application.storage.default-directory}")
+    @Value("${storage.default-directory}")
     private URI defaultDirectory;
 
     private DropboxProperties dropboxProperties;

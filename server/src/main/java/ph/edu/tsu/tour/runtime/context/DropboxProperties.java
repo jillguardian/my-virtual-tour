@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @EqualsAndHashCode
 final class DropboxProperties {
 
-    @Value("${application.storage.dropbox.access-token}")
+    @Value("${storage.dropbox.access-token}")
     private String accessToken;
 
 }

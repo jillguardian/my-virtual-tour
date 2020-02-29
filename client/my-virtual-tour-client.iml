@@ -299,7 +299,7 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.webjars:AdminLTE:2.4.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.webjars:select2:4.0.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.webjars.bower:iCheck:1.0.2" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.webjars.bower:jquery:3.3.1" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.webjars.bower:jquery:3.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:bootstrap-datepicker:1.7.1" level="project" />
     <orderEntry type="library" name="Maven: org.webjars:bootstrap-timepicker:0.2.3" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.webjars:font-awesome:4.7.0" level="project" />

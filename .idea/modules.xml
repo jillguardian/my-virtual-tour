@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/my-virtual-tour.iml" filepath="$PROJECT_DIR$/my-virtual-tour.iml" />
+      <module fileurl="file://$PROJECT_DIR$/client/my-virtual-tour-client.iml" filepath="$PROJECT_DIR$/client/my-virtual-tour-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/core/my-virtual-tour-core.iml" filepath="$PROJECT_DIR$/core/my-virtual-tour-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/server/my-virtual-tour-server.iml" filepath="$PROJECT_DIR$/server/my-virtual-tour-server.iml" />
+    </modules>
+  </component>
+</project>
