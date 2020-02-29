@@ -6,6 +6,14 @@ to configure the application to your liking.
 To see other Spring Boot-specific configurable properties, you may consult 
 [this page](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html).
 
+## Profile
+
+Available profiles:
+- `default`
+- `development`
+
+Set the active Spring profile by setting the value of the `SPRING_PROFILES_ACTIVE` environment property.
+
 ## Storage
 
 As of now, only the following storage options are supported:
